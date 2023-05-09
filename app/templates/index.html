@@ -1,0 +1,68 @@
+{% extends 'base_template.html' %}
+
+{% block title %}
+AI Flicks
+{% endblock %}
+
+{% block content %}
+<div class="body-logo">
+    AI<span> Flicks</span>
+</div>
+
+<div class="description">
+    <p>Get your hands on unique and personalized t-shirts and more, designed just for you. Simply provide us with your prompts
+    and we'll create a one-of-a-kind design that perfectly fits your style. From trendy graphics 
+    to catchy slogans, we've got you covered. Start designing your dream t-shirt today!</p>
+</div>
+
+
+<div class="prompt">
+    <div class="row">
+
+        <div class="column1">
+            <form id="prompt" action="{{ url_for('model') }}" class="form" method="POST">
+                <textarea type="text" name="prompt" placeholder="Start prompt here..." required></textarea>
+                <button type="submit" class="button">
+                    <span class="button__text">Get Results</span>
+                </button>
+              </form>
+        </div>
+
+        <div class="column2">
+            <div class="prompt-right">
+                <div class="prompts-options">
+
+                    <p>Quality Attributes to consider:</p>
+
+                    <div class="checkbox">
+                        <input type="checkbox" id="photorealistic" name="photorealistic" value="photorealistic">
+                        <label for="photorealistic">Photorealistic</label>
+                        <p>The degree of realism in the generated image, which can range from highly realistic to stylized or abstract.</p>
+                    </div>
+                    
+                    <div class="checkbox">
+                        <input type="checkbox" id="semantic" name="semantic" value="semantic">
+                        <label for="semantic">Semantic consistency</label>
+                        <p>The extent to which the generated image accurately reflects the intended meaning of the textual prompt.</p>
+                    </div>
+
+                    <div class="checkbox">
+                        <input type="checkbox" id="coherence" name="coherence" value="coherence">
+                        <label for="coherence">Coherence</label>
+                        <p>The overall consistency and logical flow of the generated image with respect to the input prompt.</p>
+                    </div>
+
+                    <div class="checkbox">
+                        <input type="checkbox" id="novelty" name="novelty" value="novelty">
+                        <label for="novelty">Novelty</label>
+                        <p>The degree to which the generated image is unique or original in comparison to existing images.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>  
+
+{% endblock %}

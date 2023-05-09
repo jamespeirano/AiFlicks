@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/x-icon">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="../static/script.js"></script>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<header>
+    <nav class="navbar">
+        <ul>
+          <li class="logo"><a href="/">AI Flicks</a></li>
+          <li class="nav-item"><a href="/#gallery">Gallery</a></li>
+          <li class="nav-item"><a href="/#models">Models</a></li>
+        </ul>
+    </nav>
+</header>
+
+
+<body>
+    <div class="content-container">{% block content %}{% endblock %}</div><hr>
+
+    <div class="footer">
+        <div class="footer-logo"><a href="/">AI Flicks</a></div>
+        <div class="footer-text">
+            <p>&copy; 2023 AI Flicks - v0.0.1
+            <a href="/" target="_blank"></a></p>
+        </div>
+    </div>
+</body>
+
+</html>
