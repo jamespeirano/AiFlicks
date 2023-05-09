@@ -161,6 +161,20 @@ li {
 }
 /* Body -- end */
 
+/* Result -- start */
+.tshirt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    top: 50%;
+    background-image: url(images/tshirt.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+/* Result -- end */
+
 /* Footer -- start */
 .footer {
     flex-shrink: 0;
