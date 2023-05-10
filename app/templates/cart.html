@@ -1,0 +1,59 @@
+{% extends 'base_template.html' %}
+
+{% block title %}
+AIF - Customer Cart
+{% endblock %}
+
+{% block content %}
+<div class="cart">
+    <h2>Your Cart</h2><hr>
+    <ul class="cart-items">
+      <!-- Iterate through the cart items and display them -->
+      <li>
+        <span>Product 1</span>
+        <span>$10.00</span>
+        <span>Quantity: 2</span>
+      </li>
+      <li>
+        <span>Product 2</span>
+        <span>$15.00</span>
+        <span>Quantity: 1</span>
+      </li>
+      <!-- Add more items dynamically as per the cart data -->
+    </ul>
+</div>  
+
+<div class="modal">
+    <form class="form">
+
+        <div class="separator">
+            <hr class="line"><p>Pay using credit card</p><hr class="line">
+        </div>
+      
+        <div class="credit-card-info--form">
+            <div class="input_container">
+                <label for="password_field" class="input_label">Card holder full name</label>
+                <input id="password_field" class="input_field" type="text" name="input-name" title="Inpit title" placeholder="Enter your full name">
+            </div>
+        
+            <div class="input_container">
+                <label for="password_field" class="input_label">Card Number</label>
+                <input id="password_field" class="input_field" type="number" name="input-name" title="Inpit title" placeholder="0000 0000 0000 0000">
+            </div>
+        
+            <div class="input_container">
+                <label for="password_field" class="input_label">Expiry Date / CVV</label>
+          
+                <div class="split">
+                    <input id="password_field" class="input_field" type="text" name="input-name" title="Expiry Date" placeholder="01/23">
+                    <input id="password_field" class="input_field" type="number" name="cvv" title="CVV" placeholder="CVV">
+                </div>
+            </div>
+        
+        </div>
+        
+        <button class="purchase--btn">Checkout</button>
+    </form>
+</div>
+  
+{% endblock %}

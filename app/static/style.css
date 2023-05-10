@@ -97,7 +97,6 @@ li {
     font-weight: 900;
     text-transform: uppercase;
 }
-
 .description {
     margin: 1rem 0 2rem 0;
     font-size: 1.1rem;
@@ -139,6 +138,7 @@ li {
 .prompt .button {
     margin-top: 10px;
     padding: 10px;
+    width: fit-content;
     border: 2px solid var(--border-color);
     border-radius: 20px;
     font-size: 1rem;
@@ -255,3 +255,135 @@ li {
     text-align: center;
 }
 /* Footer -- end */
+
+/* Gallery -- start */
+.gallery-header h2 {
+    color: var(--header-color);
+    text-transform: uppercase;
+    font-weight: 900;
+    text-align: center;
+}
+.gallery-header p {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+
+}
+.gallery {
+    margin: 20px auto;
+    max-width: 800px;
+}  
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}  
+.grid img {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(200, 180, 255, 0.5);
+}  
+/* Gallery -- end */
+
+/* Cart -- start */
+.cart {
+    color: var(--text-color);
+}
+/* Cart -- end */
+
+/* Payment -- start */
+.modal {
+    background: var(--bg-color);
+    border-radius: 26px;
+    max-width: 500px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+.separator {
+    width: calc(100% - 20px);
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 10px;
+    color: #8B8E98;
+    margin: 0 10px;
+}  
+.separator > p {
+    word-break: keep-all;
+    display: block;
+    text-align: center;
+    font-weight: 600;
+    font-size: 11px;
+    margin: auto;
+}
+.separator .line {
+    display: inline-block;
+    width: 100%;
+    height: 1px;
+    border: 0;
+    background-color: #e8e8e8;
+    margin: auto;
+}
+.credit-card-info--form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.input_container {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.split {
+    display: grid;
+    grid-template-columns: 4fr 2fr;
+    gap: 15px;
+}  
+.split input {
+    width: 100%;
+}  
+.input_label {
+    font-size: 10px;
+    color: #8B8E98;
+    font-weight: 600;
+}  
+.input_field {
+    width: auto;
+    height: 40px;
+    padding: 0 0 0 16px;
+    border-radius: 9px;
+    outline: none;
+    background-color: #F2F2F2;
+    border: 1px solid #e5e5e500;
+    transition: all 0.3s cubic-bezier(0.15, 0.83, 0.66, 1);
+}  
+.input_field:focus {
+    color: var(--text-color);
+    border: 1px solid transparent;
+    box-shadow: 0px 0px 0px 2px #242424;
+    background-color: transparent;
+}  
+.purchase--btn {
+    height: 55px;
+    background: transparent;
+    border-radius: 11px;
+    border: 1px solid #FFFFFF;
+    outline: none;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+}
+.purchase--btn:hover {
+    cursor: pointer;
+    border: 2px solid #242424;
+}
+  

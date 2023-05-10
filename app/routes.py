@@ -72,3 +72,12 @@ def model():
     base64_image = base64.b64encode(image_byte_data.getvalue()).decode('utf-8')
 
     return render_template("result.html", image=base64_image, prompt=prompt)
+
+
+@app.route('/gallery')
+def gallery():
+    return render_template("gallery.html")
+
+@app.route('/cart')
+def cart():
+    return render_template("cart.html")
