@@ -6,12 +6,51 @@ AI Flicks
 
 {% block content %}
 
-<div class="image">
-    <img src="data:image/png;base64,{{image}}" alt="image">
+<div class="image-container">
+    
+    <div class="image">
+        <img src="data:image/png;base64,{{image}}" alt="image">
+    </div>
+  
+    <div class="prompt">
+        <p class="header">Image prompt</p><hr><br>
+        <p>{{ prompt }}</p>
+    </div>
+
 </div>
 
-<div class="tshirt">
-    <img src="static/images/tshirt.svg" alt="tshirt image">
+<div class="products">
+    <p class="header">Discover</p><hr><br>
+    <p>Discover our wide range of customizable products, meticulously crafted to suit your preferences. 
+        Visualize your unique designs on our premium items before making a purchase.</p>
+</div>
+
+
+<div class="on-demand">
+
+    <div class="grid-item">
+        <img class="static" src="static/images/tshirt.svg" alt="tshirt">
+        <img class="overlay-image" src="data:image/png;base64,{{image}}" alt="Overlay Image 1">
+        <button class="select-button">Select</button>
+    </div>
+    
+    <div class="grid-item">
+        <img class="static" src="static/images/tshirt.svg" alt="mug">
+        <img class="overlay-image" src="data:image/png;base64,{{image}}" alt="Overlay Image 2">
+        <button class="select-button">Select</button>
+    </div>
+
+    <div class="grid-item">
+        <img class="static" src="static/images/tshirt.svg" alt="Image 3">
+        <img class="overlay-image" src="data:image/png;base64,{{image}}" alt="Overlay Image 3">
+        <button class="select-button">Select</button>
+    </div>
+
+    <div class="grid-item">
+        <img class="static" src="static/images/tshirt.svg" alt="Image 4">
+        <img class="overlay-image" src="data:image/png;base64,{{image}}" alt="Overlay Image 4">
+        <button class="select-button">Select</button>
+    </div>
 </div>
 
 {% endblock %}
