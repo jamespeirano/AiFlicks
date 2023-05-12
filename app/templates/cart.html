@@ -23,37 +23,86 @@ AIF - Customer Cart
     </ul>
 </div>  
 
-<div class="modal">
-    <form class="form">
+<!-- Add the Stripe.js library to your HTML file -->
+<script src="https://js.stripe.com/v3/"></script>
 
-        <div class="separator">
-            <hr class="line"><p>Pay using credit card</p><hr class="line">
+<div class="modal">
+    <form id="payment-form" class="form" method="POST">
+        <div class="input_container">
+            <label for="card-holder-name" class="input_label">Full Name</label>
+            <input id="card-holder-name" class="input_field" type="text" name="card_holder_name" title="Input title" placeholder="Enter your full name">
         </div>
-      
-        <div class="credit-card-info--form">
-            <div class="input_container">
-                <label for="password_field" class="input_label">Card holder full name</label>
-                <input id="password_field" class="input_field" type="text" name="input-name" title="Inpit title" placeholder="Enter your full name">
-            </div>
-        
-            <div class="input_container">
-                <label for="password_field" class="input_label">Card Number</label>
-                <input id="password_field" class="input_field" type="number" name="input-name" title="Inpit title" placeholder="0000 0000 0000 0000">
-            </div>
-        
-            <div class="input_container">
-                <label for="password_field" class="input_label">Expiry Date / CVV</label>
-          
-                <div class="split">
-                    <input id="password_field" class="input_field" type="text" name="input-name" title="Expiry Date" placeholder="01/23">
-                    <input id="password_field" class="input_field" type="number" name="cvv" title="CVV" placeholder="CVV">
-                </div>
-            </div>
-        
+
+        <div class="input_container">
+            <label for="card-number" class="input_label">Card Number</label>
+            <div id="card-number" class="input_field"></div>
         </div>
-        
-        <button class="purchase--btn">Checkout</button>
+
+        <div class="split">
+            <div class="input_container">
+                <label for="expiry-date" class="input_label">Expiry Date</label>
+                <input id="expiry-date" class="input_field" type="text" name="expiry_date" title="Expiry Date" placeholder="01/23">
+            </div>
+            <div class="input_container">
+                <label for="cvv" class="input_label">CVV</label>
+                <input id="cvv" class="input_field" type="number" name="cvv" title="CVV" placeholder="CVV">
+            </div>
+        </div>
+
+        <button class="purchase--btn" type="submit">Checkout</button>
     </form>
 </div>
+
+<script>
+    
+    const stripe = Stripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
+    const elements = stripe.elements();
+    const cardElement = elements.create("card", {hidePostalCode: true});
+    cardElement.mount("#card-number");
+
+    const form = document.getElementById("payment-form");
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        // Get the cardholder's name
+        const cardholderName = document.getElementById("card-holder-name").value;
+
+        // Create a payment method
+        const {paymentMethod, error} = await stripe.createPaymentMethod({
+            type: "card",
+            card: cardElement,
+            billing_details: {
+                name: cardholderName,
+            },
+        });
+
+        if (error) {
+            // Show an error message to the user
+            console.error(error.message);
+        } else {
+            // Send the payment method ID to the server
+            const response = await fetch("/payment", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    paymentMethodId: paymentMethod.id,
+                    amount: 1000, // Replace with the actual amount
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Payment succeeded, show a success message
+                console.log("Payment succeeded");
+            } else {
+                // Payment failed, show an error message
+                console.error(result.message);
+            }
+        }
+    });
+</script>
+
   
 {% endblock %}
