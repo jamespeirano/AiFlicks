@@ -1,6 +1,8 @@
 import io
 import os
 import time
+import jsonify
+import stripe
 
 import requests
 from PIL import Image
@@ -51,9 +53,10 @@ def model():
     except KeyError:
         return "Invalid form data supplied", 400
 
-    time.sleep(2)
-    response = requests.post(API_URL, headers=headers, json={"inputs": prompt})
-    if response.status_code != 200:
+    # retry API call with exponential backoff
+    try:
+        response = make_api_call_with_retry(API_URL, headers, {"inputs": prompt})
+    except requests.exceptions.RequestException:
         return "Failed to fetch response from the API", 500
 
     try:
@@ -81,3 +84,46 @@ def gallery():
 @app.route('/cart')
 def cart():
     return render_template("cart.html")
+
+@app.route("/payment", methods=["POST"])
+def payment():
+    data = request.get_json()
+    payment_method_id = data.get("paymentMethodId")
+    amount = data.get("amount")
+
+    try:
+        # create a payment intent with the payment method and amount
+        payment_intent = stripe.PaymentIntent.create(
+            payment_method=payment_method_id,
+            amount=amount,
+            currency="usd",
+            confirmation_method="manual",
+            confirm=True,
+        )
+
+        if payment_intent.status == "succeeded":
+            return jsonify({"success": True})
+
+    except stripe.error.CardError as e:
+        return jsonify({"success": False, "message": e.user_message})
+
+    return jsonify({"success": False, "message": "Payment failed"})
+
+
+# replace with James' async API call
+
+def make_api_call_with_retry(url, headers, data, retries=3):
+    backoff = 1
+    for attempt in range(retries):
+        try:
+            response = requests.post(url, headers=headers, json=data)
+            response.raise_for_status()
+            return response
+        except requests.exceptions.RequestException:
+            if attempt < retries - 1:
+                time.sleep(backoff)
+                # exponential backoff
+                backoff *= 2
+            else:
+                # no more retries, raise exception
+                raise
