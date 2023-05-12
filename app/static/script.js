@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
     $('#prompt').on('submit', function() {
         // Collect checkbox values

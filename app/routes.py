@@ -4,10 +4,14 @@ import time
 
 import requests
 from PIL import Image
-from flask import render_template, request
+from flask import render_template, request, Flask, jsonify
 from dotenv import load_dotenv
 import base64
-
+import httpx
+import stripe
+import asyncio
+from flask import Flask, request, jsonify
+import stripe
 from app import app
 
 load_dotenv()
@@ -39,10 +43,8 @@ def model():
             novelty: "Aim for a unique and original depiction, showcasing a fresh and distinctive perspective"
         }
 
-        # filter out the attributes that are not selected
         options = {k: v for k, v in attributes.items() if k is not False}
 
-        # if no attributes are selected, use the default
         if len(options) == 0:
             options = {"photorealistic": True}
 
@@ -51,8 +53,7 @@ def model():
     except KeyError:
         return "Invalid form data supplied", 400
 
-    time.sleep(2)
-    response = requests.post(API_URL, headers=headers, json={"inputs": prompt})
+    response = asyncio.run(fetch_response(API_URL, headers=headers, json={"inputs": prompt}))
     if response.status_code != 200:
         return "Failed to fetch response from the API", 500
 
@@ -61,17 +62,20 @@ def model():
     except Exception:
         return "Failed to process image response from the API", 500
 
-    # encode the image as base64
     image_byte_data = io.BytesIO()
     try:
         image.save(image_byte_data, format='PNG')
     except Exception:
         return "Failed to save image data", 500
-    
-    # convert the bytes to string
+
     base64_image = base64.b64encode(image_byte_data.getvalue()).decode('utf-8')
 
     return render_template("result.html", image=base64_image, prompt=prompt)
+
+async def fetch_response(url, headers, json):
+    async with httpx.AsyncClient(timeout = 10.0) as client:
+        response = await client.post(url, headers=headers, json=json)
+    return response
 
 
 @app.route('/gallery')
@@ -81,3 +85,27 @@ def gallery():
 @app.route('/cart')
 def cart():
     return render_template("cart.html")
+
+
+@app.route("/payment", methods=["POST"])
+def payment():
+    data = request.get_json()
+    payment_method_id = data.get("paymentMethodId")
+    amount = data.get("amount")
+
+    try:
+        # Create a payment intent with the payment method and amount
+        payment_intent = stripe.PaymentIntent.create(
+            payment_method=payment_method_id,
+            amount=amount,
+            currency="usd",
+            confirmation_method="manual",
+            confirm=True,
+        )
+        if payment_intent.status == "succeeded":
+            return jsonify({"success": True})
+
+    except stripe.error.CardError as e:
+        return jsonify({"success": False, "message": e.user_message})
+
+    return jsonify({"success": False, "message": "Payment failed"})
