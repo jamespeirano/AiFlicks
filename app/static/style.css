@@ -235,7 +235,7 @@ li {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
-.select-button {
+.select-button, .size-select {
     margin: 10px;
     padding: 10px;
     border: 2px solid var(--border-color);
@@ -289,7 +289,7 @@ li {
 /* Gallery -- end */
 
 /* Cart -- start */
-.cart {
+.cart-items {
     color: var(--text-color);
 }
 /* Cart -- end */
@@ -298,6 +298,7 @@ li {
 .modal {
     background: var(--bg-color-opacity);
     border-radius: 26px;
+    width: 100%;
     max-width: 500px;
     position: fixed;
     top: 50%;
@@ -389,4 +390,6 @@ li {
     cursor: pointer;
     border: 2px solid #242424;
 }
-  
+#card-number {
+    padding-top: 0.6rem;
+}

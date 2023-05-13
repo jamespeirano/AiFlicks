@@ -1,24 +1,23 @@
 import io
 import os
-import time
 import jsonify
 import stripe
 
-import requests
 from PIL import Image
-from flask import render_template, request, Flask, jsonify
+from flask import render_template, request, jsonify
 from dotenv import load_dotenv
 import base64
 import httpx
 import stripe
 import asyncio
-from flask import Flask, request, jsonify
 import stripe
 from app import app
 
 load_dotenv()
 API_URL = os.getenv('API_URL')
 headers = {"Authorization": f"Bearer {os.getenv('API_TOKEN')}"}
+
+cart_items = []
 
 @app.route('/')
 def index():
@@ -84,9 +83,18 @@ async def fetch_response(url, headers, json):
 def gallery():
     return render_template("gallery.html")
 
+@app.route('/add-to-cart', methods=['POST'])
+def add_to_cart():
+    data = request.get_json()
+    name = data['name']
+    price = data['price']
+    size = data['size']
+    cart_items.append({'name': name, 'price': price, 'size': size})
+    return jsonify({'message': 'Item added to the cart'})
+
 @app.route('/cart')
 def cart():
-    return render_template("cart.html")
+    return render_template("cart.html", items=cart_items)
 
 
 @app.route("/payment", methods=["POST"])

@@ -5,56 +5,48 @@ AIF - Customer Cart
 {% endblock %}
 
 {% block content %}
-<div class="cart">
+<div class="cart-items">
     <h2>Your Cart</h2><hr>
-    <ul class="cart-items">
-      <!-- Iterate through the cart items and display them -->
-      <li>
-        <span>Product 1</span>
-        <span>$10.00</span>
-        <span>Quantity: 2</span>
-      </li>
-      <li>
-        <span>Product 2</span>
-        <span>$15.00</span>
-        <span>Quantity: 1</span>
-      </li>
-      <!-- Add more items dynamically as per the cart data -->
+    {% set ns = namespace(total=0) %}
+    <ul>
+    {% for item in items %}
+        <li>{{ loop.index }}. {{ item.name }} - ${{ item.price }}</li>
+        {% set ns.total = ns.total + item.price %}
+    {% endfor %}
     </ul>
-</div>  
-
-<!-- Add the Stripe.js library to your HTML file -->
-<script src="https://js.stripe.com/v3/"></script>
+    <hr>
+    <strong>Total: ${{ ns.total }}</strong>
+</div> 
 
 <div class="modal">
     <form id="payment-form" class="form" method="POST">
         <div class="input_container">
             <label for="card-holder-name" class="input_label">Full Name</label>
-            <input id="card-holder-name" class="input_field" type="text" name="card_holder_name" title="Input title" placeholder="Enter your full name">
+            <input id="card-holder-name" class="input_field" type="text" name="card_holder_name" title="Input title" placeholder="Enter your full name" required>
         </div>
 
         <div class="input_container">
-            <label for="card-number" class="input_label">Card Number</label>
-            <div id="card-number" class="input_field"></div>
+            <label for="card-holder-address" class="input_label">Address</label>
+            <input id="card-holder-address" class="input_field" type="text" name="card_holder_address" title="Input title" placeholder="Street address" required>
         </div>
 
-        <div class="split">
-            <div class="input_container">
-                <label for="expiry-date" class="input_label">Expiry Date</label>
-                <input id="expiry-date" class="input_field" type="text" name="expiry_date" title="Expiry Date" placeholder="01/23">
-            </div>
-            <div class="input_container">
-                <label for="cvv" class="input_label">CVV</label>
-                <input id="cvv" class="input_field" type="number" name="cvv" title="CVV" placeholder="CVV">
-            </div>
+        <div class="input_container">
+            <label for="card-holder-email" class="input_label">Email</label>
+            <input id="card-holder-email" class="input_field" type="text" name="card_holder_email" title="Input title" placeholder="Enter your email" required>
+        </div>
+
+        <div class="input_container">
+            <label for="card-number" class="input_label" aria-required="true">Card Number</label>
+            <div id="card-number" class="input_field"></div>
         </div>
 
         <button class="purchase--btn" type="submit">Checkout</button>
     </form>
 </div>
 
+<!-- Add the Stripe.js library to your HTML file -->
+<script src="https://js.stripe.com/v3/"></script>
 <script>
-    
     const stripe = Stripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
     const elements = stripe.elements();
     const cardElement = elements.create("card", {hidePostalCode: true});
