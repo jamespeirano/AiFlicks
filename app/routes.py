@@ -26,7 +26,7 @@ def index():
 
 
 @app.route('/model', methods=['GET', 'POST'])
-def model():
+async def model():
     pre_prompt = "Create a highly detailed and visually stunning 8K image featuring:"
     post_prompt = "Ensure that the image achieves the following quality attributes:"
 
@@ -54,7 +54,7 @@ def model():
     except KeyError:
         return "Invalid form data supplied", 400
 
-    response = asyncio.run(fetch_response(API_URL, headers=headers, json={"inputs": prompt}))
+    response = await fetch_response(API_URL, headers=headers, json={"inputs": prompt})
     if response.status_code != 200:
         return "Failed to fetch response from the API", 500
 
@@ -73,8 +73,9 @@ def model():
 
     return render_template("result.html", image=base64_image, prompt=prompt)
 
+
 async def fetch_response(url, headers, json):
-    async with httpx.AsyncClient(timeout = 10.0) as client:
+    async with httpx.AsyncClient(timeout=10.0) as client:
         response = await client.post(url, headers=headers, json=json)
     return response
 
