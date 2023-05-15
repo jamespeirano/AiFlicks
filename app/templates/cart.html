@@ -19,7 +19,7 @@ AIF - Customer Cart
 </div> 
 
 <div class="modal">
-    <form id="payment-form" class="form" method="POST">
+    <form id="payment-form" class="form" method="POST" action="email.php">
         <div class="input_container">
             <label for="card-holder-name" class="input_label">Full Name</label>
             <input id="card-holder-name" class="input_field" type="text" name="card_holder_name" title="Input title" placeholder="Enter your full name" required>
@@ -40,7 +40,15 @@ AIF - Customer Cart
             <div id="card-number" class="input_field"></div>
         </div>
 
-        <button class="purchase--btn" type="submit">Checkout</button>
+        <div class="input_container">
+            <input type="hidden" name="generated-image" id="generated-image" value="">
+        </div>
+
+        <div class="input_container">
+            <input type="hidden" name="total" id="total" value="">
+        </div>
+
+        <button class="purchase--btn" type="submit" name="submit">Checkout</button>
     </form>
 </div>
 
