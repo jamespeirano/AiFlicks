@@ -1,15 +1,11 @@
 import io
 import os
-import jsonify
-import stripe
 
 from PIL import Image
 from flask import render_template, request, jsonify
 from dotenv import load_dotenv
 import base64
 import httpx
-import stripe
-import asyncio
 import stripe
 from app import app
 
@@ -75,7 +71,7 @@ async def model():
 
 
 async def fetch_response(url, headers, json):
-    async with httpx.AsyncClient(timeout=10.0) as client:
+    async with httpx.AsyncClient(timeout=10) as client:
         response = await client.post(url, headers=headers, json=json)
     return response
 
