@@ -6,6 +6,7 @@ from flask import render_template, request, jsonify
 from dotenv import load_dotenv
 import base64
 import httpx
+from httpx import Timeout, RequestError
 import stripe
 from app import app
 
@@ -51,6 +52,8 @@ async def model():
         return "Invalid form data supplied", 400
 
     response = await fetch_response(API_URL, headers=headers, json={"inputs": prompt})
+    if response is None:
+        return render_template("error.html")
     if response.status_code != 200:
         return "Failed to fetch response from the API", 500
 
@@ -71,10 +74,12 @@ async def model():
 
 
 async def fetch_response(url, headers, json):
-    async with httpx.AsyncClient(timeout=10) as client:
-        response = await client.post(url, headers=headers, json=json)
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(url, headers=headers, json=json, timeout=Timeout(20))
+        except RequestError:
+            response = None
     return response
-
 
 @app.route('/gallery')
 def gallery():
