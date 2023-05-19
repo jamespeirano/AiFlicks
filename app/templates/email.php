@@ -4,9 +4,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
-require 'path/to/PHPMailer/src/Exception.php';
-require 'path/to/PHPMailer/src/PHPMailer.php';
-require 'path/to/PHPMailer/src/SMTP.php';
+require 'src/Exception.php';
+require 'src/PHPMailer.php';
+require 'src/SMTP.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -25,27 +25,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'sender@gmail.com';
-            $mail->Password = '!';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
+            $mail->Username = 'izharali.ab@gmail.com';
+            $mail->Password = 'nftxcsavtwlyzjrb';
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port = 465;
 
             //Recipients
-            $mail->setFrom('sender@gmail.com', '');
+            $mail->setFrom('izharali.ab@gmail.com');
             $mail->addAddress($recipient);
 
             //Content
-            $mail->isHTML(false);
+            $mail->isHTML(true);
             $mail->Subject = $subject;
             $mail->Body    = $message;
 
             $mail->send();
-            echo 'Email sent!';
+            echo 
+            "
+            <script>
+                alert('Email sent successfully');
+                window.location.href='cart.html';
+            </script>
+            ";
         } catch (Exception $e) {
-            echo "Error sending email: {$mail->ErrorInfo}";
+            echo 
+            "
+            <script>
+                alert('Email not sent. Please try again');
+                window.location.href='cart.html';
+            </script>
+            {$mail->ErrorInfo}
+            ";
         }
     } else {
-        echo 'Invalid email address.';
+        echo
+        "
+        <script>
+            alert('Invalid email address');
+            window.location.href='cart.html';
+        </script>
+        ";
     }
 }
 ?>

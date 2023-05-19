@@ -18,6 +18,29 @@ $(document).ready(function() {
     });
 });
 
+function generateRandomPrompt() {
+    // Make an API call to retrieve a random prompt
+    fetch('/random-prompt', {
+        headers : {
+            'Accept-Encoding': '*'
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to retrieve random prompt');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Fill the textarea with the generated random prompt
+            document.getElementById('prompt-textarea').value = data.prompt;
+        })
+        .catch(error => {
+            console.log(error);
+            // Handle the error appropriately (e.g., show an error message)
+        });
+}
+
 
 function addToCart(name, price) {
     const selectElement = event.target.previousElementSibling;
