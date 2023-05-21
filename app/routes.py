@@ -1,6 +1,5 @@
 import io
 import os
-import requests
 import time
 from PIL import Image
 from flask import render_template, request, jsonify
@@ -9,7 +8,10 @@ import base64
 import httpx
 from httpx import Timeout, RequestError
 import stripe
+import requests
+
 from app import app
+
 
 load_dotenv()
 HUGGING_API = os.getenv('HUGGING_FACE_API_URL')
