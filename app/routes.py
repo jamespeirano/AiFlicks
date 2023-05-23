@@ -1,6 +1,5 @@
 import io
 import os
-import time
 from PIL import Image
 from flask import render_template, request, jsonify
 from dotenv import load_dotenv
@@ -108,12 +107,51 @@ async def model():
         if len(options) == 0:
             options = {"photorealistic": True}
 
-        prompt = f"{pre_prompt} {prompt}. {post_prompt} {', '.join(options.values())}."
+        # prompt = f"{pre_prompt} {prompt}. {post_prompt} {', '.join(options.values())}."
 
     except KeyError:
         return "Invalid form data supplied", 400
 
-    response = await fetch_response(HUGGING_API, headers=headers, json={"inputs": prompt})
+    response = await fetch_response(HUGGING_API, headers=headers, json={
+    "inputs": prompt,
+    "options": {
+        "seed": -1,
+        "use_cache": False,
+        "wait_for_model": True,
+        "negative_prompt": [
+            "(deformed iris)",
+            "(deformed pupils)",
+            "semi-realistic",
+            "cgi",
+            "3d",
+            "render",
+            "sketch",
+            "cartoon",
+            "drawing",
+            "anime:1.4",
+            "mutated hands and fingers:1.4",
+            "deformed",
+            "distorted",
+            "disfigured:1.3",
+            "poorly drawn",
+            "bad anatomy",
+            "wrong anatomy",
+            "extra limb",
+            "missing limb",
+            "floating limbs",
+            "disconnected limbs",
+            "mutation",
+            "mutated",
+            "ugly",
+            "disgusting",
+            "amputation"
+            ]
+        }
+    })
+
+
+
+
     if response is None:
         return render_template("error.html")
     if response.status_code != 200:
@@ -165,8 +203,8 @@ def chat_gpt(prompt, model="gpt-3.5-turbo"):
         "X-RapidAPI-Key": os.getenv("RAPID_API_KEY"),
         "X-RapidAPI-Host": os.getenv("RAPID_OPENAI_API_HOST")
     }
-    time.sleep(1)
     response = requests.post(url, json=payload, headers=headers)
+
     try:
         choices = response.json()['choices']
         if choices:
@@ -177,3 +215,4 @@ def chat_gpt(prompt, model="gpt-3.5-turbo"):
     except KeyError as e:
         print(f"KeyError: {str(e)}")
         return ""
+    
