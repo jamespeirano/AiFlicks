@@ -16,49 +16,84 @@ sender_email = os.getenv("EMAIL")
 password_email = os.getenv("PASSWORD")
 
 
-def send_email(subject, receiver_email, name, address, phone, due_date, invoice_no, amount):
+def send_email(subject, receiver_email, name, address, phone, invoice_no, amount, toCustomer=False, cartItems=None):
 
     # Create the base text message.
     msg = EmailMessage()
     msg["Subject"] = subject
-    msg["From"] = formataddr(("Coding Is Fun Corp.", f"{sender_email}"))
+    msg["From"] = formataddr(("AiFlics!", f"{sender_email}"))
     msg["To"] = receiver_email
     msg["BCC"] = sender_email
 
-    msg.set_content(
-        f"""\
-        Hi {name},
-        I hope you are well.
-        I just wanted to drop you a quick note to remind you that {amount} USD in respect of our invoice {invoice_no} is due for payment on {due_date}.
-        I would be really grateful if you could confirm that everything is on track for payment.
+    if toCustomer:
+      msg.set_content(
+          f"""\
+          Hi {name},
+          Here is your receipt for {cartItems} in the total amount of {amount}.
+          your invoice # is {invoice_no}.
+          Your custom products are on their way to:
+          Address: {address}
+          Phone: {phone}
+          Best regards,
+          AiFlics
+          """
+      )
+      # Add the html version.  This converts the message into a multipart/alternative
+      # container, with the original text message as the first part and the new html
+      # message as the second part.
+      msg.add_alternative(
+          f"""\
+      <html>
+        <body>
+          <p>Here is your receipt for {cartItems} in the total amount of {amount}.</p>
+          <p>Your invoice # is {invoice_no}.</p>
+          <p>Your custom products are on their way to:</p>
+          <p>Address: {address}</p>
+          <p>Phone: {phone}</p>
+          <p>Best regards,</p>
+          <p>AiFlics</p>
+        </body>
+      </html>
+      """,
+          subtype="html",
+      )
+    else:
+      msg.set_content(
+          f"""\
+          New Order for {name},
+            {amount}
+            {invoice_no} 
+          
 
-        Address: {address}
-        Phone: {phone}
-        Best regards
-        YOUR NAME
-        """
-    )
-    # Add the html version.  This converts the message into a multipart/alternative
-    # container, with the original text message as the first part and the new html
-    # message as the second part.
-    msg.add_alternative(
-        f"""\
-    <html>
-      <body>
-        <p>Hi {name},</p>
-        <p>I hope you are well.</p>
-        <p>I just wanted to drop you a quick note to remind you that <strong>{amount} USD</strong> in respect of our invoice {invoice_no} is due for payment on <strong>{due_date}</strong>.</p>
-        <p>I would be really grateful if you could confirm that everything is on track for payment.</p>
-        <p>Address: {address}</p>
-        <p>Phone: {phone}</p>
-        
-        <p>Best regards</p>
-        <p>YOUR NAME</p>
-      </body>
-    </html>
-    """,
-        subtype="html",
-    )
+          Address: {address}
+          Phone: {phone}
+
+
+          {cartItems}
+          WOOOO
+          """
+      )
+      # Add the html version.  This converts the message into a multipart/alternative
+      # container, with the original text message as the first part and the new html
+      # message as the second part.
+      msg.add_alternative(
+          f"""\
+      <html>
+        <body>
+          <body>
+            <p>New Order for {name},</p>
+            <p>{amount}</p>
+            <p>{invoice_no}</p>
+            <p>Address: {address}</p>
+            <p>Phone: {phone}</p>
+            <p>{cartItems}</p>
+            <p>WOOOO</p>
+        </body>
+      </html>
+      """,
+          subtype="html",
+      )
+
 
     with smtplib.SMTP(EMAIL_SERVER, PORT) as server:
         server.starttls()

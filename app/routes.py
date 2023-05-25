@@ -22,7 +22,8 @@ load_dotenv()
 HUGGING_API = os.getenv('HUGGING_FACE_API_URL')
 headers = {"Authorization": f"Bearer {os.getenv('HUGGING_FACE_API_TOKEN')}"}
 
-cart_items = {}
+cart_items = []
+user_cart_items = []
 
 
 @app.route('/')
@@ -53,10 +54,10 @@ def add_to_cart():
     price = data['price']
     size = data['size']
     image = data['image']
-    # cart_items.append({'image': image, 'name': name, 'price': price, 'size': size})
+    cart_items.append({'image': image, 'name': name, 'price': price, 'size': size})
     # print(( 'image: ', image))
-    item = {'image': image, 'name': name, 'price': price, 'size': size}
-    cart_items.update({len(cart_items) + 1: item})
+    # item = {'image': image, 'name': name, 'price': price, 'size': size}
+    # cart_items.update({len(cart_items) + 1: item})
     return jsonify({'message': 'Item added to the cart'})
 
 
@@ -70,11 +71,13 @@ def cart():
     # print(cart_items)
     
     # for the user, display cart except the overlayImage (don't delete anything)
-    user_cart_items = []
+    
 
-    for item in cart_items.values():
+    for item in cart_items:
         user_cart_items.append({'name': item['name'], 'price': item['price'], 'size': item['size']})
 
+    # for item in cart_items.values():
+    #     user_cart_items.append({'name': item['name'], 'price': item['price'], 'size': item['size']})
     print(user_cart_items)
     return render_template("cart.html", cart_items=user_cart_items)
 
@@ -242,6 +245,17 @@ def email_user():
     phone = request.form.get('card_holder_phone', False)
 
 
+    send_email(
+        subject="New order placed",
+        name=name,
+        receiver_email="jnestleme@gmail.com",
+        address=address,
+        phone=phone,
+        invoice_no="INV-21-12-009",
+        amount="5",
+        toCustomer=False,
+        cartItems=cart_items
+    )
 
     send_email(
         subject="New order placed",
@@ -249,9 +263,10 @@ def email_user():
         receiver_email=receiver_email,
         address=address,
         phone=phone,
-        due_date="11, Aug 2022",
         invoice_no="INV-21-12-009",
         amount="5",
+        toCustomer=True,
+        cartItems=user_cart_items
     )
 
     flash('Email sent successfully', 'success')
