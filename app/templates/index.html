@@ -15,6 +15,24 @@ AI Flicks
     to catchy slogans, we've got you covered. Start designing your dream t-shirt today!</p>
 </div>
 
+<div class="options-container">
+    <div id="model-1" class="option-card">
+        <h3>Model 1</h3>
+        <p>For all Purposes.</p>
+    </div>
+    <div id="model-2" class="option-card">
+        <h3>Model 2</h3>
+        <p>Hyper Realistic.</p>
+    </div>
+    <div id="model-3" class="option-card">
+        <h3>Model 3</h3>
+        <p>Anime</p>
+    </div>
+    <div id="model-4" class="option-card">
+        <h3>Model 4</h3>
+        <p>Semi_realistic</p>
+    </div>
+</div>
 
 <div class="prompt">
     <div class="row">
@@ -36,8 +54,41 @@ AI Flicks
                 <input type="hidden" name="semantic" value="">
                 <input type="hidden" name="coherence" value="">
                 <input type="hidden" name="novelty" value="">
+
+                <!-- Hidden input for selected model -->
+                <input type="hidden" id="selected-model" name="selected-model" value="model-1">
             </form>
-        </div>        
+        </div> 
+        
+        
+        <script>
+            // get all the cards
+            const cards = document.querySelectorAll('.option-card');
+        
+            // iterate over each card
+            cards.forEach(card => {
+                // add event listener
+                card.addEventListener('click', function() {
+                    // remove 'option-card-selected' class from all cards
+                    cards.forEach(card => {
+                        card.classList.remove('option-card-selected');
+                    });
+        
+                    // add 'option-card-selected' class to clicked card
+                    this.classList.add('option-card-selected');
+        
+                    // update selected model hidden field
+                    document.getElementById('selected-model').value = this.id;
+                    console.log(this.id)
+                });
+            });
+        
+            // By default select the first option
+            const defaultModel = document.getElementById('model-1');
+            defaultModel.classList.add('option-card-selected');
+            document.getElementById('selected-model').value = defaultModel.id;
+        
+        </script>
           
         <div class="column2">
             <div class="prompt-right">

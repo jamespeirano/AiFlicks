@@ -19,7 +19,14 @@ from app import app
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 load_dotenv()
-HUGGING_API = os.getenv('HUGGING_FACE_API_URL')
+
+HUGGING_FACE_API_URLS = {
+    'model-1': os.getenv('HUGGING_FACE_API_URL1'),
+    'model-2': os.getenv('HUGGING_FACE_API_URL2'),
+    'model-3': os.getenv('HUGGING_FACE_API_URL3'),
+    'model-4': os.getenv('HUGGING_FACE_API_URL4'),
+}
+
 headers = {"Authorization": f"Bearer {os.getenv('HUGGING_FACE_API_TOKEN')}"}
 
 cart_items = []
@@ -112,6 +119,10 @@ async def model():
     post_prompt = "Ensure that the image achieves the following quality attributes:"
 
     try:
+
+        selected_model = request.form.get('selected-model')
+        HUGGING_API = HUGGING_FACE_API_URLS.get(selected_model)
+
         prompt = request.form['prompt']
         photorealistic = request.form.get('photorealistic', False)
         semantic = request.form.get('semantic', False)
@@ -134,6 +145,9 @@ async def model():
 
     except KeyError:
         return "Invalid form data supplied", 400
+
+
+    print(HUGGING_API)
 
     response = await fetch_response(HUGGING_API, headers=headers, json={
     "inputs": prompt,

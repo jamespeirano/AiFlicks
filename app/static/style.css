@@ -398,3 +398,51 @@ li {
 #card-number {
     padding-top: 0.6rem;
 }
+
+
+
+
+
+
+
+
+
+.options-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.option-card {
+    flex-basis: calc(25% - 10px);
+    background-color: var(--bg-color-opacity);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px;
+    color: var(--text-color);
+}
+
+.option-card h3 {
+    font-size: 1.2rem;
+    color: var(--header-color);
+    margin-bottom: 0.5rem;
+}
+
+.option-card p {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.option-card-selected {
+    border: 3px solid var(--header-color);
+    background-color: var(--highlight-bg-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* This adds a subtle shadow effect. Adjust as needed. */
+    color: var(--highlight-text-color); /* Change the text color for the selected card */
+}
+
+.option-card:hover {
+    cursor: pointer;
+}
+
+
+
