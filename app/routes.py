@@ -67,7 +67,7 @@ def cart():
     and a button to proceed to checkout.
     """
     # print(cart_items['name'], cart_items['price'], cart_items['size'])
-    print(cart_items)
+    # print(cart_items)
     
     # for the user, display cart except the overlayImage (don't delete anything)
     user_cart_items = []
@@ -75,7 +75,7 @@ def cart():
     for item in cart_items.values():
         user_cart_items.append({'name': item['name'], 'price': item['price'], 'size': item['size']})
 
-
+    print(user_cart_items)
     return render_template("cart.html", cart_items=user_cart_items)
 
 

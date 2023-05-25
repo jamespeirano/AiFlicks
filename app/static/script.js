@@ -52,7 +52,7 @@ function addToCart(name, price) {
     }
 
     const overlayImage = document.querySelector(".overlay-image");
-    const overlayImageId = overlayImage.dataset_id;
+    // const overlayImageId = overlayImage.dataset_id; no longer necessary
 
     console.log("image ", overlayImage);
     console.log("image ", overlayImage.src);
