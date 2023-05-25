@@ -22,7 +22,7 @@ load_dotenv()
 HUGGING_API = os.getenv('HUGGING_FACE_API_URL')
 headers = {"Authorization": f"Bearer {os.getenv('HUGGING_FACE_API_TOKEN')}"}
 
-cart_items = []
+cart_items = {}
 
 
 @app.route('/')
@@ -53,7 +53,10 @@ def add_to_cart():
     price = data['price']
     size = data['size']
     image = data['image']
-    cart_items.append({'name': name, 'price': price, 'size': size, 'image': image})
+    # cart_items.append({'image': image, 'name': name, 'price': price, 'size': size})
+    # print(( 'image: ', image))
+    item = {'image': image, 'name': name, 'price': price, 'size': size}
+    cart_items.update({len(cart_items) + 1: item})
     return jsonify({'message': 'Item added to the cart'})
 
 
@@ -63,12 +66,15 @@ def cart():
     Renders the cart page which contains the items added to the cart as well as the total price
     and a button to proceed to checkout.
     """
+    # print(cart_items['name'], cart_items['price'], cart_items['size'])
     print(cart_items)
     
     # for the user, display cart except the overlayImage (don't delete anything)
     user_cart_items = []
-    for item in cart_items:
+
+    for item in cart_items.values():
         user_cart_items.append({'name': item['name'], 'price': item['price'], 'size': item['size']})
+
 
     return render_template("cart.html", cart_items=user_cart_items)
 

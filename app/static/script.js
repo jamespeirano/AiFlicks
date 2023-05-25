@@ -54,8 +54,8 @@ function addToCart(name, price) {
     const overlayImage = document.querySelector(".overlay-image");
     const overlayImageId = overlayImage.dataset_id;
 
-    console.log(overlayImageId);
-    
+    console.log("image ", overlayImage);
+    console.log("image ", overlayImage.src);
     
     // Send an AJAX request to the backend server to add the item to the Python list
     // also add the image to the cart
@@ -74,7 +74,7 @@ function addToCart(name, price) {
         'name': name,
         'price': price,
         'size': selectedSize,
-        'image': overlayImageId
+        'image': overlayImage.src
     });
     xhr.send(data);
 }

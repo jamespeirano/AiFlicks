@@ -9,7 +9,7 @@ AIF - Customer Cart
     <h2>Your Cart</h2><hr>
     {% set ns = namespace(total=0) %}
     <ul>
-    {% for item in items %}
+    {% for item in cart_items %}
         <li>{{ loop.index }}. {{ item.name }} - ${{ item.price }}</li>
         {% set ns.total = ns.total + item.price %}
     {% endfor %}
