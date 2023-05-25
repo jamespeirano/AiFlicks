@@ -9,6 +9,9 @@ from httpx import Timeout, RequestError
 import stripe
 import requests
 
+# import send_email below that's in the same directory
+from app.send_email import send_email
+
 from app import app
 
 
@@ -149,9 +152,6 @@ async def model():
         }
     })
 
-
-
-
     if response is None:
         return render_template("error.html")
     if response.status_code != 200:
@@ -215,4 +215,23 @@ def chat_gpt(prompt, model="gpt-3.5-turbo"):
     except KeyError as e:
         print(f"KeyError: {str(e)}")
         return ""
-    
+
+@app.route('/email_user', methods=['GET', 'POST'])
+def email_user():
+    name = request.form.get('card_holder_name', False)
+    receiver_email = request.form.get('card_holder_email', False)
+    address = request.form.get('card_holder_address', False)
+    phone = request.form.get('card_holder_phone', False)
+
+    print(name, receiver_email, address, phone)
+
+    send_email(
+        subject="New order placed",
+        name=name,
+        receiver_email=receiver_email,
+        address=address,
+        phone=phone,
+        due_date="11, Aug 2022",
+        invoice_no="INV-21-12-009",
+        amount="5",
+    )
