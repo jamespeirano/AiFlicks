@@ -1,7 +1,7 @@
 import io
 import os
 from PIL import Image
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, flash, redirect, url_for, session
 from dotenv import load_dotenv
 import base64
 import httpx
@@ -9,11 +9,14 @@ from httpx import Timeout, RequestError
 import stripe
 import requests
 
+import uuid
+
 # import send_email below that's in the same directory
 from app.send_email import send_email
 
 from app import app
 
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 load_dotenv()
 HUGGING_API = os.getenv('HUGGING_FACE_API_URL')
@@ -49,7 +52,8 @@ def add_to_cart():
     name = data['name']
     price = data['price']
     size = data['size']
-    cart_items.append({'name': name, 'price': price, 'size': size})
+    image = data['image']
+    cart_items.append({'name': name, 'price': price, 'size': size, 'image': image})
     return jsonify({'message': 'Item added to the cart'})
 
 
@@ -59,7 +63,14 @@ def cart():
     Renders the cart page which contains the items added to the cart as well as the total price
     and a button to proceed to checkout.
     """
-    return render_template("cart.html", items=cart_items)
+    print(cart_items)
+    
+    # for the user, display cart except the overlayImage (don't delete anything)
+    user_cart_items = []
+    for item in cart_items:
+        user_cart_items.append({'name': item['name'], 'price': item['price'], 'size': item['size']})
+
+    return render_template("cart.html", cart_items=user_cart_items)
 
 
 @app.route("/payment", methods=["POST"])
@@ -169,8 +180,9 @@ async def model():
         return "Failed to save image data", 500
 
     base64_image = base64.b64encode(image_byte_data.getvalue()).decode('utf-8')
+    image_id = str(uuid.uuid4())
 
-    return render_template("result.html", image=base64_image, prompt=prompt)
+    return render_template("result.html", image=base64_image, image_id=image_id, prompt=prompt)
 
 
 async def fetch_response(url, headers, json):
@@ -216,14 +228,14 @@ def chat_gpt(prompt, model="gpt-3.5-turbo"):
         print(f"KeyError: {str(e)}")
         return ""
 
-@app.route('/email_user', methods=['GET', 'POST'])
+@app.route('/email_user', methods=['POST'])
 def email_user():
     name = request.form.get('card_holder_name', False)
     receiver_email = request.form.get('card_holder_email', False)
     address = request.form.get('card_holder_address', False)
     phone = request.form.get('card_holder_phone', False)
 
-    print(name, receiver_email, address, phone)
+
 
     send_email(
         subject="New order placed",
@@ -235,3 +247,7 @@ def email_user():
         invoice_no="INV-21-12-009",
         amount="5",
     )
+
+    flash('Email sent successfully', 'success')
+    # return back to index.html
+    return redirect(url_for('index'))

@@ -17,7 +17,7 @@ password_email = os.getenv("PASSWORD")
 
 
 def send_email(subject, receiver_email, name, address, phone, due_date, invoice_no, amount):
-    print("Sending email to", receiver_email)
+
     # Create the base text message.
     msg = EmailMessage()
     msg["Subject"] = subject
@@ -49,6 +49,9 @@ def send_email(subject, receiver_email, name, address, phone, due_date, invoice_
         <p>I hope you are well.</p>
         <p>I just wanted to drop you a quick note to remind you that <strong>{amount} USD</strong> in respect of our invoice {invoice_no} is due for payment on <strong>{due_date}</strong>.</p>
         <p>I would be really grateful if you could confirm that everything is on track for payment.</p>
+        <p>Address: {address}</p>
+        <p>Phone: {phone}</p>
+        
         <p>Best regards</p>
         <p>YOUR NAME</p>
       </body>

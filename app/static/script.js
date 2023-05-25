@@ -50,8 +50,15 @@ function addToCart(name, price) {
         alert('Please select a size.');
         return;
     }
+
+    const overlayImage = document.querySelector(".overlay-image");
+    const overlayImageId = overlayImage.dataset_id;
+
+    console.log(overlayImageId);
+    
     
     // Send an AJAX request to the backend server to add the item to the Python list
+    // also add the image to the cart
     const xhr = new XMLHttpRequest();
     xhr.open('POST', '/add-to-cart');
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -62,6 +69,12 @@ function addToCart(name, price) {
             alert('Failed to add item to the cart. Please try again.');
         }
     };
-    const data = JSON.stringify({ name: name, price: price, size: selectedSize });
+
+    const data = JSON.stringify({
+        'name': name,
+        'price': price,
+        'size': selectedSize,
+        'image': overlayImageId
+    });
     xhr.send(data);
 }

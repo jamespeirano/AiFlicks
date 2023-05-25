@@ -101,6 +101,13 @@ AIF - Customer Cart
             if (result.success) {
                 // Payment succeeded, show a success message
                 console.log("Payment succeeded");
+                  // Payment succeeded, submit the form data to the email_user route
+                const formData = new FormData(form);
+                
+                fetch("{{ url_for('email_user') }}", {
+                    method: "POST",
+                    body: formData,
+                });
             } else {
                 // Payment failed, show an error message
                 console.error(result.message);
