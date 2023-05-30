@@ -19,29 +19,6 @@ $(document).ready(function() {
 });
 
 function generateRandomPrompt() {
-    // Make an API call to retrieve a random prompt
-    // fetch('/random-prompt', {
-    //     headers : {
-    //         'Accept-Encoding': '*'
-    //     }
-    // })
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error('Failed to retrieve random prompt');
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         // Fill the textarea with the generated random prompt
-    //         document.getElementById('prompt-textarea').value = data.prompt;
-    //     })
-    //     .catch(error => {
-    //         console.log(error);
-    //         // Handle the error appropriately (e.g., show an error message)
-    //     });
-
-
-
     StableDiffusionPrompts = ["redshift style incredible highly detailed space ship, space background, perfect composition, beautiful detailed, intricate, insanely detailed, octane render, trending on artstation, artistic, photorealistic, concept art, soft natural volumetric cinematic perfect light, chiaroscuro, award winning photograph, splash of color, masterpiece, oil on canvas, Carne Griffiths, E. Abramzon, raphael, caravaggio, beeple, beksinski, giger style",
         "arcane style dublex, redshift style, What went wrong digital artwork concept art unreal engine cinematic Hyper detailed (highly detailed background) Highres iridescent metallic virtual octane render 4k UHD Splash screen (masterpiece) trending on deviantart artstation art by AI",
         "My heart is an ocean, fantasy art, cinema 4d, matte painting, polished, beautiful, colorful, intricate, eldritch, ethereal, vibrant, surrealism, surrealism, vray, nvdia ray tracing, cryengine, magical, 4k, 8k, masterpiece, crystal, romanticism",

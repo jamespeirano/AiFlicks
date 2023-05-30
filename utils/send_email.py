@@ -5,6 +5,9 @@ from email.utils import formataddr
 
 from dotenv import load_dotenv  
 
+__all__ = ["send_email"]
+
+
 load_dotenv()
 
 
@@ -93,7 +96,6 @@ def send_email(subject, receiver_email, name, address, phone, invoice_no, amount
       """,
           subtype="html",
       )
-
 
     with smtplib.SMTP(EMAIL_SERVER, PORT) as server:
         server.starttls()

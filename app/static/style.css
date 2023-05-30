@@ -399,14 +399,6 @@ li {
     padding-top: 0.6rem;
 }
 
-
-
-
-
-
-
-
-
 .options-container {
     display: flex;
     justify-content: space-between;
@@ -444,5 +436,6 @@ li {
     cursor: pointer;
 }
 
-
-
+.error {
+    color: var(--text-color);
+}
