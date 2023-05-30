@@ -66,7 +66,7 @@ def payment():
     Handles the payment using Stripe.
     """
     data = request.get_json()
-    return checkout(data)
+    return payment(data)
 
 
 @app.route('/model', methods=['GET', 'POST'])
@@ -92,6 +92,13 @@ async def model():
     if response is None:
         return render_template("error.html")
     return render_template("result.html", image=response, prompt=prompt)
+
+
+@app.route('/random-prompt', methods=['GET'])
+def random_prompt_route():
+    selected_model = request.args.get('model')
+    prompt = random_prompt(selected_model)
+    return jsonify({'prompt': prompt})
 
 
 @app.route('/email_user', methods=['POST'])
