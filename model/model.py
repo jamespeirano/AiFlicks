@@ -8,6 +8,14 @@ __all__ = ["Model"]
 
 
 headers = {"Authorization": f"Bearer {os.getenv('HUGGING_FACE_API_TOKEN')}"}
+negative_prompt = """
+(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime:1.4), 
+text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid,
+ mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, 
+ dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed 
+ limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck
+"""
+
 
 class Model:
     def __init__(self, selected_model, prompt, options):
@@ -56,14 +64,29 @@ class Model:
                 headers=headers,
                 json={
                     "inputs": self.prompt,
+                    "parameters": {
+                        "negative_prompt": negative_prompt,
+                        "guidance_scale": 0.5,
+                    },
                     "options": {
-                        "seed": -1,
+                        "seed": 42,
+                        "temperature": 0.5,
                         "use_cache": False,
                         "wait_for_model": True,
+                        "sampling_steps": 100,
+                        "classifier_free_guidance_scale": 7,
                     }
                 }
             )
         except requests.RequestException:
             response = None
+
+        if response.status_code != 200:
+            print(f"Response status code: {response.status_code}")
+            print(f"Response text: {response.text}")
+        if response.status_code == 400:
+            print("Bad Request - there might be something wrong with your parameters.")
+        elif response.status_code == 401:
+            print("Unauthorized - there might be something wrong with your authentication.")
 
         return response
