@@ -66,15 +66,16 @@ class Model:
                     "inputs": self.prompt,
                     "parameters": {
                         "negative_prompt": negative_prompt,
-                        "guidance_scale": 0.5,
+                        "guidance_scale": 7.5,
+                        "num_inference_steps": 150,
+                        "height": 512,
+                        "width": 512,
                     },
                     "options": {
                         "seed": 42,
                         "temperature": 0.5,
                         "use_cache": False,
-                        "wait_for_model": True,
-                        "sampling_steps": 100,
-                        "classifier_free_guidance_scale": 7,
+                        "wait_for_model": True
                     }
                 }
             )
