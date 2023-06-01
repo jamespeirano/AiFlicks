@@ -4,24 +4,19 @@ import requests
 import base64
 from PIL import Image
 
+from utils import negative_prompt
+
 __all__ = ["Model"]
 
 
 headers = {"Authorization": f"Bearer {os.getenv('HUGGING_FACE_API_TOKEN')}"}
-negative_prompt = """
-(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime:1.4), 
-text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid,
- mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, 
- dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed 
- limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck
-"""
-
 
 class Model:
     def __init__(self, selected_model, prompt, options):
         self.selected_model = selected_model
         self.prompt = prompt
         self.options = options
+        self.negative_prompt = self.generate_negative_prompt(self.selected_model)
 
     def generate_prompt(self):
         """
@@ -31,6 +26,13 @@ class Model:
         for option in self.options:
             prompt += self.options[option]
         return prompt
+    
+    def generate_negative_prompt(self, selected_model):
+        """
+        Generates the negative prompt from the selected model.
+        """
+        model_name = selected_model.split("/")[-1]
+        return negative_prompt(model_name)
 
     def generate_image(self):
         """
@@ -65,7 +67,7 @@ class Model:
                 json={
                     "inputs": self.prompt,
                     "parameters": {
-                        "negative_prompt": negative_prompt,
+                        "negative_prompt": self.negative_prompt,
                         "guidance_scale": 7.5,
                         "num_inference_steps": 150,
                         "height": 512,
