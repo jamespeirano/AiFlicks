@@ -14,20 +14,35 @@ def prompts():
 def random_prompt(selected_model):
     prompts = {
         "model-1": [
-            "redshift style incredible highly detailed space ship, space background, perfect composition, ...",
-            "arcane style dublex, redshift style, What went wrong digital artwork concept art ...",
-            "My heart is an ocean, fantasy art, cinema 4d, matte painting, polished, beautiful, colorful, ..."
+            "Visualize a serene mountain landscape under the starry night sky with a bright full moon.",
+            "Illustrate a bustling cityscape at sunset, with skyscrapers casting long shadows and streetlights just starting to twinkle.",
+            "Create an image of a calm forest with a clear, babbling brook running through it, surrounded by various animals and plants.",
+            "Show a futuristic city on a distant planet with unusual architecture, flying cars, and vibrant neon lights.",
+            "Picture a tranquil beach scene with a hammock between two palm trees, looking out at the crystal clear ocean with a stunning sunset in the background."
         ],
         "model-2": [
-            "Ode to Neon': Ultra-modern duplex design, Octane render, high-res, iridescent, metallic accents, ..."
+            "Visualize a vibrant cityscape at night, complete with twinkling lights, towering skyscrapers, and a dazzling neon glow.",
+            "Illustrate an ancient castle nestled atop a lush green hill, with a blue sky filled with fluffy clouds in the background.",
+            "Create an image of a deep ocean scene, featuring a coral reef teeming with colorful marine life, and sun rays filtering through the clear blue water.",
+            "Picture an expansive desert under a starry sky, with a caravan of camels traveling over the sand dunes under the moonlight.",
+            "Generate an image of a snowy mountain range, with pine trees dusted with snow, a clear river running through the valley, and the Northern Lights shimmering in the sky."
         ],
         "model-3": [
-            "Nocturnal 2100: Mysterious Metropolis, blend of glass, metal, and vibrant neon, exquisitely detailed, ..."
+            "Visualize an epic battle scene between two powerful samurais on a stone bridge over a fast-flowing river, with cherry blossom trees in full bloom on both sides.",
+            "Create an image of a lively magic school situated on a floating island, with students on broomsticks and mythical creatures roaming around.",
+            "Imagine a post-apocalyptic Tokyo cityscape, with towering skyscrapers taken over by nature, and a group of young adventurers standing on a rooftop.",
+            "Illustrate a tranquil scene of a small ramen shop nestled in a narrow alley of an old Japanese town, with lanterns glowing warmly and snow gently falling.",
+            "Draw a vibrant festival scene filled with people in traditional attire, food stalls, lanterns, fireworks, and a huge, brightly-lit Ferris wheel in the background."
         ],
         "model-4": [
             "(masterpiece, best quality, extremely detailed CG, beautiful detailed eyes, ultra-detailed, intricate details:1.2), 8k wallpaper, elaborate features, (1girl, solo:1.4), (multicolored hair:1.2),(blond hair:1.2), long hair, streaked hair, halo, looking at viewer, animal ears, red eyes,earring, black jacket, choker,upper body, floating hair, open jacket, night, full moon,outdoors",
             "best quality, painting, cyberpunk anime, (intense_angle:0.6), standing, wet ((female_battle_android)), 25 years old, medium_hair, small_breast, (anger vein), ((diamond_shaped_pupils)), (looking to viewer), detailed eyes, mechanical_parts, (flush:1.3), (shimmer iridescent silver hair), motion_lines, face in focus, dim colors, HD, intridicated, ultra detailed cyberpunk rainy background, highly detailed, (by Kawase Hasui:1.3),CGSociety,ArtStation",
-            "masterpiece, best quality, upper body, 1girl, looking at viewer, red hair, medium hair, purple eyes, demon horns, black coat, indoors, dimly lit"
+            "masterpiece, best quality, upper body, 1girl, looking at viewer, red hair, medium hair, purple eyes, demon horns, black coat, indoors, dimly lit",
+            "Create an image of a grand castle floating in the clouds, with a majestic rainbow connecting it to a magical forest below.",
+            "Visualize a serene lakeside scene under a glowing moon, where luminous fairy-like creatures are dancing on the water's surface.",
+            "Imagine a mysterious portal opening in the middle of a bustling city street, revealing a vivid, enchanted garden filled with mythical creatures.",
+            "Illustrate a mystical underwater city lit by bio-luminescent plants and inhabited by merpeople and fantastical marine creatures.",
+            "Draw a surreal scene of a giant cherry blossom tree glowing with magical energy in a forest, with tiny spirits swirling around it under the starry night sky."
         ]
     }
 

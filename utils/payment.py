@@ -7,7 +7,6 @@ __all__ = ["checkout"]
 stripe_publishable_key = os.getenv('STRIPE_PUBLISHABLE_KEY')
 stripe_secret_key = os.getenv('STRIPE_SECRET_KEY')
 stripe.api_key = "sk_test_4eC39HqLyjWDarjtT1zdp7dc"
-stripe.api_key = "sk_test_4eC39HqLyjWDarjtT1zdp7dc"
 
 def checkout(data):
     payment_method_id = data.get("paymentMethodId")
