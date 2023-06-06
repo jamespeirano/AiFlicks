@@ -1,32 +1,22 @@
 import os
-from flask import render_template, request, jsonify, redirect, url_for
+from flask import render_template, request, jsonify
 from dotenv import load_dotenv
-from utils import *
+from utils import generate_random_prompt
 from model import Model
-
 from app import app
 
 load_dotenv()
 
 HUGGING_FACE_API_URLS = {
-    'model-1': os.getenv('HUGGING_FACE_API_URL1'),
-    'model-2': os.getenv('HUGGING_FACE_API_URL2'),
-    'model-3': os.getenv('HUGGING_FACE_API_URL3'),
-    'model-4': os.getenv('HUGGING_FACE_API_URL4'),
+    'stable-diffusion': os.getenv('HUGGING_FACE_API_URL1'),
+    'realistic-vision': os.getenv('HUGGING_FACE_API_URL2'),
+    'nitro-diffusion': os.getenv('HUGGING_FACE_API_URL3'),
+    'dreamlike-anime': os.getenv('HUGGING_FACE_API_URL4'),
 }
-
-cart_items = []
-user_cart_items = []
-
 
 @app.route('/')
 def index():
-    """
-    Renders the index page which contains the form for the user to fill out
-    to generate an image.
-    """
     return render_template("index.html")
-
 
 @app.route('/models')
 def models():
@@ -36,101 +26,33 @@ def models():
 def gallery():
     return render_template('gallery.html')
 
-
-@app.route('/add-to-cart', methods=['POST'])
-def add_to_cart():
-    """
-    Adds the item to the cart.
-    """
-    data = request.get_json()
-    name = data['name']
-    price = data['price']
-    size = data['size']
-    image = data['image']
-    cart_items.append({'image': image, 'name': name, 'price': price, 'size': size})
-    return jsonify({'message': 'Item added to the cart'})
-
-
 @app.route('/cart')
 def cart():
-    """
-    Renders the cart page which contains the items added to the cart.
-    """
-    for item in cart_items:
-        user_cart_items.append({'name': item['name'], 'price': item['price'], 'size': item['size']})
-    return render_template("cart.html", cart_items=user_cart_items)
-
-
-@app.route("/payment", methods=["POST"])
-def payment():
-    """
-    Handles the payment using Stripe.
-    """
-    data = request.get_json()
-    return payment(data)
-
+    return render_template('cart.html')
 
 @app.route('/model', methods=['GET', 'POST'])
 async def model():
     try:
-        selected_model = request.form.get('selected-model')
+        selected_model = request.form.get('model_input')
+        if selected_model is None:
+            raise ValueError("Model not selected")
+        else:
+            # default model
+            selected_model = 'stable-diffusion'
         HUGGING_API = HUGGING_FACE_API_URLS.get(selected_model)
-
         prompt = request.form['prompt']
-        photorealistic = request.form.get('photorealistic', False)
-        semantic = request.form.get('semantic', False)
-        coherence = request.form.get('coherence', False)
-        novelty = request.form.get('novelty', False)
-        options = {k: v for k, v in prompts().items() if k in [photorealistic, semantic, coherence, novelty] and k is not False}
     except KeyError:
         return "Invalid form data supplied", 400
 
     print(HUGGING_API)
-
-    model = Model(HUGGING_API, prompt=prompt, options=options)
+    model = Model(HUGGING_API, prompt=prompt)
     response = model.generate_image()
-
     if response is None:
         return render_template("error.html")
     return render_template("result.html", image=response, prompt=prompt)
 
-
 @app.route('/random-prompt', methods=['GET'])
-def random_prompt_route():
+def random_prompt():
     selected_model = request.args.get('model')
-    prompt = random_prompt(selected_model)
+    prompt = generate_random_prompt(selected_model)
     return jsonify({'prompt': prompt})
-
-
-@app.route('/email_user', methods=['POST'])
-def email_user():
-    name = request.form.get('card_holder_name', False)
-    receiver_email = request.form.get('card_holder_email', False)
-    address = request.form.get('card_holder_address', False)
-    phone = request.form.get('card_holder_phone', False)
-
-    send_email(
-        subject="New order placed",
-        name=name,
-        receiver_email="jnestleme@gmail.com",
-        address=address,
-        phone=phone,
-        invoice_no="INV-21-12-009",
-        amount="5",
-        toCustomer=False,
-        cartItems=cart_items
-    )
-
-    send_email(
-        subject="New order placed",
-        name=name,
-        receiver_email=receiver_email,
-        address=address,
-        phone=phone,
-        invoice_no="INV-21-12-009",
-        amount="5",
-        toCustomer=True,
-        cartItems=user_cart_items
-    )
-
-    return redirect(url_for('index'))

@@ -34,7 +34,14 @@
                         <p class="fw-bold text-success mb-2">AI FLICKS</p>
                         <h2 class="fw-bold">Create Anything!</h2>
                         <p class="my-3">See what it looks like on AI Generated t-shirts and hoodies tailored to your style and preferences</p>
-                        <div class="mb-3" style="text-align: center;"><textarea id="message-1" name="message" rows="6" placeholder="anime female mechanical android head with flowers growing out ..."></textarea><button class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Generate Image</button><button class="btn btn-primary shadow" type="submit" style="margin: 10px;margin-left: 10px;--bs-body-font-size: 0.5rem;background: var(--bs-gray-700);border-color: var(--bs-gray-700);" onclick="generateRandomPrompt()">Random Prompt</button></div>
+                        <div class="mb-3" style="text-align: center;">
+                            <form action="{{ url_for('model') }}" id="prompt_form" class="form" method="POST">
+                                <textarea id="message-1" name="prompt" rows="6" placeholder="anime female mechanical android head with flowers growing out ..." required></textarea>
+                                <input type="hidden" id="model_input" name="model_input" value="">  <!-- Hidden field for model -->
+                                <button class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Generate Image</button>
+                                <button class="btn btn-primary shadow" type="button" style="margin: 10px;margin-left: 10px;--bs-body-font-size: 0.5rem;background: var(--bs-gray-700);border-color: var(--bs-gray-700);" onclick="generateRandomPrompt()">Random Prompt</button>
+                            </form>
+                        </div>                      
                     </div>
                 </div>
                 <div class="col-md-6 mb-4">
@@ -72,8 +79,13 @@
                     <section class="py-5">
                         <div class="container text-center py-5">
                             <p class="mb-4">Summon your imagination into existence! <br>Choose a different&nbsp;<span class="text-success"><strong>model</strong></span>&nbsp;to change the output style of your image</p>
-                            <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-black);border-color: var(--bs-black);"><a>Stable Diffusion</a></button>
-                                <div class="dropdown-menu dropdown-menu-dark"><a class="dropdown-item" data-bs-toggle="" href="#">Realistic Vision</a><a class="dropdown-item" href="#">Nitro Diffusion</a><a class="dropdown-item" href="#">Dreamlike Anime</a></div>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-black);border-color: var(--bs-black);"><a>Stable Diffusion</a></button>
+                                <div class="dropdown-menu dropdown-menu-dark">
+                                    <a class="dropdown-item" href="#" onclick="selectModel('realistic-vision')">Realistic Vision</a>
+                                    <a class="dropdown-item" href="#" onclick="selectModel('nitro-diffusion')">Nitro Diffusion</a>
+                                    <a class="dropdown-item" href="#" onclick="selectModel('dreamlike-anime')">Dreamlike Anime</a>
+                                </div>
                             </div>
                         </div>
                     </section>
