@@ -1,3 +1,13 @@
+window.onload = function() {
+    document.getElementById('generate-button').addEventListener('click', function() {
+        var textAreaContent = document.getElementById('message-1').value;
+
+        if (textAreaContent.trim() !== "") { // if the textarea is not empty
+            document.getElementById("loader-overlay").style.display = "flex";
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     var dropdownItems = document.querySelectorAll('.dropdown-menu .dropdown-item');
 
@@ -33,6 +43,7 @@ document.getElementById("modelDropdown").addEventListener("change", function() {
 });
 
 var isTyping = false;  // Global variable to track typing status
+
 function typeWriter(text, elementId, delay = 100) {
     if (text.length > 0) {
         let textarea = document.getElementById(elementId);
@@ -43,13 +54,25 @@ function typeWriter(text, elementId, delay = 100) {
         }, delay);
     } else {
         isTyping = false;  // Reset the typing status when done
+        enableGenerateButton();  // Re-enable the button when typing is finished
     }
+}
+
+function disableGenerateButton() {
+    var generateButton = document.getElementById('generate-button');
+    generateButton.disabled = true;
+}
+
+function enableGenerateButton() {
+    var generateButton = document.getElementById('generate-button');
+    generateButton.disabled = false;
 }
 
 function generateRandomPrompt() {
     if (isTyping) {
         return;  // If a previous prompt is still being typed out, don't generate a new one
     }
+    disableGenerateButton();  // Disable the button while generating the prompt
     fetch('/random-prompt?model=' + selectedModel, {
         method: 'GET',
         headers: {
@@ -61,9 +84,10 @@ function generateRandomPrompt() {
         document.getElementById('message-1').value = '';
         console.log(data.prompt)
         isTyping = true;  // Set the typing status before starting to type
-        typeWriter(data.prompt, 'message-1', 40);
+        typeWriter(data.prompt, 'message-1', 20);
     })
     .catch(error => {
         console.error('Error:', error);
+        enableGenerateButton();  // Re-enable the button in case of an error
     });
 }
