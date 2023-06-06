@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;display=swap">
     <link rel="stylesheet" href="assets/css/custom.css">
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.svg">
 </head>
 
 <body>
@@ -37,7 +38,7 @@
                         <div class="mb-3" style="text-align: center;">
                             <form action="{{ url_for('model') }}" id="prompt_form" class="form" method="POST">
                                 <textarea id="message-1" name="prompt" rows="6" placeholder="anime female mechanical android head with flowers growing out ..." required></textarea>
-                                <input type="hidden" id="model_input" name="model_input" value="">  <!-- Hidden field for model -->
+                                <input type="hidden" id="model_input" name="model_input" value="stable-diffusion">  <!-- Hidden field for model: default stable diffusion -->
                                 <button class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Generate Image</button>
                                 <button class="btn btn-primary shadow" type="button" style="margin: 10px;margin-left: 10px;--bs-body-font-size: 0.5rem;background: var(--bs-gray-700);border-color: var(--bs-gray-700);" onclick="generateRandomPrompt()">Random Prompt</button>
                             </form>

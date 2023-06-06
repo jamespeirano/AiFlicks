@@ -61,7 +61,7 @@ function generateRandomPrompt() {
         document.getElementById('message-1').value = '';
         console.log(data.prompt)
         isTyping = true;  // Set the typing status before starting to type
-        typeWriter(data.prompt, 'message-1', 30);
+        typeWriter(data.prompt, 'message-1', 40);
     })
     .catch(error => {
         console.error('Error:', error);

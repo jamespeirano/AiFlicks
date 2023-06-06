@@ -36,9 +36,6 @@ async def model():
         selected_model = request.form.get('model_input')
         if selected_model is None:
             raise ValueError("Model not selected")
-        else:
-            # default model
-            selected_model = 'stable-diffusion'
         HUGGING_API = HUGGING_FACE_API_URLS.get(selected_model)
         prompt = request.form['prompt']
     except KeyError:
