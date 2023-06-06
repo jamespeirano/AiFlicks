@@ -1,3 +1,14 @@
+window.onload = function() {
+    document.getElementById('generate-button').addEventListener('click', function() {
+        var textAreaContent = document.getElementById('message-1').value;
+
+        if (textAreaContent.trim() !== "") { // if the textarea is not empty
+            document.getElementById("loader-overlay").style.display = "flex";
+        }
+    });
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
     var dropdownItems = document.querySelectorAll('.dropdown-menu .dropdown-item');
 
@@ -67,3 +78,9 @@ function generateRandomPrompt() {
         console.error('Error:', error);
     });
 }
+
+
+
+
+
+
