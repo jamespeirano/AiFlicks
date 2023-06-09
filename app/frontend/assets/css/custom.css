@@ -196,3 +196,8 @@
 .ref-quantity-widget input {
   width: 40px !important;
 }
+
+.ref-tab, .ref-tab * {
+  --bs-body-color: initial !important; /* replace with any color or leave it as 'initial' */
+  color: initial !important; /* replace with any color or leave it as 'initial' */
+}
