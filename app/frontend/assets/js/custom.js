@@ -76,28 +76,14 @@ function generateRandomPrompt() {
     });
 }
 
-// Function to add the base64 image to the cart page
-function addImageToCartPage(base64Image) {
-    // Find the image element on the cart page and update its source
-    let cartImageElement = document.getElementById('cart-image');
-    cartImageElement.src = 'data:image/png;base64,' + base64Image;
-}
-
 async function addToCart(event) {
     event.preventDefault(); // Prevent the default link click behavior
-
-    // Get the base64 image
-    let base64Image = document.querySelector('.generated-image img').src.split(",")[1];
-
     // Add the product to the cart
     let product_id = document.querySelector("[data-reflow-product]").getAttribute("data-reflow-product");
     let variant_id = document.querySelector(".ref-field-variants").value;
     let quantity = document.querySelector(".ref-quantity-widget input").value;
 
     addToCartWithProductId(product_id, variant_id, quantity);
-
-    // Add the image to the cart page
-    addImageToCartPage(base64Image);
 }
 
 // Function to add the product to the cart using Reflow API
@@ -126,15 +112,6 @@ function addToCartWithProductId(productId, variantId, quantity) {
         console.error("Error adding product to cart:", error);
     });
 }
-
-window.addEventListener('load', (event) => {
-    // Find the product name element on the cart page and update its text
-    let cartProductNameElement = document.querySelector('.cart-product-name');
-    if (cartProductNameElement) {
-        cartProductNameElement.textContent = 'Good Product';
-    }
-});
-
 
 let selectedModel = 'stable-diffusion'; // default selected model
 $(document).ready(function(){
