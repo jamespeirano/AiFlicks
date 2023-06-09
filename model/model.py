@@ -58,7 +58,7 @@ class Model:
                     "parameters": {
                         "negative_prompt": self.negative_prompt,
                         "guidance_scale": 7.5,
-                        "num_inference_steps": 150,
+                        "num_inference_steps": 10,
                         "height": 512,
                         "width": 512,
                     },

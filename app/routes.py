@@ -7,6 +7,8 @@ from app import app
 
 load_dotenv()
 
+products = [1133189072, 1511335455]
+
 HUGGING_FACE_API_URLS = {
     'stable-diffusion': os.getenv('HUGGING_FACE_API_URL1'),
     'realistic-vision': os.getenv('HUGGING_FACE_API_URL2'),
@@ -46,7 +48,7 @@ async def model():
     response = model.generate_image()
     if response is None:
         return render_template("error.html")
-    return render_template("result.html", image=response, prompt=prompt)
+    return render_template("result.html", image=response, prompt=prompt, products=products)
 
 @app.route('/random-prompt', methods=['GET'])
 def random_prompt():

@@ -179,7 +179,20 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: auto;
-  max-width: 30%;
-  mix-blend-mode: multiply;
 }
 
+.tshirt-overlay, .hoodie-overlay {
+  border-radius: 5px;
+}
+
+.tshirt-overlay {
+  max-width: 35%;
+}
+
+.hoodie-overlay {
+  max-width: 25%;
+}
+
+.ref-quantity-widget input {
+  width: 40px !important;
+}
