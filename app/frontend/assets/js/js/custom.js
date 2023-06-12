@@ -93,45 +93,18 @@ document.getElementById("modelDropdown").addEventListener("change", function() {
     document.getElementById("model").value = this.value;
 });
 
+// RESULTS PAGE
+function increaseValue() {
+    var value = parseInt(document.getElementById('number').value, 10);
+    value = isNaN(value) ? 0 : value;
+    value++;
+    document.getElementById('number').value = value;
+}
 
-
-let selectedSize = 'Medium'; // default selected model
-$(document).ready(function(){
-    $('.size-dropdown').on('hide.bs.dropdown', function (e) {
-        var text = $(e.relatedTarget).text(); // Get the text of the element
-        if (text) { // If the text is not empty (meaning one of the dropdown items was clicked)
-            $('.size-button a').text(text); // Change button text (use original text here)
-        }
-    });
-});
-
-let selectedColor = 'White'; // default selected model
-$(document).ready(function(){
-    $('.color-dropdown').on('hide.bs.dropdown', function (e) {
-        var text = $(e.relatedTarget).text(); // Get the text of the element
-        if (text) { // If the text is not empty (meaning one of the dropdown items was clicked)
-            $('.color-button a').text(text); // Change button text (use original text here)
-        }
-    });
-});
-
-$(document).ready(function() {
-    const minus = $('.quantity__minus');
-    const plus = $('.quantity__plus');
-    const input = $('.quantity__input');
-    minus.click(function(e) {
-      e.preventDefault();
-      var value = input.val();
-      if (value > 1) {
-        value--;
-      }
-      input.val(value);
-    });
-    
-    plus.click(function(e) {
-      e.preventDefault();
-      var value = input.val();
-      value++;
-      input.val(value);
-    })
-  });
+function decreaseValue() {
+    var value = parseInt(document.getElementById('number').value, 10);
+    value = isNaN(value) ? 0 : value;
+    value < 1 ? value = 1 : '';
+    value--;
+    document.getElementById('number').value = value;
+}

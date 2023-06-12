@@ -1,13 +1,12 @@
 import os
-from flask import render_template, request, jsonify
+import base64
+from flask import render_template, request, jsonify, url_for
 from dotenv import load_dotenv
 from utils import generate_random_prompt
 from model import Model
 from app import app
 
 load_dotenv()
-
-products = [1133189072, 1511335455]
 
 HUGGING_FACE_API_URLS = {
     'stable-diffusion': os.getenv('HUGGING_FACE_API_URL1'),
@@ -48,7 +47,17 @@ async def model():
     response = model.generate_image()
     if response is None:
         return render_template("error.html")
-    return render_template("result.html", image=response, prompt=prompt, products=products)
+    return render_template("result.html", image=response, prompt=prompt)
+
+@app.route('/gallery-image/<img_name>', methods=['GET'])
+def gallery_image(img_name):
+    try:
+        with open(f"app/frontend/assets/img/{img_name}.png", "rb") as img_file:
+            img_data = base64.b64encode(img_file.read()).decode('utf-8')
+        return render_template("result.html", image=img_data, prompt="From Gallery")
+    except Exception as e:
+        print(e)
+        return render_template("error.html")
 
 @app.route('/random-prompt', methods=['GET'])
 def random_prompt():
