@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/css/custom.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Lightbox-Gallery-baguetteBox.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Projects-Grid-Horizontal-images.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min-1.css') }}">
@@ -43,11 +41,11 @@
             </div>
             <hr>
             <div class="row" style="margin-bottom: 20px;">
-                <div class="col"><img src="assets/img/realistic-vision5.png" width="150" height="150"></div>
+                <div class="col"><img src="data:image/png;base64,{{image}}" width="150" height="150"></div>
                 <div class="col">
                     <p style="font-weight: bold;font-size: 20px;">Beautiful Girl</p>
-                    <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Size:&nbsp;&nbsp;<span style="text-align: justify;">ERROR</span>&nbsp;</p>
-                    <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Color:&nbsp;&nbsp;<span style="text-align: justify;">ERROR</span>&nbsp;</p>
+                    <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Size:&nbsp;&nbsp;<span style="text-align: justify;">{{selectedSize}}</span>&nbsp;</p>
+                    <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Color:&nbsp;&nbsp;<span style="text-align: justify;">{{selectedColor}}</span>&nbsp;</p>
                 </div>
                 <div class="col" style="text-align: right;font-size: 20px;">
                     <p style="font-size: 20px;padding-top: 30px;">$<span style="text-align: justify;">ERROR</span></p>
@@ -61,32 +59,6 @@
                         <a href="#" class="quantity__plus"><span>+</span></a>
                     </div>
                 </div>
-                <script>
-                    $(document).ready(function() {
-                        const minus = $('.quantity__minus');
-                        const plus = $('.quantity__plus');
-                    
-                        minus.click(function(e) {
-                            e.preventDefault();
-                            var input = $(this).siblings('.quantity__input');
-                            var value = parseInt(input.val(), 10);
-                            if (value > 1) {
-                                value--;
-                            }
-                            input.val(value);
-                        });
-                    
-                        plus.click(function(e) {
-                            e.preventDefault();
-                            var input = $(this).siblings('.quantity__input');
-                            var value = parseInt(input.val(), 10);
-                            value++;
-                            input.val(value);
-                        });
-                    });
-                    </script>
-                    
-
 
                 <div class="col" style="text-align: right;">
                     <p style="font-size: 20px;padding-top: 30px;">$<span style="text-align: justify;">ERROR</span></p>
@@ -110,13 +82,9 @@
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bold-and-dark.js') }}"></script>
     <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap/js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/js/custom.js') }}"></script>
     <script src="{{ url_for('static', filename='js/Lightbox-Gallery-baguetteBox.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/Lightbox-Gallery.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/js/bs-init.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/js/custom-1.js') }}"></script>
-    
+    <script src="{{ url_for('static', filename='js/bs-init.js') }}"></script>
 
 </body>
 

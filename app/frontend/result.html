@@ -8,10 +8,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/css/custom.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Lightbox-Gallery-baguetteBox.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Projects-Grid-Horizontal-images.css') }}">
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.svg">
 </head>
 <body>
     <nav class="navbar navbar-dark navbar-expand-md sticky-top py-3" id="mainNav">
@@ -76,19 +75,32 @@
                             </ol>
                         </div><br>
 
-                        <div class="options centered-content" style="padding-top: 20px;padding-bottom: 20px;">
-                            <div class="dropdown" style="margin: 10px;"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Size&nbsp;</button>
-                                <div class="dropdown-menu dropdown-menu-dark">
-                                    <a class="dropdown-item" data-bs-toggle="" href="#">Small</a>
-                                    <a class="dropdown-item" href="#">Medium</a>
-                                    <a class="dropdown-item" href="#">Large</a></div>
+                        <form action="{{ url_for('addToCart') }}" method="post" enctype="multipart/form-data">
+                            <div class="options centered-content" style="padding-top: 20px;padding-bottom: 20px;">
+                                <input type="hidden" id="selectedSize" name="selectedSize">
+                                <input type="hidden" id="selectedColor" name="selectedColor">
+                                
+                                <div class="dropdown size-dropdown" style="margin: 10px;">
+                                    <button class="btn btn-primary dropdown-toggle size-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Size&nbsp;</button>
+                                    <div class="dropdown-menu dropdown-menu-dark">
+                                        <a class="dropdown-item">Small</a>
+                                        <a class="dropdown-item">Medium</a>
+                                        <a class="dropdown-item">Large</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="dropdown color-dropdown" style="margin: 10px;">
+                                    <button class="btn btn-primary dropdown-toggle color-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Color</button>
+                                    <div class="dropdown-menu dropdown-menu-dark">
+                                        <a class="dropdown-item">White</a>
+                                        <a class="dropdown-item">Black</a>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Add To Cart</button>
                             </div>
-                            <div class="dropdown" style="margin: 10px;"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Color</button>
-                                <div class="dropdown-menu dropdown-menu-dark">
-                                    <a class="dropdown-item" data-bs-toggle="" href="#">White</a>
-                                    <a class="dropdown-item" href="#">Black</a></div>
-                            </div><button class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Add To Cart</button>
-                        </div>
+                        </form>                                               
+                        
                         
                     </div>
                 </div>
@@ -110,19 +122,31 @@
                             </ol>
                         </div><br>
 
-                        <div class="options centered-content" style="padding-top: 20px;padding-bottom: 20px;">
-                            <div class="dropdown" style="margin: 10px;"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Size&nbsp;</button>
-                                <div class="dropdown-menu dropdown-menu-dark">
-                                    <a class="dropdown-item" data-bs-toggle="" href="#">Small</a>
-                                    <a class="dropdown-item" href="#">Medium</a>
-                                    <a class="dropdown-item" href="#">Large</a></div>
+                        <form action="{{ url_for('addToCart') }}" method="post" enctype="multipart/form-data">
+                            <div class="options centered-content" style="padding-top: 20px;padding-bottom: 20px;">
+                                <input type="hidden" id="selectedSize" name="selectedSize">
+                                <input type="hidden" id="selectedColor" name="selectedColor">
+                                
+                                <div class="dropdown size-dropdown" style="margin: 10px;">
+                                    <button class="btn btn-primary dropdown-toggle size-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Size&nbsp;</button>
+                                    <div class="dropdown-menu dropdown-menu-dark">
+                                        <a class="dropdown-item">Small</a>
+                                        <a class="dropdown-item">Medium</a>
+                                        <a class="dropdown-item">Large</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="dropdown color-dropdown" style="margin: 10px;">
+                                    <button class="btn btn-primary dropdown-toggle color-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Color</button>
+                                    <div class="dropdown-menu dropdown-menu-dark">
+                                        <a class="dropdown-item">White</a>
+                                        <a class="dropdown-item">Black</a>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Add To Cart</button>
                             </div>
-                            <div class="dropdown" style="margin: 10px;"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Color</button>
-                                <div class="dropdown-menu dropdown-menu-dark">
-                                    <a class="dropdown-item" data-bs-toggle="" href="#">White</a>
-                                    <a class="dropdown-item" href="#">Black</a></div>
-                            </div><button class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Add To Cart</button>
-                        </div>
+                        </form>                                                            
                         
                     </div>
                 </div>

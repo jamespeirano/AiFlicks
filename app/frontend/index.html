@@ -82,13 +82,15 @@
                         <div class="container text-center py-5">
                             <p class="mb-4">Summon your imagination into existence! <br>Choose a different&nbsp;<span class="text-success"><strong>model</strong></span>&nbsp;to change the output style of your image</p>
                             <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-black);border-color: var(--bs-black);"><a>Stable Diffusion</a></button>
+                                <button class="btn btn-primary dropdown-toggle model-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-black);border-color: var(--bs-black);">
+                                    <span id="modelButtonText">Stable Diffusion</span>
+                                </button>
                                 <div class="dropdown-menu dropdown-menu-dark">
-                                    <a class="dropdown-item" href="#" onclick="selectModel('realistic-vision')">Realistic Vision</a>
-                                    <a class="dropdown-item" href="#" onclick="selectModel('nitro-diffusion')">Nitro Diffusion</a>
-                                    <a class="dropdown-item" href="#" onclick="selectModel('dreamlike-anime')">Dreamlike Anime</a>
+                                    <a class="dropdown-item model-item" href="#" onclick="selectModel('realistic-vision')">Realistic Vision</a>
+                                    <a class="dropdown-item model-item" href="#" onclick="selectModel('nitro-diffusion')">Nitro Diffusion</a>
+                                    <a class="dropdown-item model-item" href="#" onclick="selectModel('dreamlike-anime')">Dreamlike Anime</a>
                                 </div>
-                            </div>
+                            </div>                            
                         </div>
                     </section>
                 </div>
@@ -106,12 +108,6 @@
             </div>
         </div>
     </footer>
-
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/bs-init.js"></script>
-    <script src="assets/js/bold-and-dark.js"></script>
-    <script src="assets/js/custom.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <div class="loader-overlay" id="loader-overlay" style="display: none">
         <div class="loader">
@@ -304,6 +300,12 @@
             </div>
         </div>   
     </div>
+
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/bold-and-dark.js"></script>
+    <script src="assets/js/custom.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 
 </html>

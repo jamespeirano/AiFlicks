@@ -1,6 +1,6 @@
 import os
 import base64
-from flask import render_template, request, jsonify, url_for
+from flask import render_template, request, jsonify
 from dotenv import load_dotenv
 from utils import generate_random_prompt
 from model import Model
@@ -64,3 +64,13 @@ def random_prompt():
     selected_model = request.args.get('model')
     prompt = generate_random_prompt(selected_model)
     return jsonify({'prompt': prompt})
+
+@app.route('/addToCart', methods=['POST'])
+def addToCart():
+    image_base64 = request.form['imageBase64']
+    selectedSize = request.form['selectedSize']
+    selectedColor = request.form['selectedColor']
+
+    print(selectedSize, selectedColor)
+
+    return render_template('cart.html', image=image_base64, size=selectedSize, color=selectedColor)
