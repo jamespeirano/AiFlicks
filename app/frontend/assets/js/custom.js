@@ -1,6 +1,4 @@
 var isTyping = false;  // Global variable to track typing status
-let selectedSize = 'Medium'; // default selected model
-let selectedColor = 'White'; // default selected model
 
 function selectModel(modelName) {
     // Get the hidden input field
@@ -94,6 +92,8 @@ document.addEventListener('DOMContentLoaded', function () {
 $(document).ready(function() {
     const minus = $('.quantity__minus');
     const plus = $('.quantity__plus');
+    const priceElement = $('.price-span'); // target span element with class 'price-span'
+    const originalPrice = parseFloat(priceElement.text()); // get the original price and convert to number
 
     minus.click(function(e) {
         e.preventDefault();
@@ -103,6 +103,10 @@ $(document).ready(function() {
             value--;
         }
         input.val(value);
+
+        // Update price
+        var newPrice = originalPrice * value;
+        priceElement.text(newPrice.toFixed(2)); // Update the price display, rounded to 2 decimal places
     });
 
     plus.click(function(e) {
@@ -111,6 +115,10 @@ $(document).ready(function() {
         var value = parseInt(input.val(), 10);
         value++;
         input.val(value);
+
+        // Update price
+        var newPrice = originalPrice * value;
+        priceElement.text(newPrice.toFixed(2)); // Update the price display, rounded to 2 decimal places
     });
 
     $('.model-item').click(function() {
@@ -121,11 +129,19 @@ $(document).ready(function() {
     });
 
     $('.dropdown-item').on('click', function() {
-        // Get the text of the clicked element
         var text = $(this).text();
-        // Update the value of the hidden field with the selected model
-        $('#model_input').val(text);
-        // Update the dropdown button text
-        $(this).closest('.dropdown').find('.dropdown-toggle').text(text);
-    });                
+        var parentDropdown = $(this).closest('.dropdown');
+    
+        if (parentDropdown.hasClass('size-dropdown')) {
+            $('#selectedSize').val(text);
+            console.log('Size selected:', text);
+        } else if (parentDropdown.hasClass('color-dropdown')) {
+            $('#selectedColor').val(text);
+            console.log('Color selected:', text);
+        }
+    
+        parentDropdown.find('.dropdown-toggle').text(text);
+    });
+    
+                  
 });

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Lightbox-Gallery-baguetteBox.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Projects-Grid-Horizontal-images.css') }}">
     <link rel="icon" type="image/x-icon" href="assets/img/favicon.svg">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-dark navbar-expand-md sticky-top py-3" id="mainNav">
@@ -80,6 +81,7 @@
                                 <input type="hidden" id="imageBase64" name="imageBase64" value="{{image}}">
                                 <input type="hidden" id="selectedSize" name="selectedSize">
                                 <input type="hidden" id="selectedColor" name="selectedColor">
+                                <input type="hidden" id="selectedProduct" name="selectedProduct" value="tshirt">
                                 
                                 <div class="dropdown size-dropdown" style="margin: 10px;">
                                     <button class="btn btn-primary dropdown-toggle size-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Size&nbsp;</button>
@@ -128,6 +130,7 @@
                                 <input type="hidden" id="imageBase64" name="imageBase64" value="{{image}}">
                                 <input type="hidden" id="selectedSize" name="selectedSize">
                                 <input type="hidden" id="selectedColor" name="selectedColor">
+                                <input type="hidden" id="selectedProduct" name="selectedProduct" value="hoodie">
                                 
                                 <div class="dropdown size-dropdown" style="margin: 10px;">
                                     <button class="btn btn-primary dropdown-toggle size-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Size&nbsp;</button>
@@ -148,7 +151,7 @@
                                 
                                 <button class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Add To Cart</button>
                             </div>
-                        </form>                                                            
+                        </form>                                                                                                         
                         
                     </div>
                 </div>

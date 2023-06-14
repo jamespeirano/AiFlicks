@@ -40,30 +40,36 @@
                 <div class="col" style="text-align: right;"><span style="text-align: justify;">TOTAL</span></div>
             </div>
             <hr>
-            <div class="row" style="margin-bottom: 20px;">
-                <div class="col"><img src="data:image/png;base64,{{image}}" width="150" height="150"></div>
-                <div class="col">
-                    <p style="font-weight: bold;font-size: 20px;">Beautiful Girl</p>
-                    <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Size:&nbsp;&nbsp;<span style="text-align: justify;">{{selectedSize}}</span>&nbsp;</p>
-                    <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Color:&nbsp;&nbsp;<span style="text-align: justify;">{{selectedColor}}</span>&nbsp;</p>
-                </div>
-                <div class="col" style="text-align: right;font-size: 20px;">
-                    <p style="font-size: 20px;padding-top: 30px;">$<span style="text-align: justify;">ERROR</span></p>
-                </div>
+
+            {% for item in cart_items %}
+                <div class="row" style="margin-bottom: 20px;">
+                    <div class="col"><img src="data:image/png;base64,{{item.image}}" width="150" height="150"></div>
+                    <div class="col">
+                        <p style="font-weight: bold;font-size: 20px;">{{ item.name }}</p>
+                        <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Size:&nbsp;&nbsp;<span style="text-align: justify;">{{ item.size }}</span>&nbsp;</p>
+                        <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Color:&nbsp;&nbsp;<span style="text-align: justify;">{{ item.color }}</span>&nbsp;</p>
+                    </div>
+                    <div class="col" style="text-align: right;font-size: 20px;">
+                        <p style="font-size: 20px;padding-top: 30px;">$<span style="text-align: justify;">{{ item.price }}</span></p>
+                    </div>
 
 
-                <div class="col" style="padding-top: 30px;">
-                    <div class="quantity">
-                        <a href="#" class="quantity__minus"><span>-</span></a>
-                        <input name="quantity" type="text" class="quantity__input" value="1">
-                        <a href="#" class="quantity__plus"><span>+</span></a>
+                    <div class="col" style="padding-top: 30px;">
+                        <div class="quantity">
+                            <a href="#" class="quantity__minus"><span>-</span></a>
+                            <input name="quantity" type="text" class="quantity__input" value="1">
+                            <a href="#" class="quantity__plus"><span>+</span></a>
+                        </div>
+                    </div>
+
+                    <div class="col" style="text-align: right;">
+                        <p style="font-size: 20px;padding-top: 30px;">$<span class="price-span" style="text-align: justify;">{{ item.price }}</span></p>
                     </div>
                 </div>
+            {% else %}
+                <p style="font-size: 17px">Cart is empty.</p>
+            {% endfor %}
 
-                <div class="col" style="text-align: right;">
-                    <p style="font-size: 20px;padding-top: 30px;">$<span style="text-align: justify;">ERROR</span></p>
-                </div>
-            </div>
             <hr>
             <div class="col">
                 <p style="font-size: 20px;padding-top: 30px;text-align: right;"><strong>Subtotal: </strong>$<span style="text-align: justify;">ERROR</span></p>

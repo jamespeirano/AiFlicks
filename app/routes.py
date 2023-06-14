@@ -1,8 +1,8 @@
 import os
 import base64
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, url_for, redirect, session
 from dotenv import load_dotenv
-from utils import generate_random_prompt
+from utils import generate_random_prompt, Tshirt, Hoodie
 from model import Model
 from app import app
 
@@ -17,6 +17,7 @@ HUGGING_FACE_API_URLS = {
 
 @app.route('/')
 def index():
+    session.permanent = False
     return render_template("index.html")
 
 @app.route('/models')
@@ -29,7 +30,8 @@ def gallery():
 
 @app.route('/cart')
 def cart():
-    return render_template('cart.html')
+    cart_items = session.get('cart', [])
+    return render_template('cart.html', cart_items=cart_items)
 
 @app.route('/model', methods=['GET', 'POST'])
 async def model():
@@ -70,7 +72,18 @@ def addToCart():
     image_base64 = request.form['imageBase64']
     selectedSize = request.form['selectedSize']
     selectedColor = request.form['selectedColor']
+    selectedProduct = request.form['selectedProduct']
 
-    print(selectedSize, selectedColor)
+    if selectedProduct == 'tshirt':
+        product = Tshirt("Your tshirt design", selectedSize, selectedColor, image_base64, 20.00)
+    elif selectedProduct == 'hoodie':
+        product = Hoodie("Your hoodie design", selectedSize, selectedColor, image_base64, 40.00)
 
-    return render_template('cart.html', image=image_base64, size=selectedSize, color=selectedColor)
+    # Get the current cart from the session (or an empty list if there's no 'cart' key)
+    cart = session.get('cart', [])
+    # Append the dictionary representation of the new item to the cart
+    cart.append(product.to_dict())
+    # Store the updated cart back in the session
+    session['cart'] = cart
+
+    return redirect(url_for('cart'))
