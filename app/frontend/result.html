@@ -77,6 +77,7 @@
 
                         <form action="{{ url_for('addToCart') }}" method="post" enctype="multipart/form-data">
                             <div class="options centered-content" style="padding-top: 20px;padding-bottom: 20px;">
+                                <input type="hidden" id="imageBase64" name="imageBase64" value="{{image}}">
                                 <input type="hidden" id="selectedSize" name="selectedSize">
                                 <input type="hidden" id="selectedColor" name="selectedColor">
                                 
@@ -124,6 +125,7 @@
 
                         <form action="{{ url_for('addToCart') }}" method="post" enctype="multipart/form-data">
                             <div class="options centered-content" style="padding-top: 20px;padding-bottom: 20px;">
+                                <input type="hidden" id="imageBase64" name="imageBase64" value="{{image}}">
                                 <input type="hidden" id="selectedSize" name="selectedSize">
                                 <input type="hidden" id="selectedColor" name="selectedColor">
                                 
