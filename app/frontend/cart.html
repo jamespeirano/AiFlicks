@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Projects-Grid-Horizontal-images.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min-1.css') }}">
     <link rel="icon" type="image/x-icon" href="assets/img/favicon.svg">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -51,13 +52,42 @@
                 <div class="col" style="text-align: right;font-size: 20px;">
                     <p style="font-size: 20px;padding-top: 30px;">$<span style="text-align: justify;">ERROR</span></p>
                 </div>
+
+
                 <div class="col" style="padding-top: 30px;">
                     <div class="quantity">
                         <a href="#" class="quantity__minus"><span>-</span></a>
                         <input name="quantity" type="text" class="quantity__input" value="1">
                         <a href="#" class="quantity__plus"><span>+</span></a>
-                      </div>
+                    </div>
                 </div>
+                <script>
+                    $(document).ready(function() {
+                        const minus = $('.quantity__minus');
+                        const plus = $('.quantity__plus');
+                    
+                        minus.click(function(e) {
+                            e.preventDefault();
+                            var input = $(this).siblings('.quantity__input');
+                            var value = parseInt(input.val(), 10);
+                            if (value > 1) {
+                                value--;
+                            }
+                            input.val(value);
+                        });
+                    
+                        plus.click(function(e) {
+                            e.preventDefault();
+                            var input = $(this).siblings('.quantity__input');
+                            var value = parseInt(input.val(), 10);
+                            value++;
+                            input.val(value);
+                        });
+                    });
+                    </script>
+                    
+
+
                 <div class="col" style="text-align: right;">
                     <p style="font-size: 20px;padding-top: 30px;">$<span style="text-align: justify;">ERROR</span></p>
                 </div>
@@ -86,6 +116,8 @@
     <script src="{{ url_for('static', filename='js/Lightbox-Gallery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/js/bs-init.js') }}"></script>
     <script src="{{ url_for('static', filename='js/js/custom-1.js') }}"></script>
+    
+
 </body>
 
 </html>
