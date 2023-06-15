@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Lightbox-Gallery-baguetteBox.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Projects-Grid-Horizontal-images.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min-1.css') }}">
     <link rel="icon" type="image/x-icon" href="assets/img/favicon.svg">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
@@ -36,7 +35,7 @@
                     <p></p>
                 </div>
                 <div class="col" style="text-align: right;"><span>PRICE</span></div>
-                <div class="col" style="text-align: right;"><span>QUANTITY</span></div>
+                <div class="col" style="text-align: center;"><span>QUANTITY</span></div>
                 <div class="col" style="text-align: right;"><span style="text-align: justify;">TOTAL</span></div>
             </div>
             <hr>
@@ -53,7 +52,7 @@
                         <p style="font-size: 20px;padding-top: 30px;">$<span class="price-span" data-original-price="{{ item.price }}" style="text-align: justify;">{{ item.price }}</span></p>
                     </div>
                     <div class="col" style="padding-top: 30px;">
-                        <div class="quantity">
+                        <div class="quantity" style="text-align: center; justify-content: center;">
                             <a href="#" class="quantity__minus"><span>-</span></a>
                             <input name="quantity" type="text" class="quantity__input" value="1">
                             <a href="#" class="quantity__plus"><span>+</span></a>

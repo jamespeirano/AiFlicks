@@ -78,10 +78,10 @@
 
                         <form action="{{ url_for('addToCart') }}" method="post" enctype="multipart/form-data">
                             <div class="options centered-content" style="padding-top: 20px;padding-bottom: 20px;">
-                                <input type="hidden" id="imageBase64" name="imageBase64" value="{{image}}">
-                                <input type="hidden" id="selectedSize" name="selectedSize">
-                                <input type="hidden" id="selectedColor" name="selectedColor">
-                                <input type="hidden" id="selectedProduct" name="selectedProduct" value="tshirt">
+                                <input type="hidden" id="tshirtImageBase64" name="imageBase64" value="{{image}}">
+                                <input type="hidden" id="tshirtSelectedSize" name="tshirtSelectedSize">
+                                <input type="hidden" id="tshirtSelectedColor" name="tshirtSelectedColor">
+                                <input type="hidden" id="tshirtProduct" name="selectedProduct" value="tshirt">
                                 
                                 <div class="dropdown size-dropdown" style="margin: 10px;">
                                     <button class="btn btn-primary dropdown-toggle size-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Size&nbsp;</button>
@@ -127,10 +127,10 @@
 
                         <form action="{{ url_for('addToCart') }}" method="post" enctype="multipart/form-data">
                             <div class="options centered-content" style="padding-top: 20px;padding-bottom: 20px;">
-                                <input type="hidden" id="imageBase64" name="imageBase64" value="{{image}}">
-                                <input type="hidden" id="selectedSize" name="selectedSize">
-                                <input type="hidden" id="selectedColor" name="selectedColor">
-                                <input type="hidden" id="selectedProduct" name="selectedProduct" value="hoodie">
+                                <input type="hidden" id="hoodieImageBase64" name="imageBase64" value="{{image}}">
+                                <input type="hidden" id="hoodieSelectedSize" name="hoodieSelectedSize">
+                                <input type="hidden" id="hoodieSelectedColor" name="hoodieSelectedColor">
+                                <input type="hidden" id="hoodieProduct" name="selectedProduct" value="hoodie">
                                 
                                 <div class="dropdown size-dropdown" style="margin: 10px;">
                                     <button class="btn btn-primary dropdown-toggle size-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-gray-700);border-color: var(--bs-gray-700);">Select Size&nbsp;</button>

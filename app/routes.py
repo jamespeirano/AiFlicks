@@ -70,14 +70,16 @@ def random_prompt():
 @app.route('/addToCart', methods=['POST'])
 def addToCart():
     image_base64 = request.form['imageBase64']
-    selectedSize = request.form['selectedSize']
-    selectedColor = request.form['selectedColor']
     selectedProduct = request.form['selectedProduct']
 
     if selectedProduct == 'tshirt':
+        selectedSize = request.form['tshirtSelectedSize']
+        selectedColor = request.form['tshirtSelectedColor']
         product = Tshirt("Your tshirt design", selectedSize, selectedColor, image_base64, 20.00)
     elif selectedProduct == 'hoodie':
-        product = Hoodie("Your hoodie design", selectedSize, selectedColor, image_base64, 40.00)
+        selectedSize = request.form['hoodieSelectedSize']
+        selectedColor = request.form['hoodieSelectedColor']
+        product = Hoodie("Your hoodie design", selectedSize, selectedColor, image_base64, 40.00)        
 
     # Get the current cart from the session (or an empty list if there's no 'cart' key)
     cart = session.get('cart', [])

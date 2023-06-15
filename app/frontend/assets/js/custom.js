@@ -2,8 +2,10 @@ let isTyping = false;
 
 let formFields = {
     model: 'model_input',
-    size: 'selectedSize',
-    color: 'selectedColor'
+    tsize: 'tshirtSelectedSize',
+    tcolor: 'tshirtSelectedColor',
+    hsize: 'hoodieSelectedSize',
+    hcolor: 'hoodieSelectedColor',
 };
 
 function selectItem(fieldName, itemName) {
@@ -143,10 +145,22 @@ $(document).ready(function() {
     $('.dropdown-item').on('click', function() {
         let text = $(this).text();
         let parentDropdown = $(this).closest('.dropdown');
-    
-        // For the model dropdown items, the dropdownType will be 'model-dropdown'
+        
         let dropdownType = parentDropdown[0].classList[1];
         let fieldName = dropdownType.split('-')[0];
+    
+        // Determine if the dropdown is for a tshirt or hoodie
+        let productType = parentDropdown.closest('form').find('input[name="selectedProduct"]').val();
+    
+        // Update the fieldName based on the product type
+        if (productType === 'tshirt') {
+            if (fieldName === 'size') fieldName = 'tsize';
+            else if (fieldName === 'color') fieldName = 'tcolor';
+        } else if (productType === 'hoodie') {
+            if (fieldName === 'size') fieldName = 'hsize';
+            else if (fieldName === 'color') fieldName = 'hcolor';
+        }
+    
         selectItem(fieldName, text);
     });
 

@@ -9,7 +9,7 @@ app = Flask(__name__, template_folder='frontend', static_folder='frontend/assets
 app.config['SECRET_KEY'] = secrets.token_hex(16)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = '../flask_session'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 Session(app)
 
 def cleanup_sessions(session_folder, expiration_time):
