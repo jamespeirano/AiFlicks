@@ -1,18 +1,26 @@
-var isTyping = false;  // Global variable to track typing status
+let isTyping = false;
 
-function selectModel(modelName) {
-    // Get the hidden input field
-    let modelInput = document.getElementById('model_input');
-    // Update the input field value
-    modelInput.value = modelName;
+let formFields = {
+    model: 'model_input',
+    size: 'selectedSize',
+    color: 'selectedColor'
+};
 
-    // Find the dropdown button text and update it
-    let buttonText = document.querySelector('#modelButtonText');
-    // Set the button text to be the selected model's text
-    let updatedText = modelName.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+function selectItem(fieldName, itemName) {
+    updateHiddenField(fieldName, itemName);
+    updateButtonText(fieldName, itemName);
+}
+
+function updateHiddenField(fieldName, itemName) {
+    let input = document.getElementById(formFields[fieldName]);
+    input.value = itemName;
+}
+
+function updateButtonText(fieldName, itemName) {
+    let buttonId = fieldName + 'ButtonText';
+    let buttonText = document.querySelector('#' + buttonId);
+    let updatedText = itemName.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
     buttonText.innerText = updatedText;
-    // Update the selected model variable
-    $('#model_input').val(text.toLowerCase().replace(' ', '-'));
 }
 
 function disableGenerateButton() {
@@ -34,8 +42,8 @@ function typeWriter(text, elementId, delay = 100) {
             typeWriter(text, elementId, delay);
         }, delay);
     } else {
-        isTyping = false;  // Reset the typing status when done
-        enableGenerateButton();  // Re-enable the button when typing is finished
+        isTyping = false;
+        enableGenerateButton();
     }
 }
 
@@ -44,7 +52,7 @@ function generateRandomPrompt() {
         return;  // If a previous prompt is still being typed out, don't generate a new one
     }
     let selectedModel = document.getElementById('model_input').value;
-    disableGenerateButton();  // Disable the button while generating the prompt
+    disableGenerateButton();
     fetch('/random-prompt?model=' + selectedModel, {
         method: 'GET',
         headers: {
@@ -55,12 +63,12 @@ function generateRandomPrompt() {
     .then(data => {
         document.getElementById('message-1').value = '';
         console.log(data.prompt)
-        isTyping = true;  // Set the typing status before starting to type
+        isTyping = true;
         typeWriter(data.prompt, 'message-1', 20);
     })
     .catch(error => {
         console.error('Error:', error);
-        enableGenerateButton();  // Re-enable the button in case of an error
+        enableGenerateButton();
     });
 }
 
@@ -68,7 +76,7 @@ window.onload = function() {
     document.getElementById('generate-button').addEventListener('click', function() {
         var textAreaContent = document.getElementById('message-1').value;
 
-        if (textAreaContent.trim() !== "") { // if the textarea is not empty
+        if (textAreaContent.trim() !== "") {
             document.getElementById("loader-overlay").style.display = "flex";
         }
     });
@@ -79,10 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     dropdownItems.forEach(function (item) {
         item.addEventListener('click', function (e) {
-            // Get the clicked item text
             var text = this.textContent;
-
-            // Update the corresponding button text
             var parentDropdown = this.closest('.dropdown');
             parentDropdown.querySelector('.dropdown-toggle').textContent = text;
         });
@@ -92,56 +97,63 @@ document.addEventListener('DOMContentLoaded', function () {
 $(document).ready(function() {
     const minus = $('.quantity__minus');
     const plus = $('.quantity__plus');
-    const priceElement = $('.price-span'); // target span element with class 'price-span'
-    const originalPrice = parseFloat(priceElement.text()); // get the original price and convert to number
 
     minus.click(function(e) {
         e.preventDefault();
-        var input = $(this).siblings('.quantity__input');
-        var value = parseInt(input.val(), 10);
+        let input = $(this).siblings('.quantity__input');
+        let totalElement = $(this).closest('.row').find('.total-span'); 
+        let originalPrice = parseFloat(totalElement.data('original-price'));
+        let value = parseInt(input.val(), 10);
         if (value > 1) {
             value--;
         }
         input.val(value);
 
-        // Update price
-        var newPrice = originalPrice * value;
-        priceElement.text(newPrice.toFixed(2)); // Update the price display, rounded to 2 decimal places
+        let newPrice = originalPrice * value;
+        totalElement.text(newPrice.toFixed(2));
+
+        updateSubtotal();
     });
 
     plus.click(function(e) {
         e.preventDefault();
-        var input = $(this).siblings('.quantity__input');
-        var value = parseInt(input.val(), 10);
+        let input = $(this).siblings('.quantity__input');
+        let totalElement = $(this).closest('.row').find('.total-span'); 
+        let originalPrice = parseFloat(totalElement.data('original-price'));
+        let value = parseInt(input.val(), 10);
         value++;
         input.val(value);
 
-        // Update price
-        var newPrice = originalPrice * value;
-        priceElement.text(newPrice.toFixed(2)); // Update the price display, rounded to 2 decimal places
+        let newPrice = originalPrice * value;
+        totalElement.text(newPrice.toFixed(2));
+
+        updateSubtotal();
     });
 
-    $('.model-item').click(function() {
-        var text = $(this).text(); // Get the text of the element
-        $('#modelButtonText').text(text); // Change button text
-        // update the value of the hidden field with the selected model
-        $('#model_input').val(text.toLowerCase().replace(' ', '-'));
-    });
+    function updateSubtotal() {
+        let subtotal = 0;
+        $('.total-span').each(function() {
+            subtotal += parseFloat($(this).text());
+        });
+        $('#subtotal').text(subtotal.toFixed(2));
+    }
+
+    updateSubtotal();  // Call the function as soon as the page loads.
 
     $('.dropdown-item').on('click', function() {
-        var text = $(this).text();
-        var parentDropdown = $(this).closest('.dropdown');
+        let text = $(this).text();
+        let parentDropdown = $(this).closest('.dropdown');
     
-        if (parentDropdown.hasClass('size-dropdown')) {
-            $('#selectedSize').val(text);
-            console.log('Size selected:', text);
-        } else if (parentDropdown.hasClass('color-dropdown')) {
-            $('#selectedColor').val(text);
-            console.log('Color selected:', text);
-        }
-    
-        parentDropdown.find('.dropdown-toggle').text(text);
+        // For the model dropdown items, the dropdownType will be 'model-dropdown'
+        let dropdownType = parentDropdown[0].classList[1];
+        let fieldName = dropdownType.split('-')[0];
+        selectItem(fieldName, text);
     });
-    
-                  
+
+    $('#generate-button').on('click', function() {
+        let textAreaContent = $('#message-1').val();
+        if (textAreaContent.trim() !== "") {
+            $("#loader-overlay").css("display", "flex");
+        }
+    });
 });

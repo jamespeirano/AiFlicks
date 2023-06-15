@@ -50,10 +50,8 @@
                         <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Color:&nbsp;&nbsp;<span style="text-align: justify;">{{ item.color }}</span>&nbsp;</p>
                     </div>
                     <div class="col" style="text-align: right;font-size: 20px;">
-                        <p style="font-size: 20px;padding-top: 30px;">$<span style="text-align: justify;">{{ item.price }}</span></p>
+                        <p style="font-size: 20px;padding-top: 30px;">$<span class="price-span" data-original-price="{{ item.price }}" style="text-align: justify;">{{ item.price }}</span></p>
                     </div>
-
-
                     <div class="col" style="padding-top: 30px;">
                         <div class="quantity">
                             <a href="#" class="quantity__minus"><span>-</span></a>
@@ -61,9 +59,8 @@
                             <a href="#" class="quantity__plus"><span>+</span></a>
                         </div>
                     </div>
-
                     <div class="col" style="text-align: right;">
-                        <p style="font-size: 20px;padding-top: 30px;">$<span class="price-span" style="text-align: justify;">{{ item.price }}</span></p>
+                        <p style="font-size: 20px;padding-top: 30px;">$<span class="total-span" data-original-price="{{ item.price }}" style="text-align: justify;">{{ item.price }}</span></p>
                     </div>
                 </div>
             {% else %}
@@ -72,7 +69,7 @@
 
             <hr>
             <div class="col">
-                <p style="font-size: 20px;padding-top: 30px;text-align: right;"><strong>Subtotal: </strong>$<span style="text-align: justify;">ERROR</span></p>
+                <p style="font-size: 20px;padding-top: 30px;text-align: right;"><strong>Subtotal: </strong>$<span id="subtotal" style="text-align: justify;">0.00</span></p>
                 <section class="py-5" style="display: flex;justify-content: flex-end;"><button class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;padding: 11.6px 32px;">Checkout!</button></section>
             </div>
         </div>
