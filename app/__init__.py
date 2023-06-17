@@ -4,23 +4,24 @@ from datetime import datetime, timedelta
 from flask import Flask
 from flask_session import Session
 from apscheduler.schedulers.background import BackgroundScheduler
+from pathlib import Path
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__, template_folder='frontend', static_folder='frontend/assets')
 app.config['SECRET_KEY'] = secrets.token_hex(16)
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_FILE_DIR'] = '../flask_session'
+app.config['SESSION_FILE_DIR'] = os.path.join(BASE_DIR, '..', 'flask_session')
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)
 Session(app)
 
-def cleanup_sessions(session_folder, expiration_time):
+def cleanup_sessions(session_folder: Path, expiration_time: int):
     now = datetime.now()
 
-    for filename in os.listdir(session_folder):
-        file_path = os.path.join(session_folder, filename)
-        if os.path.getmtime(file_path) < (now - timedelta(seconds=expiration_time)).timestamp():
+    for file_path in session_folder.iterdir():
+        if file_path.is_file() and file_path.stat().st_mtime < (now - timedelta(seconds=expiration_time)).timestamp():
             try:
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
+                file_path.unlink()
             except Exception as e:
                 print(f"Failed to delete {file_path}. Reason: {e}")
 
