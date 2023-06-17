@@ -1,19 +1,22 @@
-import os
 import base64
-from flask import render_template, request, jsonify, url_for, redirect, session
-from dotenv import load_dotenv
+from flask import render_template, request, jsonify, url_for, redirect, session, abort
+from dotenv import dotenv_values
 from utils import generate_random_prompt, Tshirt, Hoodie
 from model import Model
 from app import app
+import stripe
 
-load_dotenv()
+# Loading environment variables
+config = dotenv_values(".env")
 
 HUGGING_FACE_API_URLS = {
-    'stable-diffusion': os.getenv('HUGGING_FACE_API_URL1'),
-    'realistic-vision': os.getenv('HUGGING_FACE_API_URL2'),
-    'nitro-diffusion': os.getenv('HUGGING_FACE_API_URL3'),
-    'dreamlike-anime': os.getenv('HUGGING_FACE_API_URL4'),
+    'stable-diffusion': config['HUGGING_FACE_API_URL1'],
+    'realistic-vision': config['HUGGING_FACE_API_URL2'],
+    'nitro-diffusion': config['HUGGING_FACE_API_URL3'],
+    'dreamlike-anime': config['HUGGING_FACE_API_URL4'],
 }
+
+stripe.api_key = config['STRIPE_SECRET_KEY']
 
 @app.route('/')
 def index():
@@ -36,14 +39,15 @@ def cart():
 
 @app.route('/model', methods=['GET', 'POST'])
 async def model():
-    try:
-        selected_model = request.form.get('model_input')
-        if selected_model is None:
-            raise ValueError("Model not selected")
-        HUGGING_API = HUGGING_FACE_API_URLS.get(selected_model)
-        prompt = request.form['prompt']
-    except KeyError:
-        return "Invalid form data supplied", 400
+    selected_model = request.form.get('model_input')
+    if not selected_model:
+        return abort(400, "Model not selected")
+        
+    HUGGING_API = HUGGING_FACE_API_URLS.get(selected_model)
+    prompt = request.form.get('prompt')
+
+    if not HUGGING_API or not prompt:
+        return abort(400, "Invalid form data supplied")
 
     print(HUGGING_API)
     model = Model(HUGGING_API, prompt=prompt)
@@ -70,53 +74,47 @@ def random_prompt():
 
 @app.route('/addToCart', methods=['POST'])
 def addToCart():
-    image_base64 = request.form['imageBase64']
-    selectedProduct = request.form['selectedProduct']
-    quantity = int(request.form.get('quantity', 1))  # Get the quantity from the request, convert it to int, or use 1 as a default
+    image_base64 = request.form.get('imageBase64')
+    selectedProduct = request.form.get('selectedProduct')
+    quantity = int(request.form.get('quantity', 1)) 
 
-    if selectedProduct == 'tshirt':
-        selectedSize = request.form['tshirtSelectedSize']
-        selectedColor = request.form['tshirtSelectedColor']
-        product = Tshirt("Your tshirt design", selectedSize, selectedColor, image_base64, 20.00, quantity)
-    elif selectedProduct == 'hoodie':
-        selectedSize = request.form['hoodieSelectedSize']
-        selectedColor = request.form['hoodieSelectedColor']
-        product = Hoodie("Your hoodie design", selectedSize, selectedColor, image_base64, 40.00, quantity)    
+    # Dictionary to determine product type
+    products = {
+        'tshirt': Tshirt,
+        'hoodie': Hoodie
+    }
 
-    # Get the current cart from the session (or an empty list if there's no 'cart' key)
+    if selectedProduct in products:
+        selectedSize = request.form.get(f'{selectedProduct}SelectedSize')
+        selectedColor = request.form.get(f'{selectedProduct}SelectedColor')
+        price = 20.00 if selectedProduct == 'tshirt' else 40.00
+        product = products[selectedProduct]("Your {} design".format(selectedProduct), selectedSize, selectedColor, image_base64, price, quantity)
+    else:
+        return abort(400, "Invalid product type")
+
     cart = session.get('cart', [])
-    # Append the dictionary representation of the new item to the cart
     cart.append(product.to_dict())
-    # Store the updated cart back in the session
     session['cart'] = cart
 
     return redirect(url_for('cart'))
 
-
-import stripe
-from flask import jsonify
-
-stripe.api_key = "sk_test_51Mpg4OHhtpW6f5otjU9sxetInnUYfgcZaXhOuXj9paTTt1fx9MkhVjbzYu8gziqWYt2cDCkBrGE1QfgOgaqpOcTe002PWJ0OIH"
-
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
-    # Get the cart from the session
     cart = session.get('cart', [])
+    if not cart:
+        return abort(400, "Cart is empty")
 
-    # Prepare line items for Stripe
-    line_items = []
-    for product in cart:
-        line_item = {
-            'price_data': {
-                'currency': 'usd',
-                'unit_amount': int(float(product['price']) * 100),  # convert to cents
-                'product_data': {
-                    'name': product['name'],
-                },
+    # Use list comprehension for generating line items
+    line_items = [{
+        'price_data': {
+            'currency': 'usd',
+            'unit_amount': int(float(product['price']) * 100),
+            'product_data': {
+                'name': product['name'],
             },
-            'quantity': product['quantity'],
-        }
-        line_items.append(line_item)
+        },
+        'quantity': product['quantity'],
+    } for product in cart]
 
     try:
         checkout_session = stripe.checkout.Session.create(
@@ -130,8 +128,6 @@ def create_checkout_session():
     except Exception as e:
         return jsonify(error=str(e)), 403
 
-
-
 @app.route('/update-cart-quantity', methods=['POST'])
 def update_cart_quantity():
     data = request.get_json()
@@ -144,9 +140,9 @@ def update_cart_quantity():
     for item in cart:
         if item['id'] == product_id:
             item['quantity'] = new_quantity
-            new_total = item['price'] * new_quantity  # New total for this item
-        subtotal += item['price'] * item['quantity']  # Subtotal for all items
+            new_total = item['price'] * new_quantity
+        subtotal += item['price'] * item['quantity']
 
     session['cart'] = cart
 
-    return jsonify({"success": True, "newTotal": new_total, "subtotal": subtotal}), 200  # Return new total for this item and subtotal
+    return jsonify({"success": True, "newTotal": new_total, "subtotal": subtotal}), 200

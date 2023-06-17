@@ -61,9 +61,7 @@
                         </div>
                     </div>
                     <div class="col" style="text-align: right;">
-                        <p style="font-size: 20px;padding-top: 30px;">$<span class="total-span product-total" data-product-id="{{ item.id }}" id="product-subtotal" style="text-align: justify;">
-                            {{ "%.2f"|format(item.price * item.quantity) }}
-                        </span></p>
+                        <p style="font-size: 20px;padding-top: 30px;">$<span class="total-span product-total" data-product-id="{{ item.id }}" id="product-subtotal" style="text-align: justify;">{{ "%.2f"|format(item.price * item.quantity) }}</span></p>
                     </div>
                 </div>
             {% else %}

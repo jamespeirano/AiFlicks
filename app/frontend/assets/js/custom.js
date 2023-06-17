@@ -75,12 +75,35 @@ window.onload = () => {
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.dropdown-menu .dropdown-item').forEach((item) => {
         item.addEventListener('click', (e) => {
-            this.closest('.dropdown').querySelector('.dropdown-toggle').textContent = this.textContent;
+            e.target.closest('.dropdown').querySelector('.dropdown-toggle').textContent = e.target.textContent;
         });
     });
 });
 
 $(document).ready(() => {
+    var formSelectors = {
+        tshirt: {
+            size: '#tshirtSelectedSize',
+            color: '#tshirtSelectedColor',
+            button: '#add-to-cart-btn-tshirt'
+        },
+        hoodie: {
+            size: '#hoodieSelectedSize',
+            color: '#hoodieSelectedColor',
+            button: '#add-to-cart-btn-hoodie'
+        }
+    };
+
+    function checkIfBothSelected(product) {
+        var size = $(formSelectors[product].size).val();
+        var color = $(formSelectors[product].color).val();
+        if (size && color) {
+            $(formSelectors[product].button).prop('disabled', false);
+        } else {
+            $(formSelectors[product].button).prop('disabled', true);
+        }
+    }
+
     $('.dropdown-item').on('click', function() {
         const text = $(this).text();
         const parentDropdown = $(this).closest('.dropdown');
@@ -98,7 +121,10 @@ $(document).ready(() => {
     
         $('#' + formFields[fieldName]).val(text);
         parentDropdown.find('.dropdown-toggle').text(text);
-    });          
+
+        // Check if both color and size are selected for the product
+        checkIfBothSelected(productType);
+    });      
 
     $('#generate-button').on('click', function() {
         if (message.value.trim() !== "") loaderOverlay.style.display = "flex";
