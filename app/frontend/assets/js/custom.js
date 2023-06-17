@@ -74,6 +74,34 @@ function generateRandomPrompt() {
     });
 }
 
+function updateQuantityOnServer(index, value) {
+    $.ajax({
+        url: '/update-cart-quantity', // Updated URL.
+        type: 'POST',
+        data: JSON.stringify({
+            productIndex: index,
+            newQuantity: value
+        }),
+        contentType: 'application/json',  // Required for sending JSON in request body
+        success: function(response) {
+            if(response.success) {
+                // Update the total span with the total from the server
+                $('#total-span').text(response.newTotal.toFixed(2));
+                updateSubtotal();
+            } else {
+                // Handle error here
+                console.log(response.error);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            // Handle AJAX error here
+            console.log(textStatus, errorThrown);
+        }
+    });
+}
+
+
+
 window.onload = function() {
     document.getElementById('generate-button').addEventListener('click', function() {
         var textAreaContent = document.getElementById('message-1').value;
@@ -113,7 +141,8 @@ $(document).ready(function() {
 
         let newPrice = originalPrice * value;
         totalElement.text(newPrice.toFixed(2));
-
+        
+        updateQuantityOnServer(input.closest('.product-row').data('index'), value);  // new AJAX request
         updateSubtotal();
     });
 
@@ -129,6 +158,7 @@ $(document).ready(function() {
         let newPrice = originalPrice * value;
         totalElement.text(newPrice.toFixed(2));
 
+        updateQuantityOnServer(input.closest('.product-row').data('index'), value);  // new AJAX request
         updateSubtotal();
     });
 

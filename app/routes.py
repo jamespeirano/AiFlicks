@@ -31,7 +31,28 @@ def gallery():
 @app.route('/cart')
 def cart():
     cart_items = session.get('cart', [])
-    return render_template('cart.html', cart_items=cart_items)
+    total = 0.0
+    for item in cart_items:
+        total += item['price'] * item['quantity']
+    print(total)  # Print total
+    return render_template('cart.html', cart_items=cart_items, total=total)
+
+
+# @app.route('/cart')
+# def cart():
+#     cart_items = session.get('cart', [])
+#     return render_template('cart.html', cart_items=cart_items)
+
+# @app.route('/get-cart-total', methods=['GET'])
+# def get_cart_total():
+#     cart = session.get('cart', [])
+#     total = 0.0
+
+#     for item in cart:
+#         total += item['price'] * item['quantity']  # Multiply price by quantity for each item
+
+#     return jsonify({"total": total})
+
 
 @app.route('/model', methods=['GET', 'POST'])
 async def model():
@@ -71,15 +92,17 @@ def random_prompt():
 def addToCart():
     image_base64 = request.form['imageBase64']
     selectedProduct = request.form['selectedProduct']
+    quantity = int(request.form.get('quantity', 1))  # Get the quantity from the request, convert it to int, or use 1 as a default
+
 
     if selectedProduct == 'tshirt':
         selectedSize = request.form['tshirtSelectedSize']
         selectedColor = request.form['tshirtSelectedColor']
-        product = Tshirt("Your tshirt design", selectedSize, selectedColor, image_base64, 20.00)
+        product = Tshirt("Your tshirt design", selectedSize, selectedColor, image_base64, 20.00, quantity)
     elif selectedProduct == 'hoodie':
         selectedSize = request.form['hoodieSelectedSize']
         selectedColor = request.form['hoodieSelectedColor']
-        product = Hoodie("Your hoodie design", selectedSize, selectedColor, image_base64, 40.00)        
+        product = Hoodie("Your hoodie design", selectedSize, selectedColor, image_base64, 40.00, quantity)    
 
     # Get the current cart from the session (or an empty list if there's no 'cart' key)
     cart = session.get('cart', [])
@@ -89,3 +112,64 @@ def addToCart():
     session['cart'] = cart
 
     return redirect(url_for('cart'))
+
+
+import stripe
+from flask import jsonify
+
+stripe.api_key = "sk_test_51Mpg4OHhtpW6f5otjU9sxetInnUYfgcZaXhOuXj9paTTt1fx9MkhVjbzYu8gziqWYt2cDCkBrGE1QfgOgaqpOcTe002PWJ0OIH"
+
+@app.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    # Get the cart from the session
+    cart = session.get('cart', [])
+
+    # Prepare line items for Stripe
+    line_items = []
+    for product in cart:
+        line_item = {
+            'price_data': {
+                'currency': 'usd',
+                'unit_amount': int(float(product['price']) * 100),  # convert to cents
+                'product_data': {
+                    'name': product['name'],
+                },
+            },
+            'quantity': product['quantity'],
+        }
+        line_items.append(line_item)
+
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=line_items,
+            mode='payment',
+            success_url=url_for('success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url=url_for('cancel', _external=True),
+        )
+        return jsonify(id=checkout_session.id)
+    except Exception as e:
+        return jsonify(error=str(e)), 403
+
+
+
+@app.route('/update-cart-quantity', methods=['POST'])
+def update_cart_quantity():
+    data = request.get_json()
+    product_index = int(data.get('productIndex', 0))  # convert to int as json has no int keys
+    new_quantity = int(data.get('newQuantity', 1)) 
+
+    cart = session.get('cart', [])
+    
+    if 0 <= product_index < len(cart):
+        cart[product_index]['quantity'] = new_quantity
+        session['cart'] = cart
+
+        total = 0.0
+        for item in cart:
+            total += item['price'] * item['quantity']
+
+        return jsonify({"success": True, "newTotal": total}), 200
+    else:
+        return jsonify({"error": "Invalid product index"}), 400
+
