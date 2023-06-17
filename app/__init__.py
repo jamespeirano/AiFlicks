@@ -27,7 +27,7 @@ def cleanup_sessions(session_folder: Path, expiration_time: int):
 
 scheduler = BackgroundScheduler()
 scheduler.start()
-scheduler.add_job(lambda: cleanup_sessions(app.config['SESSION_FILE_DIR'], 1*60), 'interval', minutes=1)
+scheduler.add_job(lambda: cleanup_sessions(Path(app.config['SESSION_FILE_DIR']), 1*60), 'interval', minutes=1)
 
 # avoid circular import
 from app import routes

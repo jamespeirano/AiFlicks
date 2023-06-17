@@ -74,7 +74,7 @@
                 <section class="py-5" style="display: flex;justify-content: flex-end;">
                     <form action="/create-checkout-session" method="POST" id="checkout-form">
                         <input type="hidden" id="session-id" name="sessionId">
-                        <button class="btn btn-primary shadow" type="button" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;padding: 11.6px 32px;" data-bs-toggle="modal" data-bs-target="#paymentModal">Checkout!</button>
+                        <button class="btn btn-primary shadow" id="checkout-btn" type="button" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;padding: 11.6px 32px;" data-bs-toggle="modal" data-bs-target="#paymentModal" disabled>Checkout!</button>
                     </form>
                 </section>
             </div>

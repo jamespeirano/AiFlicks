@@ -81,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 $(document).ready(() => {
+
+    // Check if both color and size are selected for the product
     var formSelectors = {
         tshirt: {
             size: '#tshirtSelectedSize',
@@ -124,7 +126,8 @@ $(document).ready(() => {
 
         // Check if both color and size are selected for the product
         checkIfBothSelected(productType);
-    });      
+    });
+    
 
     $('#generate-button').on('click', function() {
         if (message.value.trim() !== "") loaderOverlay.style.display = "flex";
