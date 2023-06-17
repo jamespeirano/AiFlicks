@@ -82,6 +82,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 $(document).ready(() => {
 
+    $('#generate-button').on('click', function(e){
+        e.preventDefault();  // prevent default form submission
+        const negativePrompt = $('#message-3').val();
+        $('#negative_prompt_input').val(negativePrompt);  // update the hidden field
+    
+        const data = {
+            prompt: $('#message-1').val(),
+            model_input: $('#model_input').val(),
+            negative_prompt: negativePrompt
+        };
+    
+        $.ajax({
+            type: "POST",
+            url: "/model",
+            data: data,
+            success: function(response) {
+                $('#prompt_form').submit();  // manually submit the form
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });     
+
     // Check if both color and size are selected for the product
     var formSelectors = {
         tshirt: {
@@ -128,7 +152,6 @@ $(document).ready(() => {
         checkIfBothSelected(productType);
     });
     
-
     $('#generate-button').on('click', function() {
         if (message.value.trim() !== "") loaderOverlay.style.display = "flex";
     });

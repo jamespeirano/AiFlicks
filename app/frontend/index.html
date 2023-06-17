@@ -40,6 +40,7 @@
                             <form action="{{ url_for('model') }}" id="prompt_form" class="form" method="POST">
                                 <textarea id="message-1" name="prompt" rows="6" placeholder="anime female mechanical android head with flowers growing out ..." required></textarea>
                                 <input type="hidden" id="model_input" name="model_input" value="stable-diffusion">  <!-- Hidden field for model: default stable diffusion -->
+                                <input type="hidden" id="negative_prompt_input" name="negative_prompt">
                                 <button id="generate-button" class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Generate Image</button>
                                 <button class="btn btn-primary shadow" type="button" style="margin: 10px;margin-left: 10px;--bs-body-font-size: 0.5rem;background: var(--bs-gray-700);border-color: var(--bs-gray-700);" onclick="generateRandomPrompt()">Random Prompt</button>
                             </form>
@@ -95,7 +96,8 @@
                     </section>
                 </div>
                 <div class="col">
-                    <p class="my-3">Negative Prompt</p><textarea id="message-3" name="message" rows="6" placeholder="A negative prompt serves as a beacon, guiding the AI model away from unwanted elements in your crafted vision. Its role? To ensure the generation process faithfully avoids incorporating specific facets into the image, according to the text provided." style="color: var(--bs-body-color);border-radius: 20px;"></textarea>
+                    <p class="my-3">Negative Prompt</p>
+                    <textarea id="message-3" name="negative_prompt" rows="6" placeholder="A negative prompt serves as a beacon, guiding the AI model away from unwanted elements in your crafted vision. Its role? To ensure the generation process faithfully avoids incorporating specific facets into the image, according to the text provided." style="color: var(--bs-body-color);border-radius: 20px;"></textarea>
                 </div>
             </div>
         </div>
@@ -301,6 +303,7 @@
         </div>   
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/bs-init.js"></script>
     <script src="assets/js/bold-and-dark.js"></script>

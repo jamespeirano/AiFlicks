@@ -8,11 +8,13 @@ from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+time_to_live = 3*60 # 3 minutes
+
 app = Flask(__name__, template_folder='frontend', static_folder='frontend/assets')
 app.config['SECRET_KEY'] = secrets.token_hex(16)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = os.path.join(BASE_DIR, '..', 'flask_session')
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=time_to_live)
 Session(app)
 
 def cleanup_sessions(session_folder: Path, expiration_time: int):
@@ -27,7 +29,7 @@ def cleanup_sessions(session_folder: Path, expiration_time: int):
 
 scheduler = BackgroundScheduler()
 scheduler.start()
-scheduler.add_job(lambda: cleanup_sessions(Path(app.config['SESSION_FILE_DIR']), 1*60), 'interval', minutes=1)
+scheduler.add_job(lambda: cleanup_sessions(Path(app.config['SESSION_FILE_DIR']), time_to_live), 'interval', minutes=time_to_live)
 
 # avoid circular import
 from app import routes

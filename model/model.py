@@ -12,17 +12,17 @@ __all__ = ["Model"]
 headers = {"Authorization": f"Bearer {os.getenv('HUGGING_FACE_API_TOKEN')}"}
 
 class Model:
-    def __init__(self, selected_model, prompt):
+    def __init__(self, selected_model, prompt, negative_prompt):
         self.selected_model = selected_model
         self.prompt = prompt
-        self.negative_prompt = self.generate_negative_prompt(self.selected_model)
+        self.negative_prompt = negative_prompt
     
-    def generate_negative_prompt(self, selected_model):
-        """
-        Generates the negative prompt from the selected model.
-        """
-        model = selected_model.split('/')[-1]
-        return negative_prompt(model)
+    # def generate_negative_prompt(self, selected_model):
+    #     """
+    #     Generates the negative prompt from the selected model.
+    #     """
+    #     model = selected_model.split('/')[-1]
+    #     return negative_prompt(model)
 
     def generate_image(self):
         """
@@ -58,7 +58,7 @@ class Model:
                     "parameters": {
                         "negative_prompt": self.negative_prompt,
                         "guidance_scale": 7.5,
-                        "num_inference_steps": 5,
+                        "num_inference_steps": 75,
                         "height": 512,
                         "width": 512,
                     },

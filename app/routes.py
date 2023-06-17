@@ -38,19 +38,20 @@ def cart():
     return render_template('cart.html', cart_items=cart, subtotal=subtotal)
 
 @app.route('/model', methods=['GET', 'POST'])
-async def model():
+def model():
     selected_model = request.form.get('model_input')
     if not selected_model:
         return abort(400, "Model not selected")
         
     HUGGING_API = HUGGING_FACE_API_URLS.get(selected_model)
     prompt = request.form.get('prompt')
+    negative_prompt = request.form.get('negative_prompt')
 
     if not HUGGING_API or not prompt:
         return abort(400, "Invalid form data supplied")
 
     print(HUGGING_API)
-    model = Model(HUGGING_API, prompt=prompt)
+    model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
     response = model.generate_image()
     if response is None:
         return render_template("error.html")

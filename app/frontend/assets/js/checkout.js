@@ -19,16 +19,12 @@ $(document).ready(function() {
 
     // Handle modal show event
     $('#paymentModal').on('show.bs.modal', function (event) {
-        let subtotal = 0;
-        document.querySelectorAll('.total-span').forEach(function(totalSpan) {
-            subtotal += parseFloat(totalSpan.getAttribute('data-original-price'));
-        });
-        document.getElementById('subtotal').innerText = subtotal.toFixed(2);
-
-        var button = $(event.relatedTarget); 
-        var recipient = subtotal.toFixed(2); 
+        let subtotal = parseFloat(document.getElementById('subtotal').innerText);
+    
+        var button = $(event.relatedTarget);
+        var recipient = subtotal.toFixed(2);
         var modal = $(this);
-        modal.find('#subtotal-input').val(recipient); 
+        modal.find('#subtotal-input').val(recipient);
     });
 
     // Handle form submission
@@ -53,7 +49,6 @@ $(document).ready(function() {
         hiddenInput.setAttribute('name', 'stripeToken');
         hiddenInput.setAttribute('value', token.id);
         form.appendChild(hiddenInput);
-
         form.submit();
     }
 });
