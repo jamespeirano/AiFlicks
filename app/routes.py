@@ -30,29 +30,9 @@ def gallery():
 
 @app.route('/cart')
 def cart():
-    cart_items = session.get('cart', [])
-    total = 0.0
-    for item in cart_items:
-        total += item['price'] * item['quantity']
-    print(total)  # Print total
-    return render_template('cart.html', cart_items=cart_items, total=total)
-
-
-# @app.route('/cart')
-# def cart():
-#     cart_items = session.get('cart', [])
-#     return render_template('cart.html', cart_items=cart_items)
-
-# @app.route('/get-cart-total', methods=['GET'])
-# def get_cart_total():
-#     cart = session.get('cart', [])
-#     total = 0.0
-
-#     for item in cart:
-#         total += item['price'] * item['quantity']  # Multiply price by quantity for each item
-
-#     return jsonify({"total": total})
-
+    cart = session.get('cart', [])
+    subtotal = sum(item['price'] * item['quantity'] for item in cart)
+    return render_template('cart.html', cart_items=cart, subtotal=subtotal)
 
 @app.route('/model', methods=['GET', 'POST'])
 async def model():
@@ -93,7 +73,6 @@ def addToCart():
     image_base64 = request.form['imageBase64']
     selectedProduct = request.form['selectedProduct']
     quantity = int(request.form.get('quantity', 1))  # Get the quantity from the request, convert it to int, or use 1 as a default
-
 
     if selectedProduct == 'tshirt':
         selectedSize = request.form['tshirtSelectedSize']
@@ -156,20 +135,18 @@ def create_checkout_session():
 @app.route('/update-cart-quantity', methods=['POST'])
 def update_cart_quantity():
     data = request.get_json()
-    product_index = int(data.get('productIndex', 0))  # convert to int as json has no int keys
-    new_quantity = int(data.get('newQuantity', 1)) 
-
+    product_id = data.get('productId', None)
+    new_quantity = int(data.get('newQuantity', 1))
     cart = session.get('cart', [])
-    
-    if 0 <= product_index < len(cart):
-        cart[product_index]['quantity'] = new_quantity
-        session['cart'] = cart
 
-        total = 0.0
-        for item in cart:
-            total += item['price'] * item['quantity']
+    new_total = 0.0
+    subtotal = 0.0
+    for item in cart:
+        if item['id'] == product_id:
+            item['quantity'] = new_quantity
+            new_total = item['price'] * new_quantity  # New total for this item
+        subtotal += item['price'] * item['quantity']  # Subtotal for all items
 
-        return jsonify({"success": True, "newTotal": total}), 200
-    else:
-        return jsonify({"error": "Invalid product index"}), 400
+    session['cart'] = cart
 
+    return jsonify({"success": True, "newTotal": new_total, "subtotal": subtotal}), 200  # Return new total for this item and subtotal

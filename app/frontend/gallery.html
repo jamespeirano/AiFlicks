@@ -43,19 +43,90 @@
     <section class="py-4 py-xl-5">
         <div class="container">
             <div class="row gx-2 gy-2 row-cols-1 row-cols-md-2 row-cols-xl-3" data-bss-baguettebox="">
-                <div class="col"><a href="{{ url_for('gallery_image', img_name='spiderman')}}"><img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/spiderman.png"></a></div>
-                <div class="col"><a href="{{ url_for('gallery_image', img_name='snake')}}"><img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/snake.png"></a></div>
-                <div class="col"><a href="{{ url_for('gallery_image', img_name='forest')}}"><img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/forest.png"></a></div>
-                <div class="col"><a href="{{ url_for('gallery_image', img_name='desert')}}"><img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/desert.png"></a></div>
-                <div class="col"><a href="{{ url_for('gallery_image', img_name='market')}}"><img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/market.png"></a></div>
-                <div class="col"><a href="{{ url_for('gallery_image', img_name='dragon')}}"><img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/dragon.png"></a></div>
-                <div class="col"><a href="{{ url_for('gallery_image', img_name='alien')}}"><img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/alien.png"></a></div>
-                <div class="col"><a href="{{ url_for('gallery_image', img_name='owl')}}"><img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/owl.png"></a></div>
-                <div class="col"><a href="{{ url_for('gallery_image', img_name='robot')}}"><img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/robot.png"></a></div>
-                <div class="col"><a href="{{ url_for('gallery_image', img_name='tree')}}"><img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/tree.png"></a></div>
+                <div class="col">
+                    <div class="img-container">
+                        <a href="{{ url_for('gallery_image', img_name='spiderman')}}">
+                            <img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/spiderman.png">
+                            <div class="overlay"><div class="text">Click To Preview!</div></div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="img-container">
+                        <a href="{{ url_for('gallery_image', img_name='snake')}}">
+                            <img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/snake.png">
+                            <div class="overlay"><div class="text">Click To Preview!</div></div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="img-container">
+                        <a href="{{ url_for('gallery_image', img_name='forest')}}">
+                            <img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/forest.png">
+                            <div class="overlay"><div class="text">Click To Preview!</div></div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="img-container">
+                        <a href="{{ url_for('gallery_image', img_name='desert')}}">
+                            <img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/desert.png">
+                            <div class="overlay"><div class="text">Click To Preview!</div></div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="img-container">
+                        <a href="{{ url_for('gallery_image', img_name='market')}}">
+                            <img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/market.png">
+                            <div class="overlay"><div class="text">Click To Preview!</div></div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="img-container">
+                        <a href="{{ url_for('gallery_image', img_name='dragon')}}">
+                            <img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/dragon.png">
+                            <div class="overlay"><div class="text">Click To Preview!</div></div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="img-container">
+                        <a href="{{ url_for('gallery_image', img_name='alien')}}">
+                            <img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/alien.png">
+                            <div class="overlay"><div class="text">Click To Preview!</div></div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="img-container">
+                        <a href="{{ url_for('gallery_image', img_name='owl')}}">
+                            <img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/owl.png">
+                            <div class="overlay"><div class="text">Click To Preview!</div></div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="img-container">
+                        <a href="{{ url_for('gallery_image', img_name='robot')}}">
+                            <img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/robot.png">
+                            <div class="overlay"><div class="text">Click To Preview!</div></div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="img-container">
+                        <a href="{{ url_for('gallery_image', img_name='tree')}}">
+                            <img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/tree.png">
+                            <div class="overlay"><div class="text">Click To Preview!</div></div>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
+
     <footer class="bg-dark">
         <div class="container py-4 py-lg-5">
             <hr>
@@ -64,6 +135,7 @@
             </div>
         </div>
     </footer>
+    
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/bs-init.js"></script>
     <script src="assets/js/bold-and-dark.js"></script>
