@@ -1,10 +1,21 @@
-# AI Flicks
-This is a web application that utilizes image-generating AI to create unique t-shirt designs based on user input.
+# AI Flicks: AI-Powered Custom Design Creator
+
+AI Flicks is a web application that utilizes advanced image-generating AI technology to create unique and personalized designs for clothing items like t-shirts and hoodies based on user input.
+
+## Features
+
+- **AI-Powered Design**: The app uses text-to-image algorithms to generate unique designs based on user's input and preferences.
+
+- **Custom Clothing Designs**: Users can generate custom designs for various clothing items including t-shirts and hoodies.
+
+- **Personalization**: The application provides various customization options allowing users to truly create a design that matches their personal style.
+
+- **E-Commerce Integration**: After creating a design, users can add it to their cart and proceed to checkout, providing a seamless shopping experience.
 
 ## Dependencies
-Run the following command to install the required dependencies:
+Install the following dependencies:
 ```python
-pip install -r requirements.txt
+pip -r install requirements.txt
 ```
 
 ## Usage
