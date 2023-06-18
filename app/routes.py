@@ -38,6 +38,10 @@ def gallery():
 @app.route('/cart')
 def cart():
     cart = session.get('cart', [])
+
+    if not cart:
+        return render_template('cart.html', cart_items=cart, subtotal=0)
+    
     subtotal = sum(item['price'] * item['quantity'] for item in cart)
     return render_template('cart.html', cart_items=cart, subtotal=subtotal)
 
@@ -182,8 +186,8 @@ def checkout():
     cart = session.get('cart', [])
 
     send_email(
-        "Your AiFlics order receipt",
-        email, name, address, None, 'invoice_no', subtotal, toCustomer=False, cartItems=cart
+        "Your order receipt from AI FLICKS",
+        email, name, address, None, 'invoice_no', subtotal, to_customer=True, cart_items=cart
     )
 
     session.pop('cart', None)  # Clear the cart
