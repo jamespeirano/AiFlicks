@@ -2,98 +2,90 @@ import os
 import smtplib
 from email.message import EmailMessage
 from email.utils import formataddr
+from dotenv import dotenv_values
 
-from dotenv import load_dotenv  
+config = dotenv_values(".env")
 
-load_dotenv()
+PORT = 587
+EMAIL_SERVER = "smtp-mail.outlook.com"
 
+sender_email = config['SENDER_EMAIL']
+password_email = config['PASSWORD_EMAIL']
 
-PORT = 587  
-EMAIL_SERVER = "smtp-mail.outlook.com"  # Adjust server address, if you are not using @outlook
+def format_cart_items(cartItems):
+    return "\n".join(
+        f"{item['quantity']}x {item['name']} (size: {item['size']}, color: {item['color']}, image: {item['image']})"
+        for item in cartItems
+    )
 
-# Read environment variables
-sender_email = os.getenv("EMAIL")
-password_email = os.getenv("PASSWORD")
-
-
-def send_email(subject, receiver_email, name, address, phone, invoice_no, amount, toCustomer=False, cartItems=None):
-
-    # Create the base text message.
+def create_msg(subject, receiver_email, formatted_cart_items, name, address, phone, invoice_no, amount, toCustomer):
     msg = EmailMessage()
     msg["Subject"] = subject
-    msg["From"] = formataddr(("AiFlics!", f"{sender_email}"))
+    msg["From"] = formataddr(("AI FLICKS", f"{sender_email}"))
     msg["To"] = receiver_email
     msg["BCC"] = sender_email
-
+    
     if toCustomer:
-      msg.set_content(
-          f"""\
-          Hi {name},
-          Here is your receipt for {cartItems} in the total amount of {amount}.
-          your invoice # is {invoice_no}.
-          Your custom products are on their way to:
-          Address: {address}
-          Phone: {phone}
-          Best regards,
-          AiFlics
-          """
-      )
-      # Add the html version.  This converts the message into a multipart/alternative
-      # container, with the original text message as the first part and the new html
-      # message as the second part.
-      msg.add_alternative(
-          f"""\
-      <html>
-        <body>
-          <p>Here is your receipt for {cartItems} in the total amount of {amount}.</p>
-          <p>Your invoice # is {invoice_no}.</p>
-          <p>Your custom products are on their way to:</p>
-          <p>Address: {address}</p>
-          <p>Phone: {phone}</p>
-          <p>Best regards,</p>
-          <p>AiFlics</p>
-        </body>
-      </html>
-      """,
-          subtype="html",
-      )
+        content = f"""\
+            Hi {name},
+            Here is your receipt for the following items:
+            {formatted_cart_items}
+            Total amount: {amount}.
+            Your invoice # is {invoice_no}.
+            Your custom products are on their way to:
+            Address: {address}
+            Phone: {phone}
+            Best regards,
+            AiFlics
+            """
+        alternative_content = f"""\
+            <html>
+                <body>
+                    <p>Hi {name},</p>
+                    <p>Here is your receipt for the following items:</p>
+                    <p>{formatted_cart_items}</p>
+                    <p>Total amount: {amount}.</p>
+                    <p>Your invoice # is {invoice_no}.</p>
+                    <p>Your custom products are on their way to:</p>
+                    <p>Address: {address}</p>
+                    <p>Phone: {phone}</p>
+                    <p>Best regards,</p>
+                    <p>AiFlics</p>
+                </body>
+            </html>
+            """
     else:
-      msg.set_content(
-          f"""\
-          New Order for {name},
-            {amount}
-            {invoice_no} 
-          
+        content = f"""\
+            Customer name: {name},
+            Total amount: {amount},
+            Invoice #: {invoice_no},
+            Shipping details:
+            Address: {address},
+            Phone: {phone},
+            Ordered items:
+            {formatted_cart_items}
+            """
+        alternative_content = f"""\
+            <html>
+                <body>
+                    <p>Customer name: {name},</p>
+                    <p>Total amount: {amount}.</p>
+                    <p>Invoice #: {invoice_no}.</p>
+                    <p>Shipping details:</p>
+                    <p>Address: {address}</p>
+                    <p>Phone: {phone}</p>
+                    <p>Ordered items:</p>
+                    <p>{formatted_cart_items}</p>
+                </body>
+            </html>
+            """
+    msg.set_content(content)
+    msg.add_alternative(alternative_content, subtype="html")
+    return msg
 
-          Address: {address}
-          Phone: {phone}
-
-
-          {cartItems}
-          WOOOO
-          """
-      )
-      # Add the html version.  This converts the message into a multipart/alternative
-      # container, with the original text message as the first part and the new html
-      # message as the second part.
-      msg.add_alternative(
-          f"""\
-      <html>
-        <body>
-          <body>
-            <p>New Order for {name},</p>
-            <p>{amount}</p>
-            <p>{invoice_no}</p>
-            <p>Address: {address}</p>
-            <p>Phone: {phone}</p>
-            <p>{cartItems}</p>
-            <p>WOOOO</p>
-        </body>
-      </html>
-      """,
-          subtype="html",
-      )
-
+def send_email(subject, receiver_email, name, address, phone, invoice_no, amount, toCustomer=False, cartItems=None):
+    formatted_cart_items = format_cart_items(cartItems)
+    msg = create_msg(subject, receiver_email, formatted_cart_items, name, address, phone, invoice_no, amount, toCustomer)
 
     with smtplib.SMTP(EMAIL_SERVER, PORT) as server:
         server.starttls()

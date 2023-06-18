@@ -21,6 +21,29 @@ $(document).ready(() => {
         // Disable the button if subtotal is 0
         $('#checkout-btn').prop('disabled', true);
     }
+
+    $('.remove-item').click(function(e){
+        e.preventDefault();
+        var productId = $(this).data('id');
+        var parent = $(this).closest('.row');
+
+        $.ajax({
+            url: '/remove-from-cart',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                productId: productId
+            }),
+            success: function(response){
+                if(response.success){
+                    parent.remove();
+                    if($('.item-row').length === 0) {
+                        $('#empty-cart-message').show();
+                    }
+                }
+            }
+        });
+    });
 });
 
 function updateQuantityOnServer(productId, quantity) {

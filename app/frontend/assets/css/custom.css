@@ -193,15 +193,6 @@
   max-width: 25%;
 }
 
-.ref-quantity-widget input {
-  width: 40px !important;
-}
-
-.ref-tab, .ref-tab * {
-  --bs-body-color: initial !important;
-  color: initial !important;
-}
-
 .quantity {
   display: flex;
   align-items: center;
@@ -232,14 +223,14 @@
 }
 .quantity__input {
   width: 32px;
-  height: 19px;
+  height: 23px;
   margin: 0;
   padding: 0;
   text-align: center;
   border-top: 2px solid #dee0ee;
   border-bottom: 2px solid #dee0ee;
   border-left: 1px solid #dee0ee;
-  border-right: 2px solid #dee0ee;
+  border-right: 1px solid #dee0ee;
   background: #fff;
   color: #8184a1;
 }
@@ -281,4 +272,13 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
+}
+
+.remove-item {
+  font-size: 15px;
+  color: #9e0e23;
+}
+
+.remove-item:hover {
+  cursor: pointer;
 }

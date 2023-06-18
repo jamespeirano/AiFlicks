@@ -42,31 +42,37 @@
             </div>
             <hr>
 
-            {% for item in cart_items %}
-                <div class="row" style="margin-bottom: 20px;">
-                    <div class="col"><img src="data:image/png;base64,{{item.image}}" width="150" height="150"></div>
-                    <div class="col">
-                        <p style="font-weight: bold;font-size: 20px;">{{ item.name }}</p>
-                        <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Size:&nbsp;&nbsp;<span style="text-align: justify;">{{ item.size }}</span>&nbsp;</p>
-                        <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Color:&nbsp;&nbsp;<span style="text-align: justify;">{{ item.color }}</span>&nbsp;</p>
-                    </div>
-                    <div class="col" style="text-align: right;font-size: 20px;">
-                        <p style="font-size: 20px;padding-top: 30px;">$<span class="price-span" data-original-price="{{ item.price }}" style="text-align: justify;">{{ "%.2f"|format(item.price) }}</span></p>
-                    </div>
-                    <div class="col" style="padding-top: 30px;">
-                        <div class="quantity" data-product-id="{{ item.id }}" style="text-align: center; justify-content: center;">
-                            <a href="#" class="quantity__minus"><span>-</span></a>
-                            <input name="quantity" type="text" class="quantity__input" value="{{ item.quantity }}">
-                            <a href="#" class="quantity__plus"><span>+</span></a>
+            <div id="cart-items-container">
+                {% if cart_items %}
+                    {% for item in cart_items %}
+                        <div class="row item-row" data-id="{{ item.id }}" style="margin-bottom: 20px;">
+                            <div class="col"><img src="data:image/png;base64,{{item.image}}" width="150" height="150"></div>
+                            <div class="col">
+                                <p style="font-weight: bold;font-size: 20px;">{{ item.name }}</p>
+                                <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Size:&nbsp;&nbsp;<span style="text-align: justify;">{{ item.size }}</span>&nbsp;</p>
+                                <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Color:&nbsp;&nbsp;<span style="text-align: justify;">{{ item.color }}</span>&nbsp;</p>
+                            </div>
+                            <div class="col" style="text-align: right;font-size: 20px;">
+                                <p style="font-size: 20px;padding-top: 30px;">$<span class="price-span" data-original-price="{{ item.price }}" style="text-align: justify;">{{ "%.2f"|format(item.price) }}</span></p>
+                            </div>
+                            <div class="col" style="padding-top: 30px;">
+                                <div class="quantity" data-product-id="{{ item.id }}" style="text-align: center; justify-content: center;">
+                                    <a href="#" class="quantity__minus"><span>-</span></a>
+                                    <input name="quantity" type="text" class="quantity__input" value="{{ item.quantity }}">
+                                    <a href="#" class="quantity__plus"><span>+</span></a>
+                                </div>
+                                <p class="remove-item" data-id="{{ item.id }}" style="margin-top: 10px; text-align: center; justify-content: center;">Remove Item</button>
+                            </div>
+                            <div class="col" style="text-align: right;">
+                                <p style="font-size: 20px;padding-top: 30px;">$<span class="total-span product-total" data-product-id="{{ item.id }}" id="product-subtotal" style="text-align: justify;">{{ "%.2f"|format(item.price * item.quantity) }}</span></p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col" style="text-align: right;">
-                        <p style="font-size: 20px;padding-top: 30px;">$<span class="total-span product-total" data-product-id="{{ item.id }}" id="product-subtotal" style="text-align: justify;">{{ "%.2f"|format(item.price * item.quantity) }}</span></p>
-                    </div>
-                </div>
-            {% else %}
-                <p style="font-size: 17px">Cart is empty.</p>
-            {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <p id="empty-cart-message" style="font-size: 17px;">Cart is empty.</p>
+                {% endif %}
+            </div>
+            
 
             <hr>
             <div class="col">
@@ -122,7 +128,7 @@
                                 <div id="card-error" role="alert" class="text-danger mt-2"></div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-dark mt-3">Submit</button>
+                        <button type="submit" id="submit-payment" class="btn btn-dark mt-3">Submit</button>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -140,6 +146,198 @@
             </div>
         </div>
     </footer>
+
+    <div class="loader-overlay" id="loader-overlay" style="display: none">
+        <div class="loader">
+            <div class="gel center-gel">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c1 r1">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c2 r1">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c3 r1">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c4 r1">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c5 r1">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c6 r1">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            
+            <div class="gel c7 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            
+            <div class="gel c8 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c9 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c10 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c11 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c12 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c13 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c14 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c15 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c16 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c17 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c18 r2">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c19 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c20 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c21 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c22 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c23 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c24 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c25 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c26 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c28 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c29 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c30 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c31 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c32 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c33 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c34 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c35 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c36 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+            <div class="gel c37 r3">
+                <div class="hex-brick h1"></div>
+                <div class="hex-brick h2"></div>
+                <div class="hex-brick h3"></div>
+            </div>
+        </div>   
+    </div>
 
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bold-and-dark.js') }}"></script>

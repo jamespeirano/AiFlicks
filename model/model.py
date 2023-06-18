@@ -4,8 +4,6 @@ import requests
 import base64
 from PIL import Image
 
-from utils import negative_prompt
-
 __all__ = ["Model"]
 
 

@@ -1,7 +1,7 @@
 import base64
 from flask import render_template, request, jsonify, url_for, redirect, session, abort
 from dotenv import dotenv_values
-from utils import generate_random_prompt, Tshirt, Hoodie
+from utils import generate_random_prompt, Tshirt, Hoodie, send_email
 from model import Model
 from app import app
 import stripe
@@ -18,24 +18,29 @@ HUGGING_FACE_API_URLS = {
 
 stripe.api_key = config['STRIPE_SECRET_KEY']
 
+
 @app.route('/')
 def index():
     session.permanent = False
     return render_template("index.html")
 
+
 @app.route('/models')
 def models():
     return render_template('models.html')
 
+
 @app.route('/gallery')
 def gallery():
     return render_template('gallery.html')
+
 
 @app.route('/cart')
 def cart():
     cart = session.get('cart', [])
     subtotal = sum(item['price'] * item['quantity'] for item in cart)
     return render_template('cart.html', cart_items=cart, subtotal=subtotal)
+
 
 @app.route('/model', methods=['GET', 'POST'])
 def model():
@@ -57,6 +62,7 @@ def model():
         return render_template("error.html")
     return render_template("result.html", image=response, prompt=prompt)
 
+
 @app.route('/gallery-image/<img_name>', methods=['GET'])
 def gallery_image(img_name):
     try:
@@ -67,11 +73,13 @@ def gallery_image(img_name):
         print(e)
         return render_template("error.html")
 
+
 @app.route('/random-prompt', methods=['GET'])
 def random_prompt():
     selected_model = request.args.get('model')
     prompt = generate_random_prompt(selected_model)
     return jsonify({'prompt': prompt})
+
 
 @app.route('/addToCart', methods=['POST'])
 def addToCart():
@@ -96,8 +104,43 @@ def addToCart():
     cart = session.get('cart', [])
     cart.append(product.to_dict())
     session['cart'] = cart
-
     return redirect(url_for('cart'))
+
+
+@app.route('/remove-from-cart', methods=['POST'])
+def remove_from_cart():
+    data = request.get_json()
+    product_id = data.get('productId', None)
+    cart = session.get('cart', [])
+
+    for item in cart:
+        if item['id'] == product_id:
+            cart.remove(item)
+            break
+
+    session['cart'] = cart
+    return jsonify({"success": True}), 200
+
+
+@app.route('/update-cart-quantity', methods=['POST'])
+def update_cart_quantity():
+    data = request.get_json()
+    product_id = data.get('productId', None)
+    new_quantity = int(data.get('newQuantity', 1))
+    cart = session.get('cart', [])
+
+    new_total = 0.0
+    subtotal = 0.0
+    for item in cart:
+        if item['id'] == product_id:
+            item['quantity'] = new_quantity
+            new_total = item['price'] * new_quantity
+        subtotal += item['price'] * item['quantity']
+
+    session['cart'] = cart
+
+    return jsonify({"success": True, "newTotal": new_total, "subtotal": subtotal}), 200
+
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
@@ -105,7 +148,6 @@ def create_checkout_session():
     if not cart:
         return abort(400, "Cart is empty")
 
-    # Use list comprehension for generating line items
     line_items = [{
         'price_data': {
             'currency': 'usd',
@@ -128,22 +170,26 @@ def create_checkout_session():
         return jsonify(id=checkout_session.id)
     except Exception as e:
         return jsonify(error=str(e)), 403
+    
 
-@app.route('/update-cart-quantity', methods=['POST'])
-def update_cart_quantity():
+@app.route('/checkout', methods=['POST'])
+def checkout():
     data = request.get_json()
-    product_id = data.get('productId', None)
-    new_quantity = int(data.get('newQuantity', 1))
+    name = data.get('name')
+    email = data.get('email')
+    address = data.get('address')
+    subtotal = data.get('subtotal')
     cart = session.get('cart', [])
 
-    new_total = 0.0
-    subtotal = 0.0
-    for item in cart:
-        if item['id'] == product_id:
-            item['quantity'] = new_quantity
-            new_total = item['price'] * new_quantity
-        subtotal += item['price'] * item['quantity']
+    send_email(
+        "Your AiFlics order receipt",
+        email, name, address, None, 'invoice_no', subtotal, toCustomer=False, cartItems=cart
+    )
 
-    session['cart'] = cart
+    session.pop('cart', None)  # Clear the cart
+    return jsonify({"redirect": url_for('success')})
 
-    return jsonify({"success": True, "newTotal": new_total, "subtotal": subtotal}), 200
+
+@app.route('/success')
+def success():
+    return render_template('success.html')
