@@ -16,9 +16,6 @@ HUGGING_FACE_API_URLS = {
     'dreamlike-anime': config['HUGGING_FACE_API_URL4'],
 }
 
-stripe.api_key = config['STRIPE_SECRET_KEY']
-
-
 @app.route('/')
 def index():
     session.permanent = False
@@ -46,19 +43,21 @@ def cart():
     return render_template('cart.html', cart_items=cart, subtotal=subtotal)
 
 
-@app.route('/model', methods=['GET', 'POST'])
+@app.route('/model', methods=['POST'])
 def model():
-    selected_model = request.form.get('model_input')
-    if not selected_model:
-        return abort(400, "Model not selected")
-        
-    HUGGING_API = HUGGING_FACE_API_URLS.get(selected_model)
-    prompt = request.form.get('prompt')
-    negative_prompt = request.form.get('negative_prompt')
+    data = request.form
 
-    if not HUGGING_API or not prompt:
+    selected_model = data.get('model_input')
+    prompt = data.get('prompt')
+    negative_prompt = data.get('negative_prompt')
+
+    if not selected_model or not prompt:
         return abort(400, "Invalid form data supplied")
 
+    HUGGING_API = HUGGING_FACE_API_URLS.get(selected_model)
+    if not HUGGING_API:
+        return abort(400, "Invalid model selected")
+    
     print(HUGGING_API)
     model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
     response = model.generate_image()
@@ -164,36 +163,67 @@ def create_checkout_session():
     } for product in cart]
 
     try:
+        stripe.api_key = config['STRIPE_SECRET_KEY']
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=line_items,
             mode='payment',
+            shipping_address_collection={
+                'allowed_countries': ['US'],
+            },
+            billing_address_collection='required',
             success_url=url_for('success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=url_for('cancel', _external=True),
+            cancel_url=url_for('cart', _external=True),  # Updated to cart route
         )
         return jsonify(id=checkout_session.id)
     except Exception as e:
         return jsonify(error=str(e)), 403
     
 
-@app.route('/checkout', methods=['POST'])
-def checkout():
-    data = request.get_json()
-    name = data.get('name')
-    email = data.get('email')
-    address = data.get('address')
-    subtotal = data.get('subtotal')
-    cart = session.get('cart', [])
-
-    send_email(
-        "Your order receipt from AI FLICKS",
-        email, name, address, None, 'invoice_no', subtotal, to_customer=True, cart_items=cart
-    )
-
-    session.pop('cart', None)  # Clear the cart
-    return jsonify({"redirect": url_for('success')})
-
+from flask import current_app
 
 @app.route('/success')
 def success():
-    return render_template('success.html')
+    session_id = request.args.get('session_id', None)
+    stripe.api_key = config['STRIPE_SECRET_KEY']
+
+    try:
+        current_app.logger.info(f"Retrieving session: {session_id}")
+        stripe_session = stripe.checkout.Session.retrieve(session_id)
+        current_app.logger.info(f"Retrieved session: {stripe_session}")
+        
+        payment_intent = stripe.PaymentIntent.retrieve(stripe_session.payment_intent)
+        current_app.logger.info(f"Retrieved payment_intent: {payment_intent}")
+        
+        if payment_intent.status == 'succeeded':
+            cart = session.get('cart', [])
+
+            customer_email = stripe_session.customer_details.email
+            customer_name = stripe_session.customer_details.name
+            print('before shipping')
+            address = stripe_session.shipping.address.line1 + ', ' + stripe_session.shipping.address.city + ', ' + stripe_session.shipping.address.state + ', ' + stripe_session.shipping.address.postal_code
+            print('after shipping')
+            invoice = stripe_session.id
+
+            send_email(
+                "Your order receipt from AI FLICKS",
+                customer_email, 
+                customer_name, 
+                address, 
+                None,
+                invoice, 
+                payment_intent.amount / 100, 
+                to_customer=True, 
+                cart_items=cart
+            )
+            current_app.logger.info("Email sent")
+
+            session.pop('cart', None)  # Clear the cart from your app's session
+            current_app.logger.info("Cart cleared")
+
+            return render_template('success.html')
+        else:
+            return redirect(url_for('cart'))
+    except Exception as e:
+        current_app.logger.error(f"Error: {e}")
+        return render_template('error.html', error=str(e))  # Render an error page

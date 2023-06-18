@@ -6,47 +6,32 @@ from PIL import Image
 
 __all__ = ["Model"]
 
-
 headers = {"Authorization": f"Bearer {os.getenv('HUGGING_FACE_API_TOKEN')}"}
+
+
+class ModelException(Exception):
+    pass
+
 
 class Model:
     def __init__(self, selected_model, prompt, negative_prompt):
         self.selected_model = selected_model
         self.prompt = prompt
         self.negative_prompt = negative_prompt
-    
-    # def generate_negative_prompt(self, selected_model):
-    #     """
-    #     Generates the negative prompt from the selected model.
-    #     """
-    #     model = selected_model.split('/')[-1]
-    #     return negative_prompt(model)
 
     def generate_image(self):
-        """
-        Generates the image from the response.
-        """
-        response = self.fetch_response()
-
-        if response is None:
-            return None
-        if response.status_code != 200:
-            return None
-
         try:
-            image = Image.open(io.BytesIO(response.content))
+            response_content = self.fetch_response()
+            image = Image.open(io.BytesIO(response_content))
             image_byte_data = io.BytesIO()
             image.save(image_byte_data, format='PNG')
             base_64_image = base64.b64encode(image_byte_data.getvalue()).decode('utf-8')
-        except Exception:
-            return None
-
+        except Exception as e:
+            print(f"Failed to generate image: {e}")
+            raise ModelException(f"Failed to generate image: {e}") from e
         return base_64_image
-    
+
     def fetch_response(self):
-        """
-        Fetches the response from the API.
-        """
         try:
             response = requests.post(
                 self.selected_model,
@@ -68,15 +53,18 @@ class Model:
                     }
                 }
             )
-        except requests.RequestException:
-            response = None
+        except requests.RequestException as e:
+            print(f"RequestException: {e}")
+            raise ModelException(f"RequestException: {e}") from e
 
         if response.status_code != 200:
-            print(f"Response status code: {response.status_code}")
+            print(f"Failed to generate image: {response.status_code}")
             print(f"Response text: {response.text}")
-        if response.status_code == 400:
-            print("Bad Request - there might be something wrong with your parameters.")
-        elif response.status_code == 401:
-            print("Unauthorized - there might be something wrong with your authentication.")
+            if response.status_code == 400:
+                raise ModelException("Bad Request - there might be something wrong with your parameters.")
+            elif response.status_code == 401:
+                raise ModelException("Unauthorized - there might be something wrong with your authentication.")
+            else:
+                raise ModelException(f"Unexpected status code: {response.status_code}")
 
-        return response
+        return response.content
