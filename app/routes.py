@@ -190,19 +190,19 @@ def success():
     try:
         current_app.logger.info(f"Retrieving session: {session_id}")
         stripe_session = stripe.checkout.Session.retrieve(session_id)
-        current_app.logger.info(f"Retrieved session: {stripe_session}")
+        current_app.logger.info(f"Retrieved session")
+        # current_app.logger.info(f"Retrieved session: {stripe_session}")
         
         payment_intent = stripe.PaymentIntent.retrieve(stripe_session.payment_intent)
-        current_app.logger.info(f"Retrieved payment_intent: {payment_intent}")
+        current_app.logger.info(f"Retrieved payment_intent")
+        # current_app.logger.info(f"Retrieved payment_intent: {payment_intent}")
         
         if payment_intent.status == 'succeeded':
             cart = session.get('cart', [])
 
             customer_email = stripe_session.customer_details.email
             customer_name = stripe_session.customer_details.name
-            print('before shipping')
-            address = stripe_session.shipping.address.line1 + ', ' + stripe_session.shipping.address.city + ', ' + stripe_session.shipping.address.state + ', ' + stripe_session.shipping.address.postal_code
-            print('after shipping')
+            address = stripe_session.customer_details.address
             invoice = stripe_session.id
 
             send_email(
@@ -217,8 +217,9 @@ def success():
                 cart_items=cart
             )
             current_app.logger.info("Email sent")
-
-            session.pop('cart', None)  # Clear the cart from your app's session
+            
+            # Clear the cart from your app's session
+            session.pop('cart', None)
             current_app.logger.info("Cart cleared")
 
             return render_template('success.html')
@@ -226,4 +227,4 @@ def success():
             return redirect(url_for('cart'))
     except Exception as e:
         current_app.logger.error(f"Error: {e}")
-        return render_template('error.html', error=str(e))  # Render an error page
+        return render_template('fail-checkout.html', error=str(e))

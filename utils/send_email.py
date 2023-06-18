@@ -30,6 +30,8 @@ def create_msg(subject, receiver_email, cart_items, name, address, phone, invoic
     msg["To"] = receiver_email
     msg["BCC"] = sender_email
 
+    address = f"{address['line1']}, {address['city']}, {address['state']} {address['postal_code']}, {address['country']}"
+
     table_header = """
     <tr style='background-color: #4CAF50;'>
         <th style='border: 1px solid #ddd; padding: 8px; color: white;'>Name</th>
