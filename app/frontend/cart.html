@@ -1,110 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Shopping Cart - aiflicks</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;display=swap">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/Lightbox-Gallery-baguetteBox.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/Projects-Grid-Horizontal-images.css') }}">
-    <link rel="icon" type="image/x-icon" href="assets/img/favicon.svg">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
+{% block title %}Shopping Cart{% endblock %}
 
-</head>
-
-<body>
-    <nav class="navbar navbar-dark navbar-expand-md sticky-top py-3" id="mainNav-1">
-        <div class="container"><a class="navbar-brand d-flex align-items-center" href="/"><span class="shadow d-flex justify-content-center align-items-center bs-icon-sm bs-icon-circle bs-icon-primary me-2 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewbox="0 0 16 16" class="bi bi-bezier"><path fill-rule="evenodd" d="M0 10.5A1.5 1.5 0 0 1 1.5 9h1A1.5 1.5 0 0 1 4 10.5v1A1.5 1.5 0 0 1 2.5 13h-1A1.5 1.5 0 0 1 0 11.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm10.5.5A1.5 1.5 0 0 1 13.5 9h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zM6 4.5A1.5 1.5 0 0 1 7.5 3h1A1.5 1.5 0 0 1 10 4.5v1A1.5 1.5 0 0 1 8.5 7h-1A1.5 1.5 0 0 1 6 5.5v-1zM7.5 4a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"></path><path d="M6 4.5H1.866a1 1 0 1 0 0 1h2.668A6.517 6.517 0 0 0 1.814 9H2.5c.123 0 .244.015.358.043a5.517 5.517 0 0 1 3.185-3.185A1.503 1.503 0 0 1 6 5.5v-1zm3.957 1.358A1.5 1.5 0 0 0 10 5.5v-1h4.134a1 1 0 1 1 0 1h-2.668a6.517 6.517 0 0 1 2.72 3.5H13.5c-.123 0-.243.015-.358.043a5.517 5.517 0 0 0-3.185-3.185z"></path></svg></span></a><a class="text-uppercase fs-4 fw-bolder" href="{{ url_for('index') }}">AI FLICKS</a><button data-bs-toggle="collapse" data-bs-target="#navcol-2" class="navbar-toggler text-white"><span class="visually-hidden">Toggle navigation</span><span class="text-white navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse justify-content-end" id="navcol-2">
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link active" href="{{ url_for('models') }}">Models</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('gallery') }}">Gallery</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('cart') }}">Cart</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <header class="bg-dark">
-        <div class="container py-5">
-            <p style="font-weight: bold;padding-bottom: 30px;">Shopping Cart</p>
-            <div class="row" style="font-size: 20px;">
-                <div class="col"><span>PRODUCT</span></div>
-                <div class="col">
-                    <p></p>
-                </div>
-                <div class="col" style="text-align: right;"><span>PRICE</span></div>
-                <div class="col" style="text-align: center;"><span>QUANTITY</span></div>
-                <div class="col" style="text-align: right;"><span style="text-align: justify;">TOTAL</span></div>
-            </div>
-            <hr>
-
-            <div id="cart-items-container">
-                {% if cart_items %}
-                    {% for item in cart_items %}
-                        <div class="row item-row" data-id="{{ item.id }}" style="margin-bottom: 20px;">
-                            <div class="col"><img src="data:image/png;base64,{{item.image}}" width="150" height="150"></div>
-                            <div class="col">
-                                <p style="font-weight: bold;font-size: 20px;">{{ item.name }}</p>
-                                <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Size:&nbsp;&nbsp;<span style="text-align: justify;">{{ item.size }}</span>&nbsp;</p>
-                                <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Color:&nbsp;&nbsp;<span style="text-align: justify;">{{ item.color }}</span>&nbsp;</p>
-                            </div>
-                            <div class="col" style="text-align: right;font-size: 20px;">
-                                <p style="font-size: 20px;padding-top: 30px;">$<span class="price-span" data-original-price="{{ item.price }}" style="text-align: justify;">{{ "%.2f"|format(item.price) }}</span></p>
-                            </div>
-                            <div class="col" style="padding-top: 30px;">
-                                <div class="quantity" data-product-id="{{ item.id }}" style="text-align: center; justify-content: center;">
-                                    <a href="#" class="quantity__minus"><span>-</span></a>
-                                    <input name="quantity" type="text" class="quantity__input" value="{{ item.quantity }}">
-                                    <a href="#" class="quantity__plus"><span>+</span></a>
-                                </div>
-                                <p class="remove-item" data-id="{{ item.id }}" style="margin-top: 10px; text-align: center; justify-content: center;">Remove Item</button>
-                            </div>
-                            <div class="col" style="text-align: right;">
-                                <p style="font-size: 20px;padding-top: 30px;">$<span class="total-span product-total" data-product-id="{{ item.id }}" id="product-subtotal" style="text-align: justify;">{{ "%.2f"|format(item.price * item.quantity) }}</span></p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p id="empty-cart-message" style="font-size: 17px;">Cart is empty.</p>
-                {% endif %}
-            </div>
-            
-
-            <hr>
+{% block header %}
+<header class="bg-dark">
+    <div class="container py-5">
+        <p style="font-weight: bold;padding-bottom: 30px;">Shopping Cart</p>
+        <div class="row" style="font-size: 20px;">
+            <div class="col"><span>PRODUCT</span></div>
             <div class="col">
-                <p style="font-size: 20px;padding-top: 30px;text-align: right;"><strong>Subtotal: </strong>$<span id="subtotal" style="text-align: justify;">{{ "%.2f"|format(subtotal) }}</span></p>
-                <section class="py-5" style="display: flex;justify-content: flex-end;">
-                    <form action="/create-checkout-session" method="POST" id="checkout-form">
-                        <input type="hidden" id="session-id" name="sessionId">
-                        <button class="btn btn-primary shadow" id="checkout-btn" type="button" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;padding: 11.6px 32px;" data-bs-toggle="modal" data-bs-target="#paymentModal" disabled>Checkout!</button>
-                    </form>
-                </section>
+                <p></p>
             </div>
+            <div class="col" style="text-align: right;"><span>PRICE</span></div>
+            <div class="col" style="text-align: center;"><span>QUANTITY</span></div>
+            <div class="col" style="text-align: right;"><span style="text-align: justify;">TOTAL</span></div>
         </div>
-    </header>
+        <hr>
 
-    <footer class="bg-dark">
-        <div class="container py-4 py-lg-5">
-            <hr>
-            <div class="text-muted d-flex justify-content-between align-items-center pt-3">
-                <p class="mb-0">Copyright © 2023 aiflicks</p>
-            </div>
+        <div id="cart-items-container">
+            {% if cart_items %}
+                {% for item in cart_items %}
+                    <div class="row item-row" data-id="{{ item.id }}" style="margin-bottom: 20px;">
+                        <div class="col"><img src="data:image/png;base64,{{item.image}}" width="150" height="150"></div>
+                        <div class="col">
+                            <p style="font-weight: bold;font-size: 20px;">{{ item.name }}</p>
+                            <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Size:&nbsp;&nbsp;<span style="text-align: justify;">{{ item.size }}</span>&nbsp;</p>
+                            <p style="text-align: left;font-size: 17px;color: var(--bs-gray-400);height: 15px;">Color:&nbsp;&nbsp;<span style="text-align: justify;">{{ item.color }}</span>&nbsp;</p>
+                        </div>
+                        <div class="col" style="text-align: right;font-size: 20px;">
+                            <p style="font-size: 20px;padding-top: 30px;">$<span class="price-span" data-original-price="{{ item.price }}" style="text-align: justify;">{{ "%.2f"|format(item.price) }}</span></p>
+                        </div>
+                        <div class="col" style="padding-top: 30px;">
+                            <div class="quantity" data-product-id="{{ item.id }}" style="text-align: center; justify-content: center;">
+                                <a href="#" class="quantity__minus"><span>-</span></a>
+                                <input name="quantity" type="text" class="quantity__input" value="{{ item.quantity }}">
+                                <a href="#" class="quantity__plus"><span>+</span></a>
+                            </div>
+                            <p class="remove-item" data-id="{{ item.id }}" style="margin-top: 10px; text-align: center; justify-content: center;">Remove Item</button>
+                        </div>
+                        <div class="col" style="text-align: right;">
+                            <p style="font-size: 20px;padding-top: 30px;">$<span class="total-span product-total" data-product-id="{{ item.id }}" id="product-subtotal" style="text-align: justify;">{{ "%.2f"|format(item.price * item.quantity) }}</span></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p id="empty-cart-message" style="font-size: 17px;">Cart is empty.</p>
+            {% endif %}
         </div>
-    </footer>
+        
 
-    <script src="https://js.stripe.com/v3/"></script>
-    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bold-and-dark.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/Lightbox-Gallery-baguetteBox.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/Lightbox-Gallery.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bs-init.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/cart.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/checkout.js')}}"></script>
-
-</body>
-</html>
+        <hr>
+        <div class="col">
+            <p style="font-size: 20px;padding-top: 30px;text-align: right;"><strong>Subtotal: </strong>$<span id="subtotal" style="text-align: justify;">{{ "%.2f"|format(subtotal) }}</span></p>
+            <section class="py-5" style="display: flex;justify-content: flex-end;">
+                <form action="/create-checkout-session" method="POST" id="checkout-form">
+                    <input type="hidden" id="session-id" name="sessionId">
+                    <button class="btn btn-primary shadow" id="checkout-btn" type="button" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;padding: 11.6px 32px;" data-bs-toggle="modal" data-bs-target="#paymentModal" disabled>Checkout!</button>
+                </form>
+            </section>
+        </div>
+    </div>
+</header>
+{% endblock %}

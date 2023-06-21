@@ -9,7 +9,7 @@ from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-time_to_live = 10 * 60 # 10 minutes
+time_to_live = 5        # minutes
 
 app = Flask(__name__, template_folder='frontend', static_folder='frontend/assets')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', default=secrets.token_hex(16))
@@ -23,7 +23,7 @@ def cleanup_sessions(session_folder: Path, expiration_time: int):
     now = datetime.now()
 
     for file_path in session_folder.iterdir():
-        if file_path.is_file() and file_path.stat().st_mtime < (now - timedelta(seconds=expiration_time)).timestamp():
+        if file_path.is_file() and file_path.stat().st_mtime < (now - timedelta(minutes=expiration_time)).timestamp():
             try:
                 file_path.unlink()
             except Exception as e:

@@ -1,7 +1,8 @@
+import os
 import base64
 from flask import render_template, request, jsonify, url_for, redirect, session, abort
 from dotenv import dotenv_values
-from utils import generate_random_prompt, Tshirt, Hoodie, send_email
+from utils import generate_random_prompt, generate_negative_prompt, send_email, Tshirt, Hoodie
 from model import Model
 from app import app
 import stripe
@@ -29,7 +30,9 @@ def models():
 
 @app.route('/gallery')
 def gallery():
-    return render_template('gallery.html')
+    exclude_images = ['forest.png', 'hoodie-b.png', 'hoodie-w.png', 'tshirt-b.png', 'tshirt-w.png', 'logo.png']
+    images = [f for f in os.listdir('app/frontend/assets/img') if f.endswith('.png') and f not in exclude_images]
+    return render_template('gallery.html', images=images)
 
 
 @app.route('/cart')
@@ -57,8 +60,10 @@ def model():
     HUGGING_API = HUGGING_FACE_API_URLS.get(selected_model)
     if not HUGGING_API:
         return abort(400, "Invalid model selected")
-    
-    print(HUGGING_API)
+
+    if not negative_prompt:
+        negative_prompt = generate_negative_prompt(selected_model)
+
     model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
     response = model.generate_image()
     if response is None:
@@ -69,11 +74,12 @@ def model():
 @app.route('/gallery-image/<img_name>', methods=['GET'])
 def gallery_image(img_name):
     try:
-        with open(f"app/frontend/assets/img/{img_name}.png", "rb") as img_file:
-            img_data = base64.b64encode(img_file.read()).decode('utf-8')
-        return render_template("result.html", image=img_data, prompt="From Gallery")
+        file_path = f"app/frontend/assets/img/{img_name}"
+        with open(file_path, "rb") as img_file:
+            image = base64.b64encode(img_file.read()).decode('utf-8')
+        return render_template("result.html", image=image, prompt="Gallery Image")
     except Exception as e:
-        print(e)
+        print(f"Error serving image: {e}")
         return render_template("error.html")
 
 
