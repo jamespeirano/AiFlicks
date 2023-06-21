@@ -349,3 +349,21 @@
     background: #198754;
   }
 }
+
+.loader-text {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: #198754;
+  text-align: center;
+  animation: fade 1s linear infinite;
+}
+
+@keyframes fade {
+  0% {opacity: 1;}
+  50% {opacity: 0.5;}
+  100% {opacity: 1;}
+}

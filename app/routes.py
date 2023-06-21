@@ -7,7 +7,6 @@ from model import Model
 from app import app
 import stripe
 
-# Loading environment variables
 config = dotenv_values(".env")
 
 HUGGING_FACE_API_URLS = {
@@ -49,7 +48,6 @@ def cart():
 @app.route('/model', methods=['POST'])
 def model():
     data = request.form
-
     selected_model = data.get('model_input')
     prompt = data.get('prompt')
     negative_prompt = data.get('negative_prompt')
@@ -61,13 +59,18 @@ def model():
     if not HUGGING_API:
         return abort(400, "Invalid model selected")
 
-    if not negative_prompt:
+    if not negative_prompt or negative_prompt.isspace():
         negative_prompt = generate_negative_prompt(selected_model)
 
     model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
-    response = model.generate_image()
-    if response is None:
-        return render_template("error.html")
+
+    try:
+        response = model.generate_image()
+    except Exception as e:
+        return render_template("error.html", error=str(e))
+
+    if not response:
+        return render_template("error.html", error="No image generated")
     return render_template("result.html", image=response, prompt=prompt)
 
 

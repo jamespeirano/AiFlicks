@@ -43,27 +43,31 @@ function typeWriter(text, elementId, delay = 100) {
     setTimeout(() => typeWriter(text, elementId, delay), delay);
 }
 
-function generateRandomPrompt() {
+async function generateRandomPrompt() {
     if (isTyping) return;
     const selectedModel = modelInput.value;
     toggleGenerateButton(true);
-    fetch(`/random-prompt?model=${selectedModel}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
+    try {
+        const response = await fetch(`/random-prompt?model=${selectedModel}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    })
-    .then(response => response.json())
-    .then(data => {
+        const data = await response.json();
+        if (!data.prompt) {
+            throw new Error("No prompt in response from server");
+        }
         message.value = '';
-        console.log(data.prompt)
         isTyping = true;
         typeWriter(data.prompt, 'message-1', 20);
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Error:', error);
         toggleGenerateButton(false);
-    });
+    }
 }
 
 window.onload = () => {
@@ -81,8 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 $(document).ready(() => {
-
-    $('#generate-button').on('click', function(e){
+    $('#generate-button').on('click', async function(e) {
         e.preventDefault();  // prevent default form submission
         const negativePrompt = $('#message-3').val();
         $('#negative_prompt_input').val(negativePrompt);  // update the hidden field
@@ -93,18 +96,20 @@ $(document).ready(() => {
             negative_prompt: negativePrompt
         };
     
-        $.ajax({
-            type: "POST",
-            url: "/model",
-            data: data,
-            success: function(response) {
-                $('#prompt_form').submit();  // manually submit the form
-            },
-            error: function(error) {
-                console.log(error);
-            }
-        });
-    });     
+        try {
+            const response = await $.ajax({
+                type: "POST",
+                url: "/model",
+                data: data,
+                dataType: "html"
+            });
+            document.open();
+            document.write(response);
+            document.close();
+        } catch (error) {
+            console.log(error);
+        }
+    }); 
 
     // Check if both color and size are selected for the product
     var formSelectors = {
