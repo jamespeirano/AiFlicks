@@ -1,19 +1,17 @@
 import os
 import base64
 from flask import render_template, request, jsonify, url_for, redirect, session, abort
-from dotenv import dotenv_values
 from utils import generate_random_prompt, generate_negative_prompt, send_email, Tshirt, Hoodie
 from model import Model
 from app import app
 import stripe
 
-config = dotenv_values(".env")
 
 HUGGING_FACE_API_URLS = {
-    'stable-diffusion': config['HUGGING_FACE_API_URL1'],
-    'realistic-vision': config['HUGGING_FACE_API_URL2'],
-    'nitro-diffusion': config['HUGGING_FACE_API_URL3'],
-    'dreamlike-anime': config['HUGGING_FACE_API_URL4'],
+    'stable-diffusion': os.environ.get('HUGGING_FACE_API_URL1'),
+    'realistic-vision': os.environ.get('HUGGING_FACE_API_URL2'),
+    'nitro-diffusion': os.environ.get('HUGGING_FACE_API_URL3'),
+    'dreamlike-anime': os.environ.get('HUGGING_FACE_API_URL4'),
 }
 
 @app.route('/')
@@ -172,7 +170,7 @@ def create_checkout_session():
     } for product in cart]
 
     try:
-        stripe.api_key = config['STRIPE_SECRET_KEY']
+        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=line_items,
@@ -194,7 +192,7 @@ from flask import current_app
 @app.route('/success')
 def success():
     session_id = request.args.get('session_id', None)
-    stripe.api_key = config['STRIPE_SECRET_KEY']
+    stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
 
     try:
         current_app.logger.info(f"Retrieving session: {session_id}")

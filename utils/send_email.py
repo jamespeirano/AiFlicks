@@ -4,13 +4,13 @@ from email.utils import formataddr
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from dotenv import dotenv_values
 import base64
 from pathlib import Path
 
-config = dotenv_values(".env")
-sender_email = config['SENDER_EMAIL']
-password_email = config['PASSWORD_EMAIL']
+
+sender_email = os.environ.get('SENDER_EMAIL')
+password_email = os.environ.get('PASSWORD_EMAIL')
+
 
 # Set the images directory in this folder to be the path for the images
 images_dir = Path(__file__).resolve().parent / 'images'
