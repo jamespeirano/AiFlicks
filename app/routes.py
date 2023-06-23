@@ -132,7 +132,7 @@ def remove_from_cart():
     return jsonify({"success": True}), 200
 
 
-@app.route('/update-cart-quantity', methods=['POST'])
+@app.route('/update_cart_quantity', methods=['POST'])
 def update_cart_quantity():
     data = request.get_json()
     product_id = data.get('productId', None)
@@ -152,7 +152,7 @@ def update_cart_quantity():
     return jsonify({"success": True, "newTotal": new_total, "subtotal": subtotal}), 200
 
 
-@app.route('/create-checkout-session', methods=['POST'])
+@app.route('/create_checkout_session', methods=['POST'])
 def create_checkout_session():
     cart = session.get('cart', [])
     if not cart:

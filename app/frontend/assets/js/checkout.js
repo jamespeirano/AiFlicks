@@ -3,7 +3,7 @@ document.getElementById('checkout-btn').addEventListener('click', function(e) {
     // Prevent default button behavior
     e.preventDefault();
 
-    fetch('/create-checkout-session', {
+    fetch('/create_checkout_session', {
         method: 'POST',
     })
     .then(function(response) {
