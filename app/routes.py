@@ -154,7 +154,7 @@ def update_cart_quantity():
     return jsonify({"success": True, "newTotal": new_total, "subtotal": subtotal}), 200
 
 
-@app.route('/create-checkout-session', methods=['POST'])
+@app.route('/create_checkout_session', methods=['POST'])
 def create_checkout_session():
     cart = session.get('cart', [])
     if not cart:
