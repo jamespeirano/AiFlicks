@@ -1,5 +1,5 @@
 document.getElementById('checkout-btn').addEventListener('click', function(e) {
-    var stripe = Stripe('pk_test_51NK8LNDA73T5T7kqn3CqboCe93PRzJs4EtqaE6SzWekFTsGNuMim78n9Y46m2mEFZVZESI5Ng6KSx28OsoHOnAkT00G9Ug01tz');
+    var stripe = Stripe('pk_test_51Mpg4OHhtpW6f5otExCngnzTqoKFajMkw4juwWvZpLUZ8fCG0wcGjS2sizkSdcExydKbfCZF3gksF2l4RAOb5uUd00trbKHsuI');
     // Prevent default button behavior
     e.preventDefault();
 
