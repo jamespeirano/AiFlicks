@@ -48,7 +48,7 @@ $(document).ready(() => {
 
 function updateQuantityOnServer(productId, quantity) {
     $.ajax({
-        url: '/update-cart-quantity',
+        url: '/update_cart_quantity',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
