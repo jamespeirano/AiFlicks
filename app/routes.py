@@ -192,7 +192,6 @@ def create_checkout_session():
 @app.route('/success')
 def success():
     session_id = request.args.get('session_id', None)
-    stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
     try:
         current_app.logger.info(f"Retrieving session: {session_id}")
