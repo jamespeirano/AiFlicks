@@ -1,6 +1,7 @@
 import os
 import base64
-from flask import render_template, request, jsonify, url_for, redirect, session, abort
+import time
+from flask import render_template, request, jsonify, url_for, redirect, session, abort, current_app
 from utils import generate_random_prompt, generate_negative_prompt, send_email, Tshirt, Hoodie
 from model import Model
 from app import app
@@ -63,7 +64,9 @@ def model():
     model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
 
     try:
+        start_time = time.time()
         response = model.generate_image()
+        print(f"Image generation took {time.time() - start_time} seconds")
     except Exception as e:
         return render_template("error.html", error=str(e))
 
@@ -185,14 +188,11 @@ def create_checkout_session():
         return jsonify(id=checkout_session.id)
     except Exception as e:
         return jsonify(error=str(e)), 403
-    
-
-from flask import current_app
 
 @app.route('/success')
 def success():
     session_id = request.args.get('session_id', None)
-    stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+    stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
     try:
         current_app.logger.info(f"Retrieving session: {session_id}")
@@ -204,34 +204,38 @@ def success():
         current_app.logger.info(f"Retrieved payment_intent")
         # current_app.logger.info(f"Retrieved payment_intent: {payment_intent}")
         
-        if payment_intent.status == 'succeeded':
-            cart = session.get('cart', [])
+        try:
+            if payment_intent.status == 'succeeded':
+                cart = session.get('cart', [])
 
-            customer_email = stripe_session.customer_details.email
-            customer_name = stripe_session.customer_details.name
-            address = stripe_session.customer_details.address
-            invoice = stripe_session.id
+                customer_email = stripe_session.customer_details.email
+                customer_name = stripe_session.customer_details.name
+                address = stripe_session.customer_details.address
+                invoice = stripe_session.id
 
-            send_email(
-                "Your order receipt from AI FLICKS",
-                customer_email, 
-                customer_name, 
-                address, 
-                None,
-                invoice, 
-                payment_intent.amount / 100, 
-                to_customer=True, 
-                cart_items=cart
-            )
-            current_app.logger.info("Email sent")
-            
-            # Clear the cart from your app's session
-            session.pop('cart', None)
-            current_app.logger.info("Cart cleared")
+                send_email(
+                    "Your order receipt from AI FLICKS",
+                    customer_email, 
+                    customer_name, 
+                    address, 
+                    None,
+                    invoice, 
+                    payment_intent.amount / 100, 
+                    to_customer=True, 
+                    cart_items=cart
+                )
+                current_app.logger.info("Email sent")
+                
+                # Clear the cart from your app's session
+                session.pop('cart', None)
+                current_app.logger.info("Cart cleared")
 
-            return render_template('success.html')
-        else:
-            return redirect(url_for('cart'))
+                return render_template('success.html')
+            else:
+                return redirect(url_for('cart'))
+        except Exception as e:
+            current_app.logger.error(f"Error: {e}")
+            return render_template('fail-checkout.html', error=str(e), token="email")
     except Exception as e:
         current_app.logger.error(f"Error: {e}")
-        return render_template('fail-checkout.html', error=str(e))
+        return render_template('fail-checkout.html', error=str(e), token="checkout")

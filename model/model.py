@@ -2,6 +2,7 @@ import io
 import os
 import requests
 import base64
+import concurrent.futures
 from PIL import Image
 
 __all__ = ["Model"]
@@ -12,6 +13,8 @@ class ModelException(Exception):
     pass
 
 class Model:
+    MAX_RETRIES = 3
+
     def __init__(self, selected_model, prompt, negative_prompt):
         self.selected_model = selected_model
         self.prompt = prompt
@@ -21,7 +24,7 @@ class Model:
             "parameters": {
                 "negative_prompt": self.negative_prompt,
                 "guidance_scale": 7.5,
-                "num_inference_steps": 75,
+                "num_inference_steps": 25,
                 "height": 512,
                 "width": 512,
             },
@@ -33,8 +36,21 @@ class Model:
             }
         }
         self.session = requests.Session()
+        self.retry_count = 0
 
     def generate_image(self):
+        while self.retry_count < self.MAX_RETRIES:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(self._generate_image)
+                try:
+                    base_64_image = future.result(timeout=25)
+                    return base_64_image
+                except concurrent.futures.TimeoutError:
+                    print(f"Image generation took too long. Attempt {self.retry_count + 1} failed. Retrying...")
+                    self.retry_count += 1
+        raise ModelException("Failed to generate image after maximum number of retries.")
+
+    def _generate_image(self):
         try:
             response_content = self.fetch_response()
             if not response_content:
