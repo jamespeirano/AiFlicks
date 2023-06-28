@@ -6,24 +6,45 @@
 <header class="bg-dark">
     <div class="container py-5">
         <div class="row py-5">
+            
             <div class="col-md-6 text-center text-md-start d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-end mb-4">
                 <div>
-                    <p class="fw-bold text-success mb-2">AI FLICKS</p>
+                    <p class="fw-bold text-success mb-2" style="font-size: 1.4rem;">AI FLICKS</p>
                     <h2 class="fw-bold">Create Anything!</h2>
-                    <p class="my-3">See what it looks like on AI Generated t-shirts and hoodies tailored to your style and preferences</p>
-                    <div class="mb-3" style="text-align: center;">
-                        <form action="{{ url_for('model') }}" id="prompt_form" class="form" method="POST">
-                            <textarea id="message-1" name="prompt" rows="6" placeholder="anime female mechanical android head with flowers growing out ..." required></textarea>
+                    <p class="my-3">See what it looks like on AI Generated t-shirts and hoodies tailored to your style and preferences.</p>
+                    <p class="design-guide"><a href="{{ url_for('guide') }}">Guide to Prompt Design for Text-to-Image</a></p>
+                    <form action="{{ url_for('model') }}" id="prompt_form" class="form" method="POST">
+                        <div class="mb-3" style="text-align: center;">
+                            <textarea id="message-1" name="prompt" rows="6" placeholder="anime female mechanical android head with flowers growing out ..." style="color: var(--bs-body-color);border-radius: 20px;" required></textarea>
                             <input type="hidden" id="model_input" name="model_input" value="stable-diffusion">  <!-- Hidden field for model: default stable diffusion -->
-                            <input type="hidden" id="negative_prompt_input" name="negative_prompt">
                             <button id="generate-button" class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Generate Image</button>
                             <button class="btn btn-primary shadow" type="button" style="margin: 10px;margin-left: 10px;--bs-body-font-size: 0.5rem;background: var(--bs-gray-700);border-color: var(--bs-gray-700);" onclick="generateRandomPrompt()">Random Prompt</button>
-                        </form>
-                    </div>                      
+                        </div>                     
+                        <section class="py-5">
+                            <div class="container text-center py-5">
+                                <p class="mb-4" style="font-size: 1.4rem;">Choose a different&nbsp;<span class="text-success"><strong>model</strong></span>&nbsp;to change the output style of your image.</p>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle model-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-black);border-color: var(--bs-black);">
+                                        <span id="modelButtonText">Stable Diffusion</span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-dark">
+                                        <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'stable-diffusion')">Stable Diffusion</a>
+                                        <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'realistic-vision')">Realistic Vision</a>
+                                        <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'nitro-diffusion')">Nitro Diffusion</a>
+                                        <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'dreamlike-anime')">Dreamlike Anime</a>
+                                    </div>                                
+                                </div>                            
+                            </div>
+                        </section>
+                        <p class="my-3">Negative Prompt</p>
+                        <textarea id="message-3" name="negative_prompt" rows="6" placeholder="A negative prompt serves as a beacon, guiding the AI model away from unwanted elements in your crafted vision. Its role? To ensure the generation process faithfully avoids incorporating specific facets into the image, according to the text provided." style="color: var(--bs-body-color);border-radius: 20px;"></textarea>
+                    </form>
                 </div>
             </div>
+
             <div class="col-md-6 mb-4">
                 <div class="p-5 mx-lg-5" style="background: url(&quot;assets/img/blob.svg&quot;) center / contain no-repeat;">
+                    <p class="index-favs">Some of our favorite designs generated by AI Flicks</p>
                     <div class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000" data-bs-pause="false" id="carousel-1">
                         <div class="carousel-inner" style="border-radius: 15px;">
                             <div class="carousel-item active"><img class="w-100 d-block" src="assets/img/spiderman.png" alt="Slide Image"></div>
@@ -52,29 +73,21 @@
                         </ol>
                     </div>
                 </div>
+                
+                <div class="how-to-use mt-5 animated-text" style="background: rgba(240, 240, 240, 0.1); border-radius: 15px; padding: 15px;">
+                    <h3 class="fw-bold text-success mb-2" style="text-align: center;">How to Use</h3>
+                    <p class="text-light" style="text-align: center;">Here are some tips to help you get started:</p>
+                    <ol class="list-group list-group-flush text-light">
+                        <li class="list-group-item bg-transparent border-0 text-light">Write a detailed description of the image you want to create in the Prompt box.</li>
+                        <li class="list-group-item bg-transparent border-0 text-light">If there are certain elements you want to avoid in your image, specify them in the Negative Prompt box.</li>
+                        <li class="list-group-item bg-transparent border-0 text-light">Choose the AI model that suits your style preference.</li>
+                        <li class="list-group-item bg-transparent border-0 text-light">Click the 'Generate Image' button and wait for your image to be created.</li>
+                        <li class="list-group-item bg-transparent border-0 text-light">You can also use the 'Random Prompt' button to get a surprise creation.</li>
+                    </ol>
+                </div>
+                                
             </div>
-            <div class="col">
-                <section class="py-5">
-                    <div class="container text-center py-5">
-                        <p class="mb-4">Summon your imagination into existence! <br>Choose a different&nbsp;<span class="text-success"><strong>model</strong></span>&nbsp;to change the output style of your image</p>
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle model-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-black);border-color: var(--bs-black);">
-                                <span id="modelButtonText">Stable Diffusion</span>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-dark">
-                                <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'stable-diffusion')">Stable Diffusion</a>
-                                <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'realistic-vision')">Realistic Vision</a>
-                                <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'nitro-diffusion')">Nitro Diffusion</a>
-                                <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'dreamlike-anime')">Dreamlike Anime</a>
-                            </div>                                
-                        </div>                            
-                    </div>
-                </section>
-            </div>
-            <div class="col">
-                <p class="my-3">Negative Prompt</p>
-                <textarea id="message-3" name="negative_prompt" rows="6" placeholder="A negative prompt serves as a beacon, guiding the AI model away from unwanted elements in your crafted vision. Its role? To ensure the generation process faithfully avoids incorporating specific facets into the image, according to the text provided." style="color: var(--bs-body-color);border-radius: 20px;"></textarea>
-            </div>
+
         </div>
     </div>
 </header>

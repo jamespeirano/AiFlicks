@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Prompt Guide{% endblock %}
+
+{% block header %}
+<header class="bg-dark text-light py-5">
+    <div class="container">
+        <h1 class="fw-bold text-center pb-4">Guide to Prompt Design for Text-to-Image Models</h1>
+        <hr class="bg-light my-4">
+        <div class="my-5">
+            <h3 class="fw-bold">Template and Tokenization</h3>
+            <p class="lead">A prompt usually follows the following template:</p>
+            <p class="text-muted fst-italic">[Art form] of [subject] by [artist(s)], [detail 1], ..., [detail n]</p>
+            
+            <h5 class="fw-bold mt-3">1. Subject</h5>
+            <p class="lead">The most important part of a prompt is the subject. What do you want to see? While this might be the most straightforward, it is also the most difficult regarding the amount of detail you want to provide.</p>
+            <figure>
+                <img src="assets/img/guide/cat.png" class="img-fluid rounded mx-auto d-block mt-3" style="width: 250px;" alt="a cat wearing sunglasses">
+                <figcaption class="text-muted text-center">Prompt: "a cat wearing sunglasses"</figcaption>
+            </figure>
+
+            <h5 class="fw-bold mt-3">2. Plurals</h5>
+            <p class="lead">Vague plural words like "cats" leave a lot of room for interpretation. Did you mean two cats or 13 cats? Therefore, when you want multiple subjects, use plural nouns with specific numbers.</p>
+            <figure>
+                <img src="assets/img/guide/cats.png" class="img-fluid rounded mx-auto d-block mt-3" style="width: 250px;" alt="two cats wearing sunglasses">
+                <figcaption class="text-muted text-center">Prompt: "two cats wearing sunglasses"</figcaption>
+            </figure>
+
+            <h5 class="fw-bold mt-3">3. Weights</h5>
+            <p class="lead">If you want to give a specific subject a heavier weight, there are various ways to do so.</p>
+            <ol>
+                <li><strong>Order: </strong>Tokens near the front of a prompt are weighted more heavily than the tokens in the back of a prompt.</li>
+                <li><strong>Repetition: </strong>Repeating the subject by phrasing it differently can impact its weighting. I have also seen prompts repeating the subject in different languages or using emojis.</li>
+                <li><strong>Parameters: </strong>You can suffix any part of a prompt with ::weight to give it a weight (e.g. ::0.5).</li>
+                <li><strong>Exclusions: </strong>Prompts containing negative words like "not", "but", "except", and "without" are difficult for the text-to-image model to interpret. Therefore, it is best to avoid them.</li>
+            </ol>
+
+            <h5 class="fw-bold mt-3">4. Art Form</h5>
+            <p class="lead">The art form is the medium in which the subject is presented. It can be a painting, a photograph, a sculpture, or a drawing. It can also be a specific style like impressionism, cubism, or surrealism.</p>
+
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <figure>
+                        <img src="assets/img/guide/painting.png" class="img-fluid rounded mx-auto d-block" style="width: 250px;" alt="Painting">
+                        <figcaption class="text-muted text-center">Painting prompt: "An oil painting of a serene lakeside at sunset with silhouettes of tall trees in the background"</figcaption>
+                    </figure>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <figure>
+                        <img src="assets/img/guide/photograph.png" class="img-fluid rounded mx-auto d-block" style="width: 250px;" alt="Photograph">
+                        <figcaption class="text-muted text-center">Photograph prompt: "A black and white photograph of a busy New York street in the 1950s, with classic cars and bustling pedestrians"</figcaption>
+                    </figure>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <figure>
+                        <img src="assets/img/guide/sculpture.png" class="img-fluid rounded mx-auto d-block" style="width: 250px;" alt="Sculpture">
+                        <figcaption class="text-muted text-center">Sculpture prompt: "A modern steel sculpture representing the fluidity of time, composed of twisted and flowing metallic shapes"</figcaption>
+                    </figure>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <figure>
+                        <img src="assets/img/guide/drawing.png" class="img-fluid rounded mx-auto d-block" style="width: 250px;" alt="Drawing">
+                        <figcaption class="text-muted text-center">Drawing prompt: "A detailed charcoal drawing of a wild lion resting in the grasslands under the African sun"</figcaption>
+                    </figure>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <figure>
+                        <img src="assets/img/guide/impressionism.png" class="img-fluid rounded mx-auto d-block" style="width: 250px;" alt="Impressionism">
+                        <figcaption class="text-muted text-center">Impressionism prompt: "An impressionist painting of a lively Parisian café scene in the late afternoon, with people sitting outside under colorful awnings"</figcaption>
+                    </figure>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <figure>
+                        <img src="assets/img/guide/cubism.png" class="img-fluid rounded mx-auto d-block" style="width: 250px;" alt="Cubism">
+                        <figcaption class="text-muted text-center">Cubism prompt: "A cubist painting depicting a musician playing a violin, with fractured and abstracted forms in vibrant colors"</figcaption>
+                    </figure>
+                </div>
+            </div>
+
+            <h5 class="fw-bold mt-3">5. Artist(s)</h5>
+            <p class="lead">The artist(s) is the creator(s) of the subject. It can be a specific artist like Vincent van Gogh, Pablo Picasso, or Leonardo da Vinci. It can also be a specific art movement like impressionism, cubism, or surrealism.</p>
+            <figure>
+                <img src="assets/img/guide/surrealism.png" class="img-fluid rounded mx-auto d-block mt-3" style="width: 250px;" alt="Salvador Dali-like painting">
+                <figcaption class="text-muted text-center">Prompt: "A surrealistic Salvador Dali-like painting of a desolate landscape with melting clocks and amorphous forms"</figcaption>
+            </figure>
+
+            <h5 class="fw-bold mt-3">6. Combining Features</h5>
+            <p class="lead">You can combine multiple features to create more specific prompts. For example, you can combine a subject with an art form, an artist, or both.</p>
+            <figure>
+                <img src="assets/img/guide/features.png" class="img-fluid rounded mx-auto d-block mt-3" style="width: 250px;" alt="A painting of a serene lakeside at sunset with silhouettes of tall trees in the background">
+                <figcaption class="text-muted text-center">Prompt: "A painting of a serene lakeside at sunset with silhouettes of tall trees in the background"</figcaption>
+            </figure>
+
+            <h5 class="fw-bold mt-3">7. Adjectives and Quality Boosters</h5>
+            <p class="lead">You can use adjectives to describe the subject. You can also use quality boosters to make the subject more vivid and detailed.</p>
+            <ol>
+                <li><strong>framing</strong> (close up, landscape, portrait, wide shot, etc.)</li>
+                <li><strong>color scheme</strong> (dark, pastel, etc.)</li>
+                <li><strong>lighting</strong> (bright, dim, etc.)</li>
+                <li><strong>time of day</strong> (morning, afternoon, evening, night, etc.)</li>
+                <li><strong>magic terms</strong> (highly detailed, hyper-realistic, rendered in real-engine, 4k or 8k resolution, etc.)</li>
+            </ol>
+
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <figure>
+                        <img src="assets/img/guide/tiger.png" class="img-fluid rounded mx-auto d-block" style="width: 250px;" alt="tiger">
+                        <figcaption class="text-muted text-center">prompt: "A close-up, highly detailed and hyper-realistic portrait of a tiger in the jungle at dawn. The image is rendered in real-engine with a 4k resolution. The color scheme is a mix of dark and light, with the rising sun casting bright light on the tiger's face. The atmosphere is misty, adding a magical touch to the scene"</figcaption>
+                    </figure>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <figure>
+                        <img src="assets/img/guide/city.png" class="img-fluid rounded mx-auto d-block" style="width: 250px;" alt="city">
+                        <figcaption class="text-muted text-center">prompt: "A wide shot landscape of a bustling city in the evening. The city is bathed in the glow of the setting sun, painting the scene in shades of orange and purple. The lighting is dim but vibrant, capturing the hustle and bustle of the city life. The image should be highly detailed and look as if it were a still from a 4k resolution film"</figcaption>
+                    </figure>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <figure>
+                        <img src="assets/img/guide/ocean.png" class="img-fluid rounded mx-auto d-block" style="width: 250px;" alt="ocean">
+                        <figcaption class="text-muted text-center">prompt: "A hyper-realistic, pastel-colored, wide shot of a serene beach at afternoon. The scene is set with a clear blue sky overhead and gentle waves lapping on the sunlit sandy shore. There's a brightly colored beach umbrella near the foreground, with a couple of seagulls flying in the distance. The image should be rendered in 4k resolution, with high detail capturing the individual grains of sand and the froth of the waves"</figcaption>
+                    </figure>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+
+{% endblock %}
