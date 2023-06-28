@@ -1,18 +1,18 @@
-#message-1 {
+#message-1, #message-3 {
   color: whitesmoke;
   background: var(--bs-border-color-translucent);
 }
 
 @media (min-width: 360px) {
-  #message-1 {
+  #message-1, #message-3 {
     padding: 10px;
-    width: 320px;
+    width: 340px;
     border-radius: 20px;
   }
 }
 
 @media (min-width: 576px) {
-  #message-1 {
+  #message-1, #message-3 {
     padding: 10px;
     width: 440px;
     border-radius: 20px;
@@ -20,7 +20,7 @@
 }
 
 @media (min-width: 768px) {
-  #message-1 {
+  #message-1, #message-3 {
     padding: 10px;
     width: 350px;
     border-radius: 20px;
@@ -28,7 +28,7 @@
 }
 
 @media (min-width: 992px) {
-  #message-1 {
+  #message-1, #message-3 {
     padding: 10px;
     width: 440px;
     border-radius: 20px;
@@ -36,7 +36,7 @@
 }
 
 @media (min-width: 1200px) {
-  #message-1 {
+  #message-1, #message-3 {
     padding: 10px;
     width: 520px;
     border-radius: 20px;
@@ -45,7 +45,7 @@
 }
 
 @media (min-width: 1400px) {
-  #message-1 {
+  #message-1, #message-3 {
     padding: 10px;
     width: 640px;
     border-radius: 20px;
@@ -90,72 +90,6 @@
 }
 
 @media (min-width: 360px) {
-  #message-3 {
-    width: 320px;
-    height: 200px;
-    border-radius: 10px;
-    padding: 10px;
-    background: var(--bs-border-color-translucent);
-    font-size: small;
-  }
-}
-
-@media (min-width: 576px) {
-  #message-3 {
-    width: 500px;
-    height: 200px;
-    border-radius: 10px;
-    padding: 10px;
-    background: var(--bs-border-color-translucent);
-    font-size: large;
-  }
-}
-
-@media (min-width: 768px) {
-  #message-3 {
-    width: 700px;
-    height: 200px;
-    border-radius: 10px;
-    padding: 10px;
-    background: var(--bs-border-color-translucent);
-    font-size: large;
-  }
-}
-
-@media (min-width: 992px) {
-  #message-3 {
-    width: 900px;
-    height: 200px;
-    border-radius: 10px;
-    padding: 10px;
-    background: var(--bs-border-color-translucent);
-    font-size: large;
-  }
-}
-
-@media (min-width: 1200px) {
-  #message-3 {
-    width: 1000px;
-    height: 200px;
-    border-radius: 10px;
-    padding: 10px;
-    background: var(--bs-border-color-translucent);
-    font-size: large;
-  }
-}
-
-@media (min-width: 1400px) {
-  #message-3 {
-    width: 1201px;
-    height: 200px;
-    border-radius: 10px;
-    padding: 10px;
-    background: var(--bs-border-color-translucent);
-    font-size: large;
-  }
-}
-
-@media (min-width: 360px) {
   .mb-0 {
     margin-bottom: 0 !important;
     font-size: medium;
@@ -179,6 +113,45 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: auto;
+}
+
+@keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+.list-group-item {
+  transition: all 0.3s ease-in-out;
+}
+
+.list-group-item:hover {
+  color: #008000 !important;
+  transform: translateX(10px);
+  cursor: pointer;
+}
+
+.animated-text {
+  animation: fadeIn 3s ease-in-out 1;
+}
+
+.design-guide, .index-favs {
+  text-align: center;
+  font-size: 1.1rem;
+  color: gray;
+  transition: all 0.3s ease-in-out;
+}
+
+.design-guide a {
+  text-decoration: none;
+}
+
+.design-guide a:hover {
+  color: #008000;
+}
+
+.design-guide:hover {
+  transform: scale(1.05);
+  cursor: pointer;
 }
 
 .tshirt-overlay, .hoodie-overlay {

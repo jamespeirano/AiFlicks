@@ -25,6 +25,9 @@ def index():
 def models():
     return render_template('models.html')
 
+@app.route('/guide')
+def guide():
+    return render_template('guide.html')
 
 @app.route('/gallery')
 def gallery():
@@ -63,6 +66,11 @@ def model():
 
     model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
 
+    print("Prompt: ", prompt)
+    print("Negative Prompt: ", negative_prompt)
+    print("Model: ", selected_model)
+    print("Hugging Face API: ", HUGGING_API)
+    
     try:
         start_time = time.time()
         response = model.generate_image()
