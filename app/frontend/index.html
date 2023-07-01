@@ -16,7 +16,7 @@
                     <form action="{{ url_for('model') }}" id="prompt_form" class="form" method="POST">
                         <div class="mb-3" style="text-align: center;">
                             <textarea id="message-1" name="prompt" rows="6" placeholder="anime female mechanical android head with flowers growing out ..." style="color: var(--bs-body-color);border-radius: 20px;" required></textarea>
-                            <input type="hidden" id="model_input" name="model_input" value="stable-diffusion">  <!-- Hidden field for model: default stable diffusion -->
+                            <input type="hidden" id="model_input" name="model_input" value="realistic-vision">  <!-- Hidden field for model: default realistic vision -->
                             <button id="generate-button" class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Generate Image</button>
                             <button class="btn btn-primary shadow" type="button" style="margin: 10px;margin-left: 10px;--bs-body-font-size: 0.5rem;background: var(--bs-gray-700);border-color: var(--bs-gray-700);" onclick="generateRandomPrompt()">Random Prompt</button>
                         </div>                     
@@ -25,11 +25,11 @@
                                 <p class="mb-4" style="font-size: 1.4rem;">Choose a different&nbsp;<span class="text-success"><strong>model</strong></span>&nbsp;to change the output style of your image.</p>
                                 <div class="dropdown">
                                     <button class="btn btn-primary dropdown-toggle model-button" aria-expanded="false" data-bs-toggle="dropdown" type="button" style="background: var(--bs-black);border-color: var(--bs-black);">
-                                        <span id="modelButtonText">Stable Diffusion</span>
+                                        <span id="modelButtonText">Realistic Vision</span>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-dark">
-                                        <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'stable-diffusion')">Stable Diffusion</a>
                                         <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'realistic-vision')">Realistic Vision</a>
+                                        <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'stable-diffusion')">Stable Diffusion</a>
                                         <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'nitro-diffusion')">Nitro Diffusion</a>
                                         <a class="dropdown-item model-item" href="#" onclick="selectItem('model', 'dreamlike-anime')">Dreamlike Anime</a>
                                     </div>                                
@@ -284,6 +284,6 @@
             <div class="hex-brick h3"></div>
         </div>
     </div>
-    <p class="loader-text">Crafting your AI masterpiece...</p> 
+    <p class="loader-text" id="loader-text">Crafting Your AI Masterpiece</p> 
 </div>
 {% endblock %}
