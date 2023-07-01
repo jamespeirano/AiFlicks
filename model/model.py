@@ -4,16 +4,16 @@ import requests
 import base64
 import concurrent.futures
 from PIL import Image
-
+import time
 __all__ = ["Model"]
 
 headers = {"Authorization": f"Bearer {os.getenv('HUGGING_FACE_API_TOKEN')}"}
+TIMEOUT = 28
 
 class ModelException(Exception):
     pass
 
 class Model:
-    MAX_RETRIES = 3
 
     def __init__(self, selected_model, prompt, negative_prompt):
         self.selected_model = selected_model
@@ -39,16 +39,13 @@ class Model:
         self.retry_count = 0
 
     def generate_image(self):
-        while self.retry_count < self.MAX_RETRIES:
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                future = executor.submit(self._generate_image)
-                try:
-                    base_64_image = future.result(timeout=25)
-                    return base_64_image
-                except concurrent.futures.TimeoutError:
-                    print(f"Image generation took too long. Attempt {self.retry_count + 1} failed. Retrying...")
-                    self.retry_count += 1
-        raise ModelException("Failed to generate image after maximum number of retries.")
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(self._generate_image)
+            try:
+                base_64_image = future.result(timeout=TIMEOUT)
+                return base_64_image
+            except concurrent.futures.TimeoutError:
+                return "timeout"
 
     def _generate_image(self):
         try:
@@ -70,7 +67,8 @@ class Model:
             response = self.session.post(
                 self.selected_model,
                 headers=headers,
-                json=self.params
+                json=self.params,
+                timeout=TIMEOUT
             )
         except requests.RequestException as e:
             print(f"RequestException: {e}")
