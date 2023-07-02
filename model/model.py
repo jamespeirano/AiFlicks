@@ -4,7 +4,7 @@ import requests
 import base64
 import concurrent.futures
 from PIL import Image
-import time
+
 __all__ = ["Model"]
 
 headers = {"Authorization": f"Bearer {os.getenv('HUGGING_FACE_API_TOKEN')}"}

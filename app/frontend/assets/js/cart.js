@@ -26,7 +26,10 @@ $(document).ready(() => {
         e.preventDefault();
         var productId = $(this).data('id');
         var parent = $(this).closest('.row');
-
+    
+        // Get the product total for this item from the DOM
+        var productTotal = parseFloat(parent.find('.product-total').text());
+    
         $.ajax({
             url: '/remove-from-cart',
             type: 'POST',
@@ -37,13 +40,19 @@ $(document).ready(() => {
             success: function(response){
                 if(response.success){
                     parent.remove();
+                    subtotal = parseFloat($('#subtotal').text());
+                    $('#subtotal').text((subtotal - productTotal).toFixed(2));
+    
                     if($('.item-row').length === 0) {
                         $('#empty-cart-message').show();
+                        $('#checkout-btn').prop('disabled', true);
+                        $('#subtotal').text('0.00');
                     }
                 }
             }
         });
-    });
+    });    
+    
 });
 
 function updateQuantityOnServer(productId, quantity) {

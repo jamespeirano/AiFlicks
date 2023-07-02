@@ -42,6 +42,7 @@
                             <p style="padding-top: 30px;">$<span class="total-span product-total" data-product-id="{{ item.id }}" id="product-subtotal" style="text-align: justify;">{{ "%.2f"|format(item.price * item.quantity) }}</span></p>
                         </div>
                     </div>
+                    <p id="empty-cart-message" style="font-size: 17px; display: none;">Cart is empty.</p>
                 {% endfor %}
             {% else %}
                 <p id="empty-cart-message" style="font-size: 17px;">Cart is empty.</p>

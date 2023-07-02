@@ -327,12 +327,12 @@
     transform: scale(1);
   }
 
-  50% {
-    -webkit-transform: scale(0.01);
-    transform: scale(0.01);
+  25% {
+    -webkit-transform: scale(0.7);
+    transform: scale(0.7);
   }
 
-  100% {
+  50% {
     -webkit-transform: scale(1);
     transform: scale(1);
   }
@@ -342,25 +342,24 @@
   0% {
     transform: scale(1);
   }
-  50% {
-    transform: scale(0.01);
+  25% {
+    transform: scale(0.7);
   }
-  100% {
+  50% {
     transform: scale(1);
   }
 }
-
 
 @-webkit-keyframes fade00 {
   0% {
     background: #000000;
   }
 
-  50% {
+  25% {
     background: #FFFFFF;
   }
 
-  100% {
+  50% {
     background: #198754;
   }
 }
@@ -369,12 +368,10 @@
   0% {
     background: #000000;
   }
-
-  50% {
+  25% {
     background: #FFFFFF;
   }
-
-  100% {
+  50% {
     background: #198754;
   }
 }
