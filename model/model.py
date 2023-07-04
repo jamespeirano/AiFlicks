@@ -14,6 +14,10 @@ TIMEOUT = 28
 class ModelException(Exception):
     pass
 
+class TimeoutException(Exception):
+    pass
+
+
 class Model:
 
     def __init__(self, selected_model, prompt, negative_prompt):
@@ -53,7 +57,7 @@ class Model:
             print(f"Failed to generate image: {e}")
             raise ModelException(f"Failed to generate image: {e}") from e
 
-    async def fetch_response(self):
+    async def fetch_response(self, retry_count=0):
         timeout = ClientTimeout(total=28)
         async with ClientSession(timeout=timeout) as session:
             try:
@@ -76,3 +80,10 @@ class Model:
             except aiohttp.ClientError as e:
                 print(f"RequestException: {e}")
                 raise ModelException(f"RequestException: {e}") from e
+            except asyncio.TimeoutError as e:
+                if retry_count < 5:
+                    print(f"TimeoutException: {e}. Retrying attempt {retry_count + 1}")
+                    return await self.fetch_response(retry_count + 1)
+                else:
+                    print(f"TimeoutException: {e}")
+                    raise TimeoutException("Timeout - the API call took too long") from e
