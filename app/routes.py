@@ -2,10 +2,12 @@ import os
 import base64
 import time
 from flask import render_template, request, jsonify, url_for, redirect, session, abort, current_app
-from utils import generate_random_prompt, generate_negative_prompt, send_email, Tshirt, Hoodie
+from utils import generate_random_prompt, generate_negative_prompt, Tshirt, Hoodie
 from model import Model
 from app import app
 import stripe
+import requests
+import json
 
 
 HUGGING_FACE_API_URLS = {
@@ -115,7 +117,7 @@ def addToCart():
     image_base64 = request.form.get('imageBase64')
     selectedProduct = request.form.get('selectedProduct')
     quantity = int(request.form.get('quantity', 1)) 
-
+    teeMillApiKey = "8F7VouCxpe4xUx1icErBNIrJiXvqpnRS7tUWFvi7"
     # Dictionary to determine product type
     products = {
         'tshirt': Tshirt,
@@ -130,10 +132,42 @@ def addToCart():
     else:
         return abort(400, "Invalid product type")
 
-    cart = session.get('cart', [])
-    cart.append(product.to_dict())
-    session['cart'] = cart
-    return redirect(url_for('cart'))
+    # Set the options
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer {}'.format(teeMillApiKey)
+    }
+
+    data = {
+        'image_url': "https://www.seiu1000.org/sites/main/files/main-images/camera_lense_0.jpeg",
+        'item_code': 'RNA1',
+        'name': 'Hello World',
+        'colours': 'White,Black',
+        'description': 'Check out this awemand.',
+        'price': 20.00
+    }
+
+    # Send the API request
+    response = requests.post('https://teemill.com/omnis/v3/product/create', headers=headers, data=json.dumps(data))
+
+    from flask import redirect
+
+    # ...
+
+    # Check the response
+    if response.status_code == 200:
+        response_data = response.json()
+        # Redirect to the new URL
+        return redirect(response_data['url'])
+    else:
+        print('Error:', response.status_code)
+        print('Message:', response.text)  # Add this line
+        return abort(500, "Error contacting API")
+
+    # cart = session.get('cart', [])
+    # cart.append(product.to_dict())
+    # session['cart'] = cart
+    # return redirect(url_for('cart'))
 
 
 @app.route('/remove-from-cart', methods=['POST'])
