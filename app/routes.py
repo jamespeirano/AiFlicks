@@ -84,10 +84,17 @@ def generate():
 
     loop = asyncio.get_event_loop()
     try:
+        print("this try block was hit")
         response = loop.run_until_complete(generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt))
+        print(type(response), response[:100])
+        response = base64.b64encode(response).decode()
+        print(type(response), response[:100])
         return render_template("result.html", image=response, prompt=prompt)
+    except ModelException as e:
+        return render_template("error.html", error=str(e))
     except Exception as e:
         return render_template("error.html", error=str(e))
+
 
 async def generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=0):
     model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
@@ -107,8 +114,8 @@ async def generate_image_and_render(HUGGING_API, selected_model, prompt, negativ
             print('retrying...')
             return await generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=retry_count + 1)
         else:
-            return render_template("error.html", error=str(e))
-            # raise Exception("Request timed out after multiple retries.") from e
+            raise e
+
 
 
 
