@@ -11,6 +11,8 @@ import json
 import asyncio
 import httpx
 from model.model import ModelException
+from model.model import TimeoutException
+
 
 
 
@@ -90,10 +92,9 @@ def model():
         loop.close()
 
 
-
-
-async def generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=0):
-    model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
+async def generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=0, model = None):
+    if not model:
+        model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
 
     print("Prompt: ", prompt)
     print("Negative Prompt: ", negative_prompt)
@@ -105,10 +106,11 @@ async def generate_image_and_render(HUGGING_API, selected_model, prompt, negativ
         response = await model.generate_image()
         print(f"Time taken: {time.time() - start} seconds")
         return response
-    except ModelException as e:  # Catch ModelException here
+    except TimeoutException as e:  # Catch ModelException here
         if retry_count < 5:  # Limit retries to avoid infinite recursion
-            print('retrying...')
-            return await generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=retry_count + 1)
+            print('retrying with NEW MODEL INSTANCE ')
+            new_model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
+            return await generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=retry_count + 1, model=new_model)
         else:
             raise e
 
