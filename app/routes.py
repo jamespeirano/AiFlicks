@@ -8,6 +8,10 @@ from app import app
 import stripe
 import requests
 import json
+import asyncio
+import httpx
+from model.model import ModelException
+
 
 
 HUGGING_FACE_API_URLS = {
@@ -51,7 +55,7 @@ def cart():
 
 
 @app.route('/model', methods=['POST'])
-def model():
+async def model():
     data = request.form
     selected_model = data.get('model_input')
     prompt = data.get('prompt')
@@ -67,10 +71,25 @@ def model():
     if not negative_prompt or negative_prompt.isspace():
         negative_prompt = generate_negative_prompt(selected_model)
 
-    return generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt)
+    return await generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt)
 
 
-def generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=0):
+
+@app.route('/generate', methods=['POST'])
+def generate():
+    HUGGING_API = request.form['huggingface_api']
+    selected_model = request.form['model']
+    prompt = request.form['prompt']
+    negative_prompt = request.form['negative_prompt']
+
+    loop = asyncio.get_event_loop()
+    try:
+        response = loop.run_until_complete(generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt))
+        return render_template("result.html", image=response, prompt=prompt)
+    except Exception as e:
+        return render_template("error.html", error=str(e))
+
+async def generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=0):
     model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
 
     print("Prompt: ", prompt)
@@ -80,18 +99,20 @@ def generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prom
 
     try:
         start = time.time()
-        response = model.generate_image()
+        response = await model.generate_image()
         print(f"Time taken: {time.time() - start} seconds")
-        if response == "timeout" and retry_count < 5:  # Limit retries to avoid infinite recursion
+        return response
+    except ModelException as e:  # Catch ModelException here
+        if retry_count < 5:  # Limit retries to avoid infinite recursion
             print('retrying...')
-            return generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count + 1)
-    except Exception as e:
-        return render_template("error.html", error=str(e))
+            return await generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=retry_count + 1)
+        else:
+            return render_template("error.html", error=str(e))
+            # raise Exception("Request timed out after multiple retries.") from e
 
-    if not response or response == "timeout":
-        return render_template("error.html", error="No image generated or timeout after retries")
-    return render_template("result.html", image=response, prompt=prompt)
 
+
+    
 
 @app.route('/gallery-image/<img_name>', methods=['GET'])
 def gallery_image(img_name):
@@ -169,122 +190,3 @@ def addToCart():
     # session['cart'] = cart
     # return redirect(url_for('cart'))
 
-
-@app.route('/remove-from-cart', methods=['POST'])
-def remove_from_cart():
-    data = request.get_json()
-    product_id = data.get('productId', None)
-    cart = session.get('cart', [])
-
-    for item in cart:
-        if item['id'] == product_id:
-            cart.remove(item)
-            break
-
-    session['cart'] = cart
-    return jsonify({"success": True}), 200
-
-
-@app.route('/update_cart_quantity', methods=['POST'])
-def update_cart_quantity():
-    data = request.get_json()
-    product_id = data.get('productId', None)
-    new_quantity = int(data.get('newQuantity', 1))
-    cart = session.get('cart', [])
-
-    new_total = 0.0
-    subtotal = 0.0
-    for item in cart:
-        if item['id'] == product_id:
-            item['quantity'] = new_quantity
-            new_total = item['price'] * new_quantity
-        subtotal += item['price'] * item['quantity']
-
-    session['cart'] = cart
-
-    return jsonify({"success": True, "newTotal": new_total, "subtotal": subtotal}), 200
-
-
-@app.route('/create_checkout_session', methods=['POST'])
-def create_checkout_session():
-    cart = session.get('cart', [])
-    if not cart:
-        return abort(400, "Cart is empty")
-
-    line_items = [{
-        'price_data': {
-            'currency': 'usd',
-            'unit_amount': int(float(product['price']) * 100),
-            'product_data': {
-                'name': product['name'],
-            },
-        },
-        'quantity': product['quantity'],
-    } for product in cart]
-
-    try:
-        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=line_items,
-            mode='payment',
-            shipping_address_collection={
-                'allowed_countries': ['US'],
-            },
-            billing_address_collection='required',
-            success_url=url_for('success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=url_for('cart', _external=True),  # Updated to cart route
-        )
-        return jsonify(id=checkout_session.id)
-    except Exception as e:
-        return jsonify(error=str(e)), 403
-
-@app.route('/success')
-def success():
-    session_id = request.args.get('session_id', None)
-
-    try:
-        current_app.logger.info(f"Retrieving session: {session_id}")
-        stripe_session = stripe.checkout.Session.retrieve(session_id)
-        current_app.logger.info(f"Retrieved session")
-        # current_app.logger.info(f"Retrieved session: {stripe_session}")
-        
-        payment_intent = stripe.PaymentIntent.retrieve(stripe_session.payment_intent)
-        current_app.logger.info(f"Retrieved payment_intent")
-        # current_app.logger.info(f"Retrieved payment_intent: {payment_intent}")
-        
-        try:
-            if payment_intent.status == 'succeeded':
-                cart = session.get('cart', [])
-
-                customer_email = stripe_session.customer_details.email
-                customer_name = stripe_session.customer_details.name
-                address = stripe_session.customer_details.address
-                invoice = stripe_session.id
-
-                send_email(
-                    "Your order receipt from AI FLICKS",
-                    customer_email, 
-                    customer_name, 
-                    address, 
-                    None,
-                    invoice, 
-                    payment_intent.amount / 100, 
-                    to_customer=True, 
-                    cart_items=cart
-                )
-                current_app.logger.info("Email sent")
-                
-                # Clear the cart from your app's session
-                session.pop('cart', None)
-                current_app.logger.info("Cart cleared")
-
-                return render_template('success.html')
-            else:
-                return redirect(url_for('cart'))
-        except Exception as e:
-            current_app.logger.error(f"Error: {e}")
-            return render_template('fail-checkout.html', error=str(e), token="email")
-    except Exception as e:
-        current_app.logger.error(f"Error: {e}")
-        return render_template('fail-checkout.html', error=str(e), token="checkout")
