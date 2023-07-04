@@ -2,10 +2,16 @@ import os
 import base64
 import time
 from flask import render_template, request, jsonify, url_for, redirect, session, abort, current_app
-from utils import generate_random_prompt, generate_negative_prompt, send_email, Tshirt, Hoodie
+from utils import generate_random_prompt, generate_negative_prompt, Tshirt, Hoodie
 from model import Model
 from app import app
 import stripe
+import requests
+import json
+import asyncio
+import httpx
+from model.model import ModelException
+
 
 
 HUGGING_FACE_API_URLS = {
@@ -65,10 +71,28 @@ def model():
     if not negative_prompt or negative_prompt.isspace():
         negative_prompt = generate_negative_prompt(selected_model)
 
-    return generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        print("this try block was hit in model")
+        response = loop.run_until_complete(generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt))
+        # print(type(response), response[:100])
+        # response = base64.b64encode(response).decode()
+        # print(type(response), response[:100])
+        return render_template("result.html", image=response, prompt=prompt)
+    except ModelException as e:
+        print("modelException")
+        return render_template("error.html", error=str(e))
+    except Exception as e:
+        print("otherException")
+        return render_template("error.html", error=str(e))
+    finally:
+        loop.close()
 
 
-def generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=0):
+
+
+async def generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=0):
     model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
 
     print("Prompt: ", prompt)
@@ -78,18 +102,20 @@ def generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prom
 
     try:
         start = time.time()
-        response = model.generate_image()
+        response = await model.generate_image()
         print(f"Time taken: {time.time() - start} seconds")
-        if response == "timeout" and retry_count < 5:  # Limit retries to avoid infinite recursion
+        return response
+    except ModelException as e:  # Catch ModelException here
+        if retry_count < 5:  # Limit retries to avoid infinite recursion
             print('retrying...')
-            return generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count + 1)
-    except Exception as e:
-        return render_template("error.html", error=str(e))
+            return await generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=retry_count + 1)
+        else:
+            raise e
 
-    if not response or response == "timeout":
-        return render_template("error.html", error="No image generated or timeout after retries")
-    return render_template("result.html", image=response, prompt=prompt)
 
+
+
+    
 
 @app.route('/gallery-image/<img_name>', methods=['GET'])
 def gallery_image(img_name):
@@ -166,6 +192,8 @@ def addToCart():
     # cart.append(product.to_dict())
     # session['cart'] = cart
     # return redirect(url_for('cart'))
+
+
 
 
 
