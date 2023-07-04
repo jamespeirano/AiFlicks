@@ -1,10 +1,9 @@
 import io
 import os
-import aiohttp
+import requests
 import base64
+import concurrent.futures
 from PIL import Image
-import asyncio
-from aiohttp import ClientSession, ClientTimeout
 
 __all__ = ["Model"]
 
@@ -36,14 +35,24 @@ class Model:
                 "wait_for_model": True
             }
         }
+        self.session = requests.Session()
         self.retry_count = 0
 
-    async def generate_image(self):
+    def generate_image(self):
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(self._generate_image)
+            try:
+                base_64_image = future.result(timeout=TIMEOUT)
+                return base_64_image
+            except concurrent.futures.TimeoutError:
+                return "timeout"
+
+    def _generate_image(self):
         try:
-            response_content = await self.fetch_response()
+            response_content = self.fetch_response()
             if not response_content:
                 raise ModelException("No content in the response")
-            
+        
             image = Image.open(io.BytesIO(response_content))
             image_byte_data = io.BytesIO()
             image.save(image_byte_data, format='PNG')
@@ -53,26 +62,26 @@ class Model:
             print(f"Failed to generate image: {e}")
             raise ModelException(f"Failed to generate image: {e}") from e
 
-    async def fetch_response(self):
-        timeout = ClientTimeout(total=28)
-        async with ClientSession(timeout=timeout) as session:
-            try:
-                async with session.post(
+    def fetch_response(self):
+        try:
+            response = self.session.post(
                 self.selected_model,
                 headers=headers,
                 json=self.params,
-                timeout=28  # Setting a low value for testing
-            ) as response:
-                    if response.status != 200:
-                        print(f"Failed to generate image: {response.status}")
-                        if response.status == 400:
-                            raise ModelException("Bad Request - there might be something wrong with your parameters.")
-                        elif response.status == 401:
-                            raise ModelException("Unauthorized - there might be something wrong with your authentication.")
-                        else:
-                            raise ModelException(f"Unexpected status code: {response.status}")
-                    
-                    return await response.read()
-            except aiohttp.ClientError as e:
-                print(f"RequestException: {e}")
-                raise ModelException(f"RequestException: {e}") from e
+                timeout=TIMEOUT
+            )
+        except requests.RequestException as e:
+            print(f"RequestException: {e}")
+            raise ModelException(f"RequestException: {e}") from e
+
+        if response.status_code != 200:
+            print(f"Failed to generate image: {response.status_code}")
+            print(f"Response text: {response.text}")
+            if response.status_code == 400:
+                raise ModelException("Bad Request - there might be something wrong with your parameters.")
+            elif response.status_code == 401:
+                raise ModelException("Unauthorized - there might be something wrong with your authentication.")
+            else:
+                raise ModelException(f"Unexpected status code: {response.status_code}")
+
+        return response.content
