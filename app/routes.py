@@ -55,7 +55,7 @@ def cart():
 
 
 @app.route('/model', methods=['POST'])
-async def model():
+def model():
     data = request.form
     selected_model = data.get('model_input')
     prompt = data.get('prompt')
@@ -71,29 +71,25 @@ async def model():
     if not negative_prompt or negative_prompt.isspace():
         negative_prompt = generate_negative_prompt(selected_model)
 
-    return await generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt)
-
-
-
-@app.route('/generate', methods=['POST'])
-def generate():
-    HUGGING_API = request.form['huggingface_api']
-    selected_model = request.form['model']
-    prompt = request.form['prompt']
-    negative_prompt = request.form['negative_prompt']
-
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     try:
-        print("this try block was hit")
+        print("this try block was hit in model")
         response = loop.run_until_complete(generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt))
-        print(type(response), response[:100])
-        response = base64.b64encode(response).decode()
-        print(type(response), response[:100])
+        # print(type(response), response[:100])
+        # response = base64.b64encode(response).decode()
+        # print(type(response), response[:100])
         return render_template("result.html", image=response, prompt=prompt)
     except ModelException as e:
+        print("modelException")
         return render_template("error.html", error=str(e))
     except Exception as e:
+        print("otherException")
         return render_template("error.html", error=str(e))
+    finally:
+        loop.close()
+
+
 
 
 async def generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=0):
