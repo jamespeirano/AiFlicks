@@ -9,13 +9,13 @@ from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-time_to_live = 15        # minutes
+time_to_live = 24
 
 app = Flask(__name__, template_folder='frontend', static_folder='frontend/assets')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', default=secrets.token_hex(16))
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = os.path.join(BASE_DIR, '..', 'flask_session')
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=time_to_live)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=time_to_live)
 
 Session(app)
 
@@ -31,7 +31,7 @@ def cleanup_sessions(session_folder: Path, expiration_time: int):
 
 scheduler = BackgroundScheduler()
 scheduler.start()
-scheduler.add_job(lambda: cleanup_sessions(Path(app.config['SESSION_FILE_DIR']), time_to_live), 'interval', minutes=time_to_live)
+scheduler.add_job(lambda: cleanup_sessions(Path(app.config['SESSION_FILE_DIR']), time_to_live), 'interval', hours=time_to_live)
 
 # Ensure all scheduled tasks are stopped when the app is exiting
 atexit.register(lambda: scheduler.shutdown())
