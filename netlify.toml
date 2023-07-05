@@ -1,4 +1,0 @@
-[build]
-base = "aiflicks"
-command = "python app/__init__.py"
-publish = "aiflicks/frontend"
