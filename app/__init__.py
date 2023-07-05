@@ -9,7 +9,7 @@ from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-time_to_live = 5        # minutes
+time_to_live = 15        # minutes
 
 app = Flask(__name__, template_folder='frontend', static_folder='frontend/assets')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', default=secrets.token_hex(16))

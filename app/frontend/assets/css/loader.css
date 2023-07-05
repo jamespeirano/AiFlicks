@@ -40,11 +40,13 @@
 .h2 {
   transform: rotate(60deg);
   -webkit-transform: rotate(60deg);
+  -ms-transform: rotate(60deg);
 }
 
 .h3 {
   transform: rotate(-60deg);
   -webkit-transform: rotate(-60deg);
+  -ms-transform: rotate(-60deg);
 }
 
 .gel {
@@ -319,20 +321,46 @@
   -webkit-animation-delay: .6s;
 }
 
-@keyframes pulse00 {
+@-webkit-keyframes pulse00 {
   0% {
     -webkit-transform: scale(1);
     transform: scale(1);
   }
 
-  50% {
-    -webkit-transform: scale(0.01);
-    transform: scale(0.01);
+  25% {
+    -webkit-transform: scale(0.7);
+    transform: scale(0.7);
   }
 
-  100% {
+  50% {
     -webkit-transform: scale(1);
     transform: scale(1);
+  }
+}
+
+@keyframes pulse00 {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(0.7);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
+
+@-webkit-keyframes fade00 {
+  0% {
+    background: #000000;
+  }
+
+  25% {
+    background: #FFFFFF;
+  }
+
+  50% {
+    background: #198754;
   }
 }
 
@@ -340,19 +368,17 @@
   0% {
     background: #000000;
   }
-
-  50% {
+  25% {
     background: #FFFFFF;
   }
-
-  100% {
+  50% {
     background: #198754;
   }
 }
 
 .loader-text {
   position: absolute;
-  top: 65%;
+  top: 70%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 24px;
@@ -360,6 +386,12 @@
   color: #198754;
   text-align: center;
   animation: fade 1s linear infinite;
+}
+
+@-webkit-keyframes fade {
+  0% {opacity: 1;}
+  50% {opacity: 0.5;}
+  100% {opacity: 1;}
 }
 
 @keyframes fade {

@@ -1,10 +1,19 @@
 import os
 import base64
-from flask import render_template, request, jsonify, url_for, redirect, session, abort
-from utils import generate_random_prompt, generate_negative_prompt, send_email, Tshirt, Hoodie
+import time
+from flask import render_template, request, jsonify, url_for, redirect, session, abort, current_app
+from utils import generate_random_prompt, generate_negative_prompt, Tshirt, Hoodie
 from model import Model
 from app import app
 import stripe
+import requests
+import json
+import asyncio
+import httpx
+from model.model import ModelException
+from model.model import TimeoutException
+
+
 
 
 HUGGING_FACE_API_URLS = {
@@ -23,6 +32,10 @@ def index():
 @app.route('/models')
 def models():
     return render_template('models.html')
+
+@app.route('/guide')
+def guide():
+    return render_template('guide.html')
 
 
 @app.route('/gallery')
@@ -60,17 +73,51 @@ def model():
     if not negative_prompt or negative_prompt.isspace():
         negative_prompt = generate_negative_prompt(selected_model)
 
-    model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        print("this try block was hit in model")
+        response = loop.run_until_complete(generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt))
+        # print(type(response), response[:100])
+        # response = base64.b64encode(response).decode()
+        # print(type(response), response[:100])
+        return render_template("result.html", image=response, prompt=prompt)
+    except ModelException as e:
+        print("modelException")
+        return render_template("error.html", error=str(e))
+    except Exception as e:
+        print("otherException")
+        return render_template("error.html", error=str(e))
+    finally:
+        loop.close()
+
+
+async def generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=0, model = None):
+    if not model:
+        model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
+
+    print("Prompt: ", prompt)
+    print("Negative Prompt: ", negative_prompt)
+    print("Model: ", selected_model)
+    print("Hugging Face API: ", HUGGING_API)
 
     try:
-        response = model.generate_image()
-    except Exception as e:
-        return render_template("error.html", error=str(e))
+        start = time.time()
+        response = await model.generate_image()
+        print(f"Time taken: {time.time() - start} seconds")
+        return response
+    except TimeoutException as e:  # Catch ModelException here
+        if retry_count < 5:  # Limit retries to avoid infinite recursion
+            print('retrying with NEW MODEL INSTANCE ')
+            new_model = Model(HUGGING_API, prompt=prompt, negative_prompt=negative_prompt)
+            return await generate_image_and_render(HUGGING_API, selected_model, prompt, negative_prompt, retry_count=retry_count + 1, model=new_model)
+        else:
+            raise e
 
-    if not response:
-        return render_template("error.html", error="No image generated")
-    return render_template("result.html", image=response, prompt=prompt)
 
+
+
+    
 
 @app.route('/gallery-image/<img_name>', methods=['GET'])
 def gallery_image(img_name):
@@ -96,7 +143,7 @@ def addToCart():
     image_base64 = request.form.get('imageBase64')
     selectedProduct = request.form.get('selectedProduct')
     quantity = int(request.form.get('quantity', 1)) 
-
+    teeMillApiKey = "8F7VouCxpe4xUx1icErBNIrJiXvqpnRS7tUWFvi7"
     # Dictionary to determine product type
     products = {
         'tshirt': Tshirt,
@@ -111,127 +158,44 @@ def addToCart():
     else:
         return abort(400, "Invalid product type")
 
-    cart = session.get('cart', [])
-    cart.append(product.to_dict())
-    session['cart'] = cart
-    return redirect(url_for('cart'))
+    # Set the options
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer {}'.format(teeMillApiKey)
+    }
+
+    data = {
+        'image_url': "https://www.seiu1000.org/sites/main/files/main-images/camera_lense_0.jpeg",
+        'item_code': 'RNA1',
+        'name': 'Hello World',
+        'colours': 'White,Black',
+        'description': 'Check out this awemand.',
+        'price': 20.00
+    }
+
+    # Send the API request
+    response = requests.post('https://teemill.com/omnis/v3/product/create', headers=headers, data=json.dumps(data))
+
+    from flask import redirect
+
+    # ...
+
+    # Check the response
+    if response.status_code == 200:
+        response_data = response.json()
+        # Redirect to the new URL
+        return redirect(response_data['url'])
+    else:
+        print('Error:', response.status_code)
+        print('Message:', response.text)  # Add this line
+        return abort(500, "Error contacting API")
+
+    # cart = session.get('cart', [])
+    # cart.append(product.to_dict())
+    # session['cart'] = cart
+    # return redirect(url_for('cart'))
 
 
-@app.route('/remove-from-cart', methods=['POST'])
-def remove_from_cart():
-    data = request.get_json()
-    product_id = data.get('productId', None)
-    cart = session.get('cart', [])
-
-    for item in cart:
-        if item['id'] == product_id:
-            cart.remove(item)
-            break
-
-    session['cart'] = cart
-    return jsonify({"success": True}), 200
 
 
-@app.route('/update_cart_quantity', methods=['POST'])
-def update_cart_quantity():
-    data = request.get_json()
-    product_id = data.get('productId', None)
-    new_quantity = int(data.get('newQuantity', 1))
-    cart = session.get('cart', [])
 
-    new_total = 0.0
-    subtotal = 0.0
-    for item in cart:
-        if item['id'] == product_id:
-            item['quantity'] = new_quantity
-            new_total = item['price'] * new_quantity
-        subtotal += item['price'] * item['quantity']
-
-    session['cart'] = cart
-
-    return jsonify({"success": True, "newTotal": new_total, "subtotal": subtotal}), 200
-
-
-@app.route('/create_checkout_session', methods=['POST'])
-def create_checkout_session():
-    cart = session.get('cart', [])
-    if not cart:
-        return abort(400, "Cart is empty")
-
-    line_items = [{
-        'price_data': {
-            'currency': 'usd',
-            'unit_amount': int(float(product['price']) * 100),
-            'product_data': {
-                'name': product['name'],
-            },
-        },
-        'quantity': product['quantity'],
-    } for product in cart]
-
-    try:
-        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=line_items,
-            mode='payment',
-            shipping_address_collection={
-                'allowed_countries': ['US'],
-            },
-            billing_address_collection='required',
-            success_url=url_for('success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=url_for('cart', _external=True),  # Updated to cart route
-        )
-        return jsonify(id=checkout_session.id)
-    except Exception as e:
-        return jsonify(error=str(e)), 403
-    
-
-from flask import current_app
-
-@app.route('/success')
-def success():
-    session_id = request.args.get('session_id', None)
-    stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
-
-    try:
-        current_app.logger.info(f"Retrieving session: {session_id}")
-        stripe_session = stripe.checkout.Session.retrieve(session_id)
-        current_app.logger.info(f"Retrieved session")
-        # current_app.logger.info(f"Retrieved session: {stripe_session}")
-        
-        payment_intent = stripe.PaymentIntent.retrieve(stripe_session.payment_intent)
-        current_app.logger.info(f"Retrieved payment_intent")
-        # current_app.logger.info(f"Retrieved payment_intent: {payment_intent}")
-        
-        if payment_intent.status == 'succeeded':
-            cart = session.get('cart', [])
-
-            customer_email = stripe_session.customer_details.email
-            customer_name = stripe_session.customer_details.name
-            address = stripe_session.customer_details.address
-            invoice = stripe_session.id
-
-            send_email(
-                "Your order receipt from AI FLICKS",
-                customer_email, 
-                customer_name, 
-                address, 
-                None,
-                invoice, 
-                payment_intent.amount / 100, 
-                to_customer=True, 
-                cart_items=cart
-            )
-            current_app.logger.info("Email sent")
-            
-            # Clear the cart from your app's session
-            session.pop('cart', None)
-            current_app.logger.info("Cart cleared")
-
-            return render_template('success.html')
-        else:
-            return redirect(url_for('cart'))
-    except Exception as e:
-        current_app.logger.error(f"Error: {e}")
-        return render_template('fail-checkout.html', error=str(e))
