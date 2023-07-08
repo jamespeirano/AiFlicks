@@ -29,6 +29,7 @@
         </div>
     </nav>
 
+    {% block loader %}{% endblock %}
     {% block header %}{% endblock %}
 
     <footer class="bg-dark">
@@ -39,9 +40,6 @@
             </div>
         </div>
     </footer>
-
-    {% block loader %}{% endblock %}
-
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/bold-and-dark.js')}}"></script>
