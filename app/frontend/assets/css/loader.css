@@ -22,7 +22,7 @@
   stroke: lightgray;
   stroke-width: 0.6px;
   animation: dashArray 4s ease-in-out infinite,
-    dashOffset 4s linear infinite;
+  dashOffset 4s linear infinite;
 }
 
 @keyframes dashArray {
@@ -51,7 +51,7 @@
 
 .loader-text {
   position: absolute;
-  top: 65%;
+  top: 69%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 24px;
