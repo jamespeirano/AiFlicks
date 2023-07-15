@@ -6,6 +6,12 @@ window.addEventListener('pageshow', (event) => {
     }
 });
 
+$(document).ready(function() {
+    setTimeout(function() {
+        $('.flashed-messages').fadeOut('slow');
+    }, 3000);
+});
+
 
 let isTyping = false;
 
