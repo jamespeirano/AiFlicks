@@ -1,45 +1,33 @@
-import os
-import secrets
-import atexit
-from datetime import datetime, timedelta
 from flask import Flask, render_template
 from flask_session import Session
-from apscheduler.schedulers.background import BackgroundScheduler
-from pathlib import Path
+from flask_login import LoginManager
+from flask_mongoengine import MongoEngine
+from flask_admin import Admin
+from flask_admin.contrib.mongoengine import ModelView
+from .config import Config
+from .utils import scheduler
+from .models import User
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-time_to_live = 24
+db = MongoEngine()
+login_manager = LoginManager()
 
 app = Flask(__name__, template_folder='frontend', static_folder='frontend/assets')
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', default=secrets.token_hex(16))
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_FILE_DIR'] = os.path.join(BASE_DIR, '..', 'flask_session')
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=time_to_live)
+app.config.from_object(Config)
 
 Session(app)
+db.init_app(app)
+login_manager.init_app(app)
 
-def cleanup_sessions(session_folder: Path, expiration_time: int):
-    now = datetime.now()
+@login_manager.user_loader
+def load_user(user_id):
+    from .models import User
+    return User.objects(pk=user_id).first()
 
-    for file_path in session_folder.iterdir():
-        if file_path.is_file() and file_path.stat().st_mtime < (now - timedelta(minutes=expiration_time)).timestamp():
-            try:
-                file_path.unlink()
-            except Exception as e:
-                print(f"Failed to delete {file_path}. Reason: {e}")
-
-scheduler = BackgroundScheduler()
-scheduler.start()
-scheduler.add_job(lambda: cleanup_sessions(Path(app.config['SESSION_FILE_DIR']), time_to_live), 'interval', hours=time_to_live)
-
-# Ensure all scheduled tasks are stopped when the app is exiting
-atexit.register(lambda: scheduler.shutdown())
-
-# Handle common HTTP errors with custom templates
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
 
-# avoid circular import
+admin = Admin(app, name='Dashboard', template_mode='bootstrap3')
+admin.add_view(ModelView(User))
+
 from app import routes

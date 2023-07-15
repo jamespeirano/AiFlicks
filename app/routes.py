@@ -1,10 +1,12 @@
 import os
 import base64
 import time
-from flask import render_template, request, jsonify, session, abort
+from flask import render_template, request, jsonify, session, abort, redirect, url_for, flash
+from flask_login import login_user, logout_user, login_required, current_user
 from utils import generate_random_prompt, generate_negative_prompt
 from model import Model
-from app import app
+from app import app, db
+from .models import User
 
 
 HUGGING_FACE_API_URLS = {
@@ -19,6 +21,45 @@ HUGGING_FACE_API_URLS = {
 def index():
     session.permanent = False
     return render_template("index.html")
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    if request.method == 'POST':
+        user = User.objects(email=request.form.get('email')).first()
+        if user and user.check_password(request.form.get('password')):
+            login_user(user, remember=True)  # Set the user in the session
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Invalid username or password')
+    return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    logout_user()  # Removes the user from the session
+    return redirect(url_for('login'))
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    if request.method == 'POST':
+        user = User()
+        user.email = request.form.get('email')
+        user.set_password(request.form.get('password'))  # Hashes the password
+        user.save()  # Stores the new user in the database
+        flash('Your account has been created! You can now login')
+        return redirect(url_for('login'))
+    return render_template('signup.html')
+
+
+@app.route('/pricing')
+def pricing():
+    return render_template('pricing.html')
 
 
 @app.route('/models')
