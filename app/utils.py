@@ -2,7 +2,7 @@ import atexit
 from datetime import datetime, timedelta
 from pathlib import Path
 from apscheduler.schedulers.background import BackgroundScheduler
-from config import time_to_live, Config
+from .config import time_to_live, Config
 
 def cleanup_sessions(session_folder: Path, expiration_time: int):
     now = datetime.now()

@@ -14,7 +14,7 @@ class Config:
 
     # MongoDB configuration
     MONGODB_SETTINGS = {
-        'db': 'your-db-name',
+        'db': 'aiflix',
         'host': 'localhost',
         'port': 27017
     }

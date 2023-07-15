@@ -5,9 +5,9 @@ from flask import render_template, request, jsonify, session, abort, redirect, u
 from flask_login import login_user, logout_user, login_required, current_user
 from utils import generate_random_prompt, generate_negative_prompt
 from model import Model
-from app import app, db
+from app import app
 from .models import User
-
+from . import login_manager
 
 HUGGING_FACE_API_URLS = {
     'stable-diffusion': os.environ.get('HUGGING_FACE_API_URL1'),
@@ -17,7 +17,14 @@ HUGGING_FACE_API_URLS = {
 }
 
 
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash('You must be logged in to view this page.')
+    return redirect(url_for('login'))
+
+
 @app.route('/')
+@login_required
 def index():
     session.permanent = False
     return render_template("index.html")
@@ -26,12 +33,12 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('index'))
     if request.method == 'POST':
         user = User.objects(email=request.form.get('email')).first()
         if user and user.check_password(request.form.get('password')):
-            login_user(user, remember=True)  # Set the user in the session
-            return redirect(url_for('dashboard'))
+            login_user(user, remember=True)
+            return redirect(url_for('index'))
         else:
             flash('Invalid username or password')
     return render_template('login.html')
@@ -39,19 +46,19 @@ def login():
 
 @app.route('/logout')
 def logout():
-    logout_user()  # Removes the user from the session
+    logout_user()
     return redirect(url_for('login'))
 
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('index'))
     if request.method == 'POST':
         user = User()
         user.email = request.form.get('email')
-        user.set_password(request.form.get('password'))  # Hashes the password
-        user.save()  # Stores the new user in the database
+        user.set_password(request.form.get('password'))
+        user.save()
         flash('Your account has been created! You can now login')
         return redirect(url_for('login'))
     return render_template('signup.html')
