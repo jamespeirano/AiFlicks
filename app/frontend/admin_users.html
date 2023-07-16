@@ -1,8 +1,15 @@
 {% extends 'admin_base.html' %}
 
 {% block title %}AIF Users{% endblock %}
-{% block name %} {{ username }} {% endblock %}
-{% block avatar %} {{ url_for('static', filename='admin_assets/img/avatars/izhar-prof.png') }} {% endblock %}
+{% block username %} {{ user.username }} {% endblock %}
+{% block avatar %}
+    {% set avatar_url = user.get_avatar_url() %}
+    {% if avatar_url %}
+        <img class="border rounded-circle img-profile avatar" src="{{ avatar_url }}" alt="Avatar"/>
+    {% else %}
+        <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/default.png') }}" alt="Default Avatar" />
+    {% endif %}
+{% endblock %}
 {% block heading %}Users{% endblock %}
 
 {% block content %}
@@ -40,18 +47,18 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Username</th>
-                        <th>Reg date</th>
+                        <th>User since</th>
                         <th>Orders</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in users[:rows] %}
                     <tr>
-                        <td><img class="rounded-circle me-2" width="30" height="30" src="{{ url_for('static', filename='admin_assets/img/avatars/user.png') }}">{{ user.email.split('@')[0] }}</td>
+                        <td><img class="rounded-circle me-2" width="30" height="30" src="{{ user.get_avatar_url() }}">{{ user.first_name + user.last_name }}</td>
                         <td>{{ user.email }}</td>
-                        <td>{{ user.email.split('@')[0] }}</td>
-                        <td>{{ None }}</td>
-                        <td>{{ None }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.since }}</td>
+                        <td>{{ user.orders if user.orders else None }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

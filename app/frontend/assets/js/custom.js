@@ -12,7 +12,6 @@ $(document).ready(function() {
     }, 3000);
 });
 
-
 let isTyping = false;
 
 const formFields = {
@@ -48,7 +47,7 @@ function toggleGenerateButton(state) {
     generateButton.disabled = state;
 }
 
-function typeWriter(text, elementId, delay = 100) {
+function typeWriter(text, elementId, delay) {
     if (!text.length) {
         isTyping = false;
         toggleGenerateButton(false);
@@ -74,7 +73,7 @@ function generateRandomPrompt() {
         message.value = '';
         console.log(data.prompt)
         isTyping = true;
-        typeWriter(data.prompt, 'message-1', 20);
+        typeWriter(data.prompt, 'message-1', 10);
     })
     .catch(error => {
         console.error('Error:', error);

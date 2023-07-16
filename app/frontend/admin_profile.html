@@ -1,8 +1,16 @@
 {% extends 'admin_base.html' %}
 
 {% block title %}Admin Profile{% endblock %}
-{% block name %} {{ username }} {% endblock %}
-{% block avatar %} {{ url_for('static', filename='admin_assets/img/avatars/izhar-prof.png') }} {% endblock %}
+{% block username %} {{ user.username }} {% endblock %}
+{% block avatar %}
+    {% set avatar_url = user.get_avatar_url() %}
+    {% if avatar_url %}
+        <img class="border rounded-circle img-profile avatar" src="{{ avatar_url }}" alt="Avatar"/>
+    {% else %}
+        <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/default.png') }}" alt="Default Avatar" />
+    {% endif %}
+{% endblock %}
+
 {% block heading %}Profile{% endblock %}
 
 {% block content %}
