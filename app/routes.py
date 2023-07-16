@@ -1,13 +1,13 @@
 import os
 import base64
 import time
+import math
 from flask import render_template, request, jsonify, session, abort, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from utils import generate_random_prompt, generate_negative_prompt
 from model import Model
-from app import app
+from app import app, login_manager
 from .models import User
-from . import login_manager
 
 HUGGING_FACE_API_URLS = {
     'stable-diffusion': os.environ.get('HUGGING_FACE_API_URL1'),
@@ -29,6 +29,38 @@ def index():
     session.permanent = False
     return render_template("index.html")
 
+
+@app.route('/admin')
+@login_required
+def admin_dashboard():
+    if not current_user.is_admin:
+        abort(403)
+    username = current_user.email.split('@')[0]
+    return render_template('admin_profile.html', username=username)
+
+
+@app.route('/admin/users')
+@login_required
+def admin_users():
+    if not current_user.is_admin:
+        abort(403)
+    
+    username = current_user.email.split('@')[0]
+    
+    page = request.args.get('page', default=1, type=int)
+    rows_per_page = request.args.get('rows', default=10, type=int)
+    
+    users = User.objects()
+    users = [user for user in users if user != current_user]
+    total_users = len(users)
+    total_pages = math.ceil(total_users / rows_per_page)
+    
+    start_index = (page - 1) * rows_per_page
+    end_index = start_index + rows_per_page
+    paginated_users = users[start_index:end_index]
+    
+    return render_template('admin_users.html', username=username, users=paginated_users, 
+                           total_pages=total_pages, current_page=page, rows=rows_per_page)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -55,13 +87,25 @@ def logout():
 def signup():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+    
     if request.method == 'POST':
-        user = User()
-        user.email = request.form.get('email')
-        user.set_password(request.form.get('password'))
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        # Check if account already exists
+        existing_user = User.objects(email=email).first()
+        if existing_user:
+            flash('An account with that email already exists. Please login.')
+            return redirect(url_for('login'))
+        
+        # Create a new user account
+        user = User(email=email)
+        user.set_password(password)
         user.save()
-        flash('Your account has been created! You can now login')
+        
+        flash('Your account has been created! You can now login.')
         return redirect(url_for('login'))
+    
     return render_template('signup.html')
 
 
