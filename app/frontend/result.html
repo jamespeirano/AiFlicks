@@ -3,7 +3,7 @@
 {% block title %}Design Image{% endblock %}
 {% block username %} {{ user.username }} {% endblock %}
 {% block avatar %}
-    {% set avatar_url = user.get_avatar_url() %}
+    {% set avatar_url = user.get_avatar() %}
     {% if avatar_url %}
         <img class="border rounded-circle img-profile avatar" src="{{ avatar_url }}" alt="Avatar"/>
     {% else %}

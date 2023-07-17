@@ -1,13 +1,13 @@
 import os
-import math
 import base64
-from flask import request, render_template, abort, redirect, url_for, flash, jsonify ,session
+from flask import request, render_template, abort, redirect, url_for, flash, jsonify, session
 from flask_login import login_required, current_user, login_user, logout_user
 from flask_executor import Executor
 from concurrent.futures import TimeoutError
 
 from app import app, login_manager
 from .models import User
+from .ops import *
 
 from model import Model, ModelError
 from utils import generate_negative_prompt, generate_random_prompt, resize_avatar
@@ -48,27 +48,16 @@ def admin_dashboard():
 def admin_users():
     if not current_user.is_admin:
         abort(403)
-    
-    page = request.args.get('page', default=1, type=int)
-    rows_per_page = request.args.get('rows', default=10, type=int)
-    
     users = User.objects()
-    total_users = len(users)
-    total_pages = math.ceil(total_users / rows_per_page)
+    return render_template('admin_users.html', user=current_user, users=users)
     
-    start_index = (page - 1) * rows_per_page
-    end_index = start_index + rows_per_page
-    paginated_users = users[start_index:end_index]
-    
-    return render_template('admin_users.html', user=current_user, users=paginated_users, 
-                           total_pages=total_pages, current_page=page, rows=rows_per_page)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     if request.method == 'POST':
-        user = User.objects(username=request.form.get('username').strip()).first()
+        user = get_user_by_username(request.form.get('username').strip())
         if user and user.check_password(request.form.get('password').strip()):
             login_user(user, remember=True)
             return redirect(url_for('index'))
@@ -102,22 +91,16 @@ def signup():
             flash('Please enter all the fields')
             return redirect(url_for('signup'))
 
-        # Check if account already exists
-        existing_user = User.objects(email=email).first()
+        existing_user = get_user_by_email(email)
         if existing_user:
             flash('An account with that email already exists. Please login.')
             return redirect(url_for('login'))
 
-        # Check if username is taken
-        existing_username = User.objects(username=username).first()
+        existing_username = get_user_by_username(username)
         if existing_username:
             flash('That username is already taken. Please choose a different username.')
             return redirect(url_for('signup'))
         
-        # Create a new user account
-        user = User(first_name=first_name, last_name=last_name, email=email, username=username)
-        user.set_password(password)
-
         # Resize and save the avatar
         if avatar and allowed_file(avatar.filename):
             try:
@@ -125,14 +108,12 @@ def signup():
             except Exception as e:
                 print("Error resizing avatar: ", e)
                 resized_avatar = None
+        
+        if not avatar or resized_avatar is None:
+            with open('app/frontend/assets/img/default.png', 'rb') as img:
+                resized_avatar = img.read()
 
-            if resized_avatar: 
-                user.save_avatar(resized_avatar)
-            else:
-                with open('app/frontend/assets/img/default.png', 'rb') as img:
-                    default_avatar = img.read()
-                    user.save_avatar(default_avatar)
-        user.save()
+        create_user(first_name, last_name, email, username, password, resized_avatar)
         flash('Your account has been created! You can now login.')
         return redirect(url_for('login'))
     return render_template('signup.html')

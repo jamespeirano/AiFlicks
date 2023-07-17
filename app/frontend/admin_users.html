@@ -3,14 +3,13 @@
 {% block title %}AIF Users{% endblock %}
 {% block username %} {{ user.username }} {% endblock %}
 {% block avatar %}
-    {% set avatar_url = user.get_avatar_url() %}
+    {% set avatar_url = user.get_avatar() %}
     {% if avatar_url %}
         <img class="border rounded-circle img-profile avatar" src="{{ avatar_url }}" alt="Avatar"/>
     {% else %}
         <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/default.png') }}" alt="Default Avatar" />
     {% endif %}
 {% endblock %}
-{% block heading %}Users{% endblock %}
 
 {% block content %}
 <div class="card shadow">
@@ -52,7 +51,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for user in users[:rows] %}
+                    {% for user in users%}
                     <tr>
                         <td><img class="rounded-circle me-2" width="30" height="30" src="{{ user.get_avatar_url() }}">{{ user.first_name + user.last_name }}</td>
                         <td>{{ user.email }}</td>
@@ -63,46 +62,6 @@
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
-        <div class="row">
-            <div class="col-md-6 align-self-center">
-                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">
-                    Showing 1 to {% if users|length > 10 %}{{ users|length }}{% else %}{{ users|length }}{% endif %} of {{ users|length }}
-                </p>                             
-            </div>
-            {% if users|length > rows %}
-            <div class="col-md-6">
-                <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
-                    <ul class="pagination">
-                        {% if total_pages <= 1 %}
-                            <li class="page-item disabled"><span class="page-link">«</span></li>
-                            <li class="page-item active"><span class="page-link">1</span></li>
-                            <li class="page-item disabled"><span class="page-link">»</span></li>
-                        {% else %}
-                            {% if current_page == 1 %}
-                                <li class="page-item disabled"><span class="page-link">«</span></li>
-                            {% else %}
-                                <li class="page-item"><a class="page-link" href="?page={{ current_page - 1 }}&rows={{ rows }}">{{ '«' }}</a></li>
-                            {% endif %}
-                
-                            {% for page_num in range(1, total_pages + 1) %}
-                                {% if current_page == page_num %}
-                                    <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
-                                {% else %}
-                                    <li class="page-item"><a class="page-link" href="?page={{ page_num }}&rows={{ rows }}">{{ page_num }}</a></li>
-                                {% endif %}
-                            {% endfor %}
-                
-                            {% if current_page == total_pages %}
-                                <li class="page-item disabled"><span class="page-link">»</span></li>
-                            {% else %}
-                                <li class="page-item"><a class="page-link" href="?page={{ current_page + 1 }}&rows={{ rows }}">{{ '»' }}</a></li>
-                            {% endif %}
-                        {% endif %}
-                    </ul>
-                </nav>                              
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>

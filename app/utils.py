@@ -1,7 +1,6 @@
 import atexit
 from datetime import datetime, timedelta
 from pathlib import Path
-from PIL import Image
 from apscheduler.schedulers.background import BackgroundScheduler
 from .config import time_to_live, Config
 

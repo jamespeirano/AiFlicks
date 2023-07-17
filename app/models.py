@@ -21,12 +21,12 @@ class User(UserMixin, db.Document):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
-
-    def save_avatar(self, avatar):
+    
+    def set_avatar(self, avatar):
         self.avatar = avatar
         self.save()
 
-    def get_avatar_url(self):
+    def get_avatar(self):
         if self.avatar is not None:
             avatar_base64 = base64.b64encode(self.avatar).decode('utf-8')
             return f"data:image/png;base64,{avatar_base64}"
