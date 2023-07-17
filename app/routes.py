@@ -7,7 +7,7 @@ from concurrent.futures import TimeoutError
 
 from app import app, login_manager
 from .models import User
-from .ops import *
+from .db_ops import *
 
 from model import Model, ModelError
 from utils import generate_negative_prompt, generate_random_prompt, resize_avatar
@@ -26,13 +26,6 @@ HUGGING_FACE_API_URLS = {
 def unauthorized():
     flash('You must be logged in to view this page.')
     return redirect(url_for('login'))
-
-
-@app.route('/')
-@login_required
-def index():
-    session.permanent = False
-    return render_template("index.html", user=current_user)
 
 
 @app.route('/admin')
@@ -57,7 +50,7 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     if request.method == 'POST':
-        user = get_user_by_username(request.form.get('username').strip())
+        user = get_by_username(request.form.get('username').strip())
         if user and user.check_password(request.form.get('password').strip()):
             login_user(user, remember=True)
             return redirect(url_for('index'))
@@ -91,12 +84,12 @@ def signup():
             flash('Please enter all the fields')
             return redirect(url_for('signup'))
 
-        existing_user = get_user_by_email(email)
+        existing_user = get_by_email(email)
         if existing_user:
             flash('An account with that email already exists. Please login.')
             return redirect(url_for('login'))
 
-        existing_username = get_user_by_username(username)
+        existing_username = get_by_username(username)
         if existing_username:
             flash('That username is already taken. Please choose a different username.')
             return redirect(url_for('signup'))
@@ -117,6 +110,13 @@ def signup():
         flash('Your account has been created! You can now login.')
         return redirect(url_for('login'))
     return render_template('signup.html')
+
+
+@app.route('/')
+@login_required
+def index():
+    session.permanent = False
+    return render_template("index.html", user=current_user)
 
 
 @app.route('/pricing')

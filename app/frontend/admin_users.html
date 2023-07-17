@@ -53,7 +53,7 @@
                 <tbody>
                     {% for user in users%}
                     <tr>
-                        <td><img class="rounded-circle me-2" width="30" height="30" src="{{ user.get_avatar_url() }}">{{ user.first_name + user.last_name }}</td>
+                        <td><img class="rounded-circle me-2" width="30" height="30" src="{{ user.get_avatar() }}">{{ user.first_name + user.last_name }}</td>
                         <td>{{ user.email }}</td>
                         <td>{{ user.username }}</td>
                         <td>{{ user.since }}</td>
