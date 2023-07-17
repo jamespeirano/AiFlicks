@@ -1,15 +1,18 @@
 import os
-import base64
 import math
-from flask import render_template, request, jsonify, session, abort, redirect, url_for, flash
-from flask_login import login_user, logout_user, login_required, current_user
-from utils import generate_random_prompt, generate_negative_prompt, resize_avatar
-from model import Model, ModelError
-from concurrent.futures import ThreadPoolExecutor, TimeoutError
+import base64
+from flask import request, render_template, abort, redirect, url_for, flash, jsonify ,session
+from flask_login import login_required, current_user, login_user, logout_user
+from flask_executor import Executor
+from concurrent.futures import TimeoutError
+
 from app import app, login_manager
 from .models import User
 
-executor = ThreadPoolExecutor(max_workers=5)
+from model import Model, ModelError
+from utils import generate_negative_prompt, generate_random_prompt, resize_avatar
+
+executor = Executor(app)
 
 HUGGING_FACE_API_URLS = {
     'stable-diffusion': os.environ.get('HUGGING_FACE_API_URL1'),
@@ -171,9 +174,7 @@ def model():
         
         if not negative_prompt or negative_prompt.isspace():
             negative_prompt = generate_negative_prompt(model_input)
-
-        response = executor.submit(generate_image, selected_model, prompt, negative_prompt).result(timeout=120)
-        return response
+        return generate_image(selected_model, prompt, negative_prompt)
 
     except TimeoutError:
         return render_template('error.html', error='Timeout')
@@ -200,15 +201,16 @@ def generate_image(selected_model, prompt, negative_prompt):
     return render_template('error.html', error='No image generated after retries')
 
 
-def query_model(model, prompt, negative_prompt):
-    model = Model(model, prompt, negative_prompt)
+def query_model(selected_model, prompt, negative_prompt):
+    model = Model(selected_model, prompt, negative_prompt)
     try:
-        image = model.generate()
+        image = executor.submit(model.generate).result(timeout=120)
     except TimeoutError:
-        raise ModelError('Timeout')
-    
+        raise ModelError('Timeout while generating image')
+
     if not image:
         raise ModelError('No image generated')
+
     return image
 
 
