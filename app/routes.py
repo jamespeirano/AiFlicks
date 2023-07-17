@@ -1,18 +1,16 @@
+import asyncio
 import os
 import base64
 from flask import request, render_template, abort, redirect, url_for, flash, jsonify, session
 from flask_login import login_required, current_user, login_user, logout_user
-from flask_executor import Executor
 from concurrent.futures import TimeoutError
 
 from app import app, login_manager
-from .models import User
 from .db_ops import *
 
 from model import Model, ModelError
 from utils import generate_negative_prompt, generate_random_prompt, resize_avatar
 
-executor = Executor(app)
 
 HUGGING_FACE_API_URLS = {
     'stable-diffusion': os.environ.get('HUGGING_FACE_API_URL1'),
@@ -28,6 +26,13 @@ def unauthorized():
     return redirect(url_for('login'))
 
 
+@app.route('/')
+@login_required
+def index():
+    session.permanent = False
+    return render_template("index.html", user=current_user)
+
+
 @app.route('/admin')
 @login_required
 def admin_dashboard():
@@ -41,7 +46,7 @@ def admin_dashboard():
 def admin_users():
     if not current_user.is_admin:
         abort(403)
-    users = User.objects()
+    users = get_all_users()
     return render_template('admin_users.html', user=current_user, users=users)
     
 
@@ -112,13 +117,6 @@ def signup():
     return render_template('signup.html')
 
 
-@app.route('/')
-@login_required
-def index():
-    session.permanent = False
-    return render_template("index.html", user=current_user)
-
-
 @app.route('/pricing')
 def pricing():
     return render_template('pricing.html')
@@ -142,7 +140,7 @@ def gallery():
 
 
 @app.route('/model', methods=['POST'])
-def model():
+async def model():
     try:
         data = request.form
         model_input = data.get('model_input')
@@ -155,7 +153,7 @@ def model():
         
         if not negative_prompt or negative_prompt.isspace():
             negative_prompt = generate_negative_prompt(model_input)
-        return generate_image(selected_model, prompt, negative_prompt)
+        return await generate_image(selected_model, prompt, negative_prompt)
 
     except TimeoutError:
         return render_template('error.html', error='Timeout')
@@ -167,10 +165,10 @@ def model():
         return render_template('error.html', error=str(e))
     
 
-def generate_image(selected_model, prompt, negative_prompt):
+async def generate_image(selected_model, prompt, negative_prompt):
     for attempt in range(3):
         try:
-            image = query_model(selected_model, prompt, negative_prompt)
+            image = await query_model(selected_model, prompt, negative_prompt)
         except ModelError as e:
             if attempt < 2: # Only allow retries if less than 2 attempts have been made
                 print(f"Attempt {attempt + 1} failed: {e}")
@@ -182,16 +180,15 @@ def generate_image(selected_model, prompt, negative_prompt):
     return render_template('error.html', error='No image generated after retries')
 
 
-def query_model(selected_model, prompt, negative_prompt):
+async def query_model(selected_model, prompt, negative_prompt):
     model = Model(selected_model, prompt, negative_prompt)
     try:
-        image = executor.submit(model.generate).result(timeout=120)
+        image = await asyncio.wait_for(model.generate(), timeout=120)
     except TimeoutError:
         raise ModelError('Timeout while generating image')
 
     if not image:
         raise ModelError('No image generated')
-
     return image
 
 

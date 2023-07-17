@@ -11,3 +11,6 @@ def create_user(first_name, last_name, email, username, password, avatar):
     user.set_password(password)
     user.set_avatar(avatar)
     user.save()
+
+def get_all_users():
+    return User.objects()

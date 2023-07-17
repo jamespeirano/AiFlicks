@@ -5,7 +5,7 @@ import concurrent.futures
 from aiohttp import ClientSession, ClientTimeout
 from PIL import Image
 
-__all__ = ["Model"]
+__all__ = ["Model", "ModelError"]
 
 headers = {"Authorization": f"Bearer {os.getenv('HUGGING_FACE_API_TOKEN')}"}
 TIMEOUT = 60
