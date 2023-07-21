@@ -1,16 +1,20 @@
 import asyncio
 import os
 import base64
+import dotenv
 from flask import request, render_template, abort, redirect, url_for, flash, jsonify, session
 from flask_login import login_required, current_user, login_user, logout_user
 from concurrent.futures import TimeoutError
+from google_auth_oauthlib.flow import Flow
 
 from app import app, login_manager
 from .db_ops import *
+from .plan_data import plans
 
 from model import Model, ModelError
-from utils import generate_negative_prompt, generate_random_prompt, resize_avatar
+from utils import generate_negative_prompt, generate_random_prompt, resize_avatar, generate_random_password, get_google_profile_pic
 
+dotenv.load_dotenv()
 
 HUGGING_FACE_API_URLS = {
     'stable-diffusion': os.environ.get('HUGGING_FACE_API_URL1'),
@@ -27,9 +31,15 @@ def unauthorized():
 
 
 @app.route('/')
-@login_required
+@login_required  
 def index():
     session.permanent = False
+    if 'oauth_token' in session:
+        info = google_auth.authorized_response()
+        email = info['email']
+        user = get_user_by_email(email)
+        if user:
+            login_user(user)
     return render_template("index.html", user=current_user)
 
 
@@ -48,14 +58,93 @@ def admin_users():
         abort(403)
     users = get_all_users()
     return render_template('admin_users.html', user=current_user, users=users)
+
+
+@app.route('/login/google')
+def google_login():
+    google_auth = Flow.from_client_config(
+        client_config={
+            "web": {
+                "client_id": os.environ.get('GOOGLE_CLIENT_KEY'),
+                "client_secret": os.environ.get('GOOGLE_CLIENT_SECRET'),
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "redirect_uris": [url_for('google_auth', _external=True)]
+            }
+        },
+        scopes=['https://www.googleapis.com/auth/userinfo.profile',
+                'https://www.googleapis.com/auth/userinfo.email']
+    )
+
+    redirect_uri = url_for('google_auth', _external=True)
+    google_auth.redirect_uri = redirect_uri
+    authorization_url, state = google_auth.authorization_url()
+
+    session['oauth_state'] = state
+    return redirect(authorization_url)
+
+
+@app.route('/login/google/auth')
+def google_auth():
+    state = session.get('oauth_state')
+    if state is None:
+        return redirect(url_for('login'))
+
+    google_auth = Flow.from_client_config(
+        client_config={
+            "web": {
+                "client_id": os.environ.get('GOOGLE_CLIENT_KEY'),
+                "client_secret": os.environ.get('GOOGLE_CLIENT_SECRET'),
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "redirect_uris": [url_for('google_auth', _external=True)]
+            }
+        },
+        scopes=['openid', 'https://www.googleapis.com/auth/userinfo.profile',
+                'https://www.googleapis.com/auth/userinfo.email'],
+        state=state
+    )
+
+    google_auth.redirect_uri = url_for('google_auth', _external=True)
     
+    # Ensure that we got back the same state to avoid CSRF attacks
+    if state != request.args.get('state', ''):
+        return redirect(url_for('login'))
+    
+    google_auth.fetch_token(
+        authorization_response_url=request.url,
+        client_secret=os.environ.get('GOOGLE_CLIENT_SECRET'),
+        code=request.args.get('code')
+    )
+
+    userinfo = google_auth.authorized_session().get('https://www.googleapis.com/oauth2/v1/userinfo').json()
+
+    email = userinfo['email'] 
+    avatar = userinfo['picture']
+    avatar = get_google_profile_pic(avatar)
+    resized_avatar = resize_avatar(avatar)
+
+    existing_user = get_user_by_email(email)
+    if existing_user:
+        login_user(existing_user)
+        return redirect(url_for('index'))
+
+    new_user = create_user(
+        email=email,
+        password=generate_random_password(),
+        avatar=resized_avatar
+    )
+
+    login_user(new_user)
+    return redirect(url_for('index'))
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     if request.method == 'POST':
-        user = get_by_username(request.form.get('username').strip())
+        user = get_user_by_email(request.form.get('email').strip())
         if user and user.check_password(request.form.get('password').strip()):
             login_user(user, remember=True)
             return redirect(url_for('index'))
@@ -77,24 +166,21 @@ def signup():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        first_name = request.form.get('first_name').strip()
-        last_name = request.form.get('last_name').strip()
-        username = request.form.get('username').strip()
         email = request.form.get('email').strip()
         password = request.form.get('password').strip()
         avatar = request.files['avatar']
 
         # Validate input
-        if not all([first_name, last_name, username, email, password]):
+        if not all([email, password]):
             flash('Please enter all the fields')
             return redirect(url_for('signup'))
 
-        existing_user = get_by_email(email)
+        existing_user = get_user_by_email(email)
         if existing_user:
             flash('An account with that email already exists. Please login.')
             return redirect(url_for('login'))
 
-        existing_username = get_by_username(username)
+        existing_username = get_user_by_email(email)
         if existing_username:
             flash('That username is already taken. Please choose a different username.')
             return redirect(url_for('signup'))
@@ -111,15 +197,51 @@ def signup():
             with open('app/frontend/assets/img/default.png', 'rb') as img:
                 resized_avatar = img.read()
 
-        create_user(first_name, last_name, email, username, password, resized_avatar)
-        flash('Your account has been created! You can now login.')
-        return redirect(url_for('login'))
+        new_user = create_user(email, password, resized_avatar)
+        flash('Your account has been created!')
+        login_user(new_user)
+        return redirect(url_for('index'))
     return render_template('signup.html')
+
+
+@app.route('/subscription', methods=['POST'])
+@login_required
+def handle_subscription():
+    user = current_user
+    current_subscription = user.subscription
+    selected_plan_name = request.form.get('plan_name')
+    selected_plan = get_plan_by_name(selected_plan_name)
+
+    print(f"Selected plan: {selected_plan.name}, current plan: {current_subscription.name}")
+
+    if selected_plan['price'] > current_subscription['price']:
+        subscription_action = url_for('upgrade_subscription', new_subscription_name=selected_plan.name)
+    elif selected_plan['price'] < current_subscription['price']:
+        subscription_action = url_for('downgrade_subscription', new_subscription_name=selected_plan.name)
+    else:
+        flash('You are already subscribed to this plan.', 'info')
+        return redirect(url_for('signin'))
+
+    return render_template('pricing.html', subscription_action=subscription_action)
+
+
+def upgrade_subscription(new_subscription_name):
+    user = current_user
+    create_subscription(new_subscription_name, plans[new_subscription_name])
+    user.upgrade_subscription(new_subscription_name)
+    return redirect(url_for('login'))
+
+
+def downgrade_subscription(new_subscription_name):
+    user = current_user
+    create_subscription(new_subscription_name, plans[new_subscription_name])
+    user.downgrade_subscription(new_subscription_name)
+    return redirect(url_for('login'))
 
 
 @app.route('/pricing')
 def pricing():
-    return render_template('pricing.html')
+    return render_template('pricing.html', plans=plans)
 
 
 @app.route('/models')

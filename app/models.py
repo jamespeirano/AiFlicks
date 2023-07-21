@@ -4,16 +4,18 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from . import db
 
+class Subscription(db.Document):
+    meta = {'collection': 'subscriptions'}
+    name = db.StringField(max_length=255, required=True, unique=True)
+    details = db.StringField(max_length=1000, required=True)
+
 class User(UserMixin, db.Document):
     meta = {'collection': 'users'}
     email = db.StringField(max_length=255, required=True, unique=True)
     password = db.StringField(required=True)
-    first_name = db.StringField(max_length=100, required=True)
-    last_name = db.StringField(max_length=100, required=True)
-    username = db.StringField(max_length=100, required=True, unique=True)
     since = db.DateTimeField(default=datetime.utcnow)
     avatar = db.BinaryField()
-
+    subscription = db.ReferenceField('Subscription', default=Subscription.objects(name="Free").first())
     is_admin = db.BooleanField(default=False)
 
     def set_password(self, password):
@@ -21,7 +23,7 @@ class User(UserMixin, db.Document):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
-    
+
     def set_avatar(self, avatar):
         self.avatar = avatar
         self.save()
@@ -32,3 +34,18 @@ class User(UserMixin, db.Document):
             return f"data:image/png;base64,{avatar_base64}"
         else:
             return None
+    
+    def get_subscription(self):
+        return self.subscription
+
+    def upgrade_subscription(self, subscription_name):
+        new_subscription = Subscription.objects(name=subscription_name).first()
+        if new_subscription:
+            self.subscription = new_subscription
+            self.save()
+
+    def downgrade_subscription(self, subscription_name):
+        new_subscription = Subscription.objects(name=subscription_name).first()
+        if new_subscription:
+            self.subscription = new_subscription
+            self.save()
