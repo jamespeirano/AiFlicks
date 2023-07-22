@@ -1,4 +1,4 @@
-from .models import User, Subscription
+from ..models import User, Subscription
 
 def create_user(email, password, avatar):
     user = User(email=email)

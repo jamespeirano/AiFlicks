@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, abort
 from flask_login import login_required, current_user
-from app.db_ops import get_all_users
+from app.services import get_all_users
 
 admin_bp = Blueprint('aiflix', __name__, url_prefix='/aiflix')
 

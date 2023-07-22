@@ -3,7 +3,7 @@ import dotenv
 from flask import request, render_template, redirect, url_for, flash, session, Blueprint
 from flask_login import current_user, login_user, logout_user
 from google_auth_oauthlib.flow import Flow
-from app.db_ops import get_user_by_email, create_user
+from app.services import get_user_by_email, create_user
 from app.utils import allowed_file
 from utils import resize_avatar, generate_random_password, get_google_profile_pic
 

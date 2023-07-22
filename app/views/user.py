@@ -1,6 +1,6 @@
 from flask import request, render_template, redirect, url_for, flash, Blueprint
 from flask_login import login_required, current_user
-from app.db_ops import get_plan_by_name, create_subscription
+from app.services import create_subscription, get_plan_by_name
 from app.plan_data import plans
 
 user_bp = Blueprint('aiflix_user', __name__, url_prefix='/aiflix_user')

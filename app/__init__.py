@@ -4,7 +4,7 @@ from flask_login import LoginManager, current_user
 from flask_mongoengine import MongoEngine
 from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.mongoengine import ModelView
-from .config import Config
+from instance.config import Config
 
 db = MongoEngine()
 login_manager = LoginManager()
@@ -19,7 +19,7 @@ class MyAdminIndexView(AdminIndexView):
         return redirect(url_for('aiflix.admin_dashboard'))
 
 def create_app(config_class=Config):
-    app = Flask(__name__, template_folder='frontend', static_folder='frontend/assets')
+    app = Flask(__name__, template_folder='templates', static_folder='static')
     app.config.from_object(config_class)
 
     Session(app)
@@ -30,7 +30,7 @@ def create_app(config_class=Config):
     admin = Admin(app, name='Dashboard', template_mode='bootstrap3', index_view=MyAdminIndexView())
     admin.add_view(ModelView(models.User))
 
-    from .routes import main_bp, admin_bp, auth_bp, user_bp, gallery_bp
+    from .views import main_bp, admin_bp, auth_bp, user_bp, gallery_bp
     app.register_blueprint(main_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(auth_bp)

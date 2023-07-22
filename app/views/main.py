@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, session
 from flask_login import login_required, current_user, login_user
 from app.plan_data import plans
-from app.db_ops import get_user_by_email
+from app.services import get_user_by_email
 from .auth import google_auth
 
 main_bp = Blueprint('main', __name__, url_prefix='/')

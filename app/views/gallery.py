@@ -5,7 +5,7 @@ import dotenv
 from flask import request, render_template, abort, jsonify, Blueprint
 from flask_login import current_user
 from concurrent.futures import TimeoutError
-from model import Model, ModelError
+from app.api import Model, ModelError
 from utils import generate_negative_prompt, generate_random_prompt
 
 dotenv.load_dotenv()
@@ -22,7 +22,7 @@ HUGGING_FACE_API_URLS = {
 @gallery_bp.route('/')
 def gallery():
     exclude_images = ['forest.png', 'hoodie-b.png', 'hoodie-w.png', 'tshirt-b.png', 'tshirt-w.png', 'logo.png']
-    images = [f for f in os.listdir('app/frontend/assets/img') if f.endswith('.png') and f not in exclude_images]
+    images = [f for f in os.listdir('app/static/img') if f.endswith('.png') and f not in exclude_images]
     return render_template('gallery.html', images=images, user=current_user)
 
 @gallery_bp.route('/model', methods=['POST'])
@@ -78,7 +78,7 @@ async def query_model(selected_model, prompt, negative_prompt):
 @gallery_bp.route('/gallery_image/<path:img_name>', methods=['GET'])
 def gallery_image(img_name):
     try:
-        file_path = f"app/frontend/assets/img/{img_name}"
+        file_path = f"app/static/img/{img_name}"
         with open(file_path, "rb") as img_file:
             image = base64.b64encode(img_file.read()).decode('utf-8')
         image_data = f"data:image/png;base64,{image}"

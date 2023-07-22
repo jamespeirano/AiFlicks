@@ -2,12 +2,9 @@ import base64
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from . import db
+from .. import db
+from .subscription import Subscription
 
-class Subscription(db.Document):
-    meta = {'collection': 'subscriptions'}
-    name = db.StringField(max_length=255, required=True, unique=True)
-    details = db.StringField(max_length=1000, required=True)
 
 class User(UserMixin, db.Document):
     meta = {'collection': 'users'}
