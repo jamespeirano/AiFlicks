@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">  
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Pricing-Clean-badges.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Pricing-Clean-icons.css') }}">
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/icons/favicon.svg') }}">
 </head>
 
 <body>
@@ -21,9 +21,9 @@
                     </svg></span></a><a class="text-uppercase fs-4 fw-bolder">AI FLICKS</a><button data-bs-toggle="collapse" class="navbar-toggler text-white" data-bs-target="#navcol-2"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon text-white"></span></button>
             <div class="collapse navbar-collapse justify-content-end" id="navcol-2">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link active" href="{{ url_for('login') }}">Login</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('signup') }}">Signup</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('pricing') }}">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{{ url_for('auth.login') }}">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.pricing') }}">Pricing</a></li>
                 </ul>
             </div>
         </div>

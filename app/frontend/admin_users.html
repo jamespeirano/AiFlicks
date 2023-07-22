@@ -7,7 +7,7 @@
     {% if avatar_url %}
         <img class="border rounded-circle img-profile avatar" src="{{ avatar_url }}" alt="Avatar"/>
     {% else %}
-        <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/default.png') }}" alt="Default Avatar" />
+        <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/icons/default.png') }}" alt="Default Avatar" />
     {% endif %}
 {% endblock %}
 

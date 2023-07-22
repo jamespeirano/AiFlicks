@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='admin_assets/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='admin_assets/fonts/fontawesome-all.min.css') }}">
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/icons/favicon.svg') }}">
 </head>
 
 <body id="page-top">
@@ -21,8 +21,8 @@
                 </a>
                 <hr class="sidebar-divider my-0">
                 <ul class="navbar-nav text-light" id="accordionSidebar">
-                    <li class="nav-item"><a class="nav-link active" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-user"></i><span>admin</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_users') }}"><i class="fas fa-table"></i><span>users</span></a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{{ url_for('aiflix.admin_dashboard') }}"><i class="fas fa-user"></i><span>admin</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('aiflix.admin_users') }}"><i class="fas fa-table"></i><span>users</span></a></li>
                 </ul>
                 <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
             </div>
@@ -48,9 +48,9 @@
                             <li class="nav-item dropdown no-arrow">
                                 <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href=""><span class="d-none d-lg-inline me-2 text-gray-600 small">{% block username %}{% endblock %}</span>{% block avatar %}{% endblock %}</a>
                                     <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in">
-                                        <a class="dropdown-item" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile</a>
-                                        <a class="dropdown-item" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Settings</a>
-                                        <div class="dropdown-divider"></div><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Logout</a>
+                                        <a class="dropdown-item" href="{{ url_for('aiflix.admin_dashboard') }}"><i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile</a>
+                                        <a class="dropdown-item" href="{{ url_for('aiflix.admin_dashboard') }}"><i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Settings</a>
+                                        <div class="dropdown-divider"></div><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Logout</a>
                                     </div>
                                 </div>
                             </li>

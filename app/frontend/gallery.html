@@ -7,7 +7,7 @@
     {% if avatar_url %}
         <img class="border rounded-circle img-profile avatar" src="{{ avatar_url }}" alt="Avatar"/>
     {% else %}
-        <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/default.png') }}" alt="Default Avatar" />
+        <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/icons/default.png') }}" alt="Default Avatar" />
     {% endif %}
 {% endblock %}
 
@@ -29,10 +29,10 @@
             {% for img_name in images %}
                 <div class="col">
                     <div class="img-container">
-                        <a href="{{ url_for('gallery_image', img_name=img_name) }}">
-                            <img class="img-fluid" data-bss-hover-animate="pulse" src="assets/img/{{ img_name }}">
+                        <a href="{{ url_for('gallery.gallery_image', img_name=img_name) }}">
+                            <img class="img-fluid" data-bss-hover-animate="pulse" src="{{ url_for('static', filename='img/' + img_name) }}">
                             <div class="overlay"><div class="text">Click To Preview!</div></div>
-                        </a>
+                        </a>                        
                     </div>
                 </div>
             {% endfor %}

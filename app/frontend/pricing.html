@@ -36,10 +36,10 @@
                         </div>
                         {% if plan.name == 'Free' %}
                             <button class="btn btn-primary d-block w-100" role="button">
-                                <a href="{{ url_for('login') }}">Get started</a>
+                                <a href="{{ url_for('auth.login') }}">Get started</a>
                             </button>
                         {% else %}
-                            <form action="{{ url_for('handle_subscription') }}" method="post">
+                            <form action="{{ url_for('aiflix_user.handle_subscription') }}" method="post">
                                 <input type="hidden" name="plan_name" value="{{ plan.name }}">
                                 <button class="btn btn-primary d-block w-100" role="submit">Subscribe now <i>(coming soon)</i></button>
                             </form>
