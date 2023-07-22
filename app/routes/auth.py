@@ -64,7 +64,7 @@ def signup():
                 resized_avatar = None
         
         if not avatar or resized_avatar is None:
-            with open('app/frontend/assets/img/default.png', 'rb') as img:
+            with open('app/frontend/assets/img/icons/default.png', 'rb') as img:
                 resized_avatar = img.read()
 
         new_user = create_user(email, password, resized_avatar)
