@@ -62,7 +62,7 @@ function generateRandomPrompt() {
     if (isTyping) return;
     const selectedModel = modelInput.value;
     toggleGenerateButton(true);
-    fetch(`/random-prompt?model=${selectedModel}`, {
+    fetch(`/gallery/random-prompt?model=${selectedModel}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
