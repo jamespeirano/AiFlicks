@@ -5,8 +5,8 @@ button.addEventListener('click', (e) => {
 
   // Get the image source
   const base64_image = document.getElementsByClassName('generated-image')[0].children[0].src; 
-  const apiKey = 'P3sbXrqgozFxB1SwZaFbCYwiKIL7Jy6g8rDcHRUj';
-  // const apiKey = 'q7JUrsWx5zMsujUmJ3BayroXjHAxROZFE72YjZCh'           // store api key
+  // const apiKey = 'P3sbXrqgozFxB1SwZaFbCYwiKIL7Jy6g8rDcHRUj';
+  const apiKey = 'UsvITXFcmE85ijtvob38Ld9Z0Ihym4dcWjYicRvZ'           // store api key
   
   const options = {
     method: 'POST',
