@@ -19,6 +19,8 @@ def login():
         user = get_user_by_email(request.form.get('email').strip())
         if user and user.check_password(request.form.get('password').strip()):
             login_user(user, remember=True)
+            if 'plan_name' in session:
+                return redirect(url_for('aiflix_user.create_checkout_session', plan_name=session.get('plan_name')))
             return redirect(url_for('main.index'))
         else:
             flash('Invalid username or password')
@@ -64,12 +66,14 @@ def signup():
                 resized_avatar = None
         
         if not avatar or resized_avatar is None:
-            with open('app/frontend/assets/img/icons/default.png', 'rb') as img:
+            with open('app/static/img/icons/default.png', 'rb') as img:
                 resized_avatar = img.read()
 
         new_user = create_user(email, password, resized_avatar)
         login_user(new_user)
         flash('Your account has been created!')
+        if 'plan_name' in session:
+            return redirect(url_for('aiflix_user.create_checkout_session', plan_name=session.get('plan_name')))
         return redirect(url_for('main.index'))
     return render_template('signup.html')
 

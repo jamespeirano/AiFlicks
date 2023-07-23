@@ -1,38 +1,80 @@
-from flask import request, render_template, redirect, url_for, flash, Blueprint
+import os
+import dotenv
+from flask import render_template, redirect, url_for, session, jsonify, Blueprint
 from flask_login import login_required, current_user
-from app.services import create_subscription, get_plan_by_name
-from app.data import PLANS
+from app.services import create_subscription
+from app.data import PLANS, PLAN_PRICES
+
+import stripe
+
+dotenv.load_dotenv()
+stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
 user_bp = Blueprint('aiflix_user', __name__, url_prefix='/aiflix_user')
 
-@user_bp.route('/subscription', methods=['POST'])
+@user_bp.route('/create_checkout_session/<plan_name>', methods=['GET', 'POST'])
 @login_required
-def handle_subscription():
-    user = current_user
-    current_subscription = user.subscription
-    selected_plan_name = request.form.get('plan_name')
-    selected_plan = get_plan_by_name(selected_plan_name)
+def create_checkout_session(plan_name):
+    session['plan_name'] = plan_name
 
-    print(f"Selected plan: {selected_plan.name}, current plan: {current_subscription.name}")
+    if plan_name not in PLAN_PRICES:
+        return jsonify(error='Invalid plan selected'), 400
 
-    if selected_plan['price'] > current_subscription['price']:
-        subscription_action = url_for('upgrade_subscription', new_subscription_name=selected_plan.name)
-    elif selected_plan['price'] < current_subscription['price']:
-        subscription_action = url_for('downgrade_subscription', new_subscription_name=selected_plan.name)
-    else:
-        flash('You are already subscribed to this plan.', 'info')
-        return redirect(url_for('auth.signin'))
+    try:
+        product = stripe.Product.create(name=plan_name)
+        
+        price = stripe.Price.create(
+          product=product.id,
+          unit_amount=PLAN_PRICES[plan_name] * 100,
+          currency='usd',
+          recurring={"interval": "month"},
+        )
 
-    return render_template('pricing.html', subscription_action=subscription_action)
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price': price.id,
+                'quantity': 1,
+            }],
+            mode='subscription',
+            success_url=url_for('aiflix_user.subscription_success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url=url_for('aiflix_user.subscription_failed', _external=True),
+        )
 
+        session['plan_name'] = plan_name
+        return redirect(checkout_session.url, code=303)
+
+    except Exception as e:
+        return jsonify(error=str(e)), 403
+
+@user_bp.route('/upgrade_subscription/<new_subscription_name>', methods=['GET', 'POST'])
+@login_required
 def upgrade_subscription(new_subscription_name):
     user = current_user
     create_subscription(new_subscription_name, PLANS[new_subscription_name])
     user.upgrade_subscription(new_subscription_name)
     return redirect(url_for('auth.login'))
 
+@user_bp.route('/downgrade_subscription/<new_subscription_name>', methods=['GET', 'POST'])
+@login_required
 def downgrade_subscription(new_subscription_name):
     user = current_user
     create_subscription(new_subscription_name, PLANS[new_subscription_name])
     user.downgrade_subscription(new_subscription_name)
     return redirect(url_for('auth.login'))
+
+@user_bp.route('/subscription_success')
+def subscription_success():
+    user = current_user
+    selected_plan = session.get('plan_name')
+
+    if selected_plan:
+        new_subscription = create_subscription(selected_plan, PLANS[selected_plan])
+        user.subscription = new_subscription
+        user.save()
+        session.pop('plan_name', None)
+    return render_template('payment_success.html')
+
+@user_bp.route('/subscription_failed')
+def subscription_failed():
+    return render_template('payment_failed.html')

@@ -1,13 +1,11 @@
 # Plans data
-PLANS = [
-    {
-        'name': 'Free',
-        'price': '$0',
+PLANS = {
+    'Free': {
+        'price': 0,
         'features': ['Unlimited image generations', 'Save your images', '5 models to choose from']
     },
-    {
-        'name': 'Basic',
-        'price': '$3',
+    'Basic': {
+        'price': 3,
         'features': [
             'Unlimited image generations',
             'Save your images',
@@ -16,9 +14,8 @@ PLANS = [
             'Prompt to image guided generation'
         ]
     },
-    {
-        'name': 'Pro',
-        'price': '$7',
+    'Pro': {
+        'price': 7,
         'features': [
             'Unlimited image generations',
             'Save your images',
@@ -28,7 +25,13 @@ PLANS = [
             'Early access to improvements'
         ]
     },
-]
+}
+
+PLAN_PRICES = {
+    'Free': 0,
+    'Basic': 3,
+    'Pro': 7,
+}
 
 # Models data
 MODELS = [
