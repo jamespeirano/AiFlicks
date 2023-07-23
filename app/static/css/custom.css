@@ -155,6 +155,32 @@
   transform: scale(1.05);
   cursor: pointer;
 }
+
+.model-button, .upgrade-badge {
+  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+}
+
+#arrowIcon {
+  transition: transform 0.3s ease-in-out;
+}
+
+.model-button:hover {
+  background-color: #17a2b8 !important;
+  color: #ffffff !important;
+}
+
+.model-button:hover #arrowIcon {
+  transform: scale(1.2);
+}
+
+.upgrade-model {
+  transition: all 0.3s ease-in-out;
+}
+
+.upgrade-model:hover .upgrade-badge {
+  background-color: #17a2b8 !important;
+  color: #ffffff !important;
+}
 /* index.html -- end */
 
 /* result.html -- start */
