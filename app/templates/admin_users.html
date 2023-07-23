@@ -43,9 +43,7 @@
             <table class="table my-0" id="dataTable">
                 <thead>
                     <tr>
-                        <th>Name</th>
                         <th>Email</th>
-                        <th>Username</th>
                         <th>User since</th>
                         <th>Orders</th>
                     </tr>
@@ -55,6 +53,7 @@
                     <tr>
                         <td>{{ user.email }}</td>
                         <td>{{ user.since }}</td>
+                        <td>{{ user.orders if user.orders else 0 }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session
 from flask_login import login_required, current_user, login_user
-from app.plan_data import plans
+from app.data import PLANS, MODELS
 from app.services import get_user_by_email
 from .auth import google_auth
 
@@ -16,11 +16,11 @@ def index():
         user = get_user_by_email(email)
         if user:
             login_user(user)
-    return render_template("index.html", user=current_user)
+    return render_template("index.html", user=current_user,  models=MODELS)
 
 @main_bp.route('/pricing')
 def pricing():
-    return render_template('pricing.html', plans=plans)
+    return render_template('pricing.html', plans=PLANS)
 
 @main_bp.route('/models')
 def models():

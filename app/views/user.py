@@ -1,7 +1,7 @@
 from flask import request, render_template, redirect, url_for, flash, Blueprint
 from flask_login import login_required, current_user
 from app.services import create_subscription, get_plan_by_name
-from app.plan_data import plans
+from app.data import PLANS
 
 user_bp = Blueprint('aiflix_user', __name__, url_prefix='/aiflix_user')
 
@@ -27,12 +27,12 @@ def handle_subscription():
 
 def upgrade_subscription(new_subscription_name):
     user = current_user
-    create_subscription(new_subscription_name, plans[new_subscription_name])
+    create_subscription(new_subscription_name, PLANS[new_subscription_name])
     user.upgrade_subscription(new_subscription_name)
     return redirect(url_for('auth.login'))
 
 def downgrade_subscription(new_subscription_name):
     user = current_user
-    create_subscription(new_subscription_name, plans[new_subscription_name])
+    create_subscription(new_subscription_name, PLANS[new_subscription_name])
     user.downgrade_subscription(new_subscription_name)
     return redirect(url_for('auth.login'))

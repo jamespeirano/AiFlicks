@@ -1,4 +1,5 @@
-plans = [
+# Plans data
+PLANS = [
     {
         'name': 'Free',
         'price': '$0',
@@ -26,5 +27,33 @@ plans = [
             'Prioritized access to new features',
             'Early access to improvements'
         ]
+    },
+]
+
+# Models data
+MODELS = [
+    {
+        'title': 'Realistic Vision',
+        'name' : 'realistic-vision',
+        'description': 'A model for realistic image rendering.',
+        'is_free': True,
+    },
+    {
+        'title': 'Stable Diffusion',
+        'name' : 'stable-diffusion',
+        'description': 'A model for stable image diffusion.',
+        'is_free': True,
+    },
+    {
+        'title': 'Nitro Diffusion',
+        'name' : 'nitro-diffusion',
+        'description': 'A model for fast image diffusion.',
+        'is_free': True,
+    },
+    {
+        'title': 'Dreamlike Anime',
+        'name' : 'dreamlike-anime',
+        'description': 'A model for anime image rendering.',
+        'is_free': False,
     },
 ]
