@@ -17,6 +17,7 @@ HUGGING_FACE_API_URLS = {
     'realistic-vision': os.environ.get('HUGGING_FACE_API_URL2'),
     'nitro-diffusion': os.environ.get('HUGGING_FACE_API_URL3'),
     'dreamlike-anime': os.environ.get('HUGGING_FACE_API_URL4'),
+    'anything-v5': os.environ.get('HUGGING_FACE_API_URL5'),
 }
 
 @gallery_bp.route('/')

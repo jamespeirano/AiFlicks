@@ -59,4 +59,10 @@ MODELS = [
         'description': 'A model for anime image rendering.',
         'is_free': False,
     },
+    {
+        'title': 'Anything v5',
+        'name' : 'anything-v5',
+        'description': 'A model for image rendering.',
+        'is_free': True,
+    },
 ]
