@@ -16,11 +16,11 @@ button.addEventListener('click', (e) => {
     },
     body: JSON.stringify({
       image_url: base64_image,
-      item_code: "RNA1",
+      item_code: "RNA4",
       name: "Your AI Design",
-      colours: "White,Black,Red,Blue,Green,Yellow,Pink,Purple,Orange,Brown,Gray",
+      colours: "Black,White,Red,Blue,Green,Yellow,Pink,Purple,Orange,Brown,Gray",
       description: "Check out your AI generated design on a t-shirt! Scroll down to see more products and variations.",
-      price: 20.00,
+      currency: "USD"
     }),
   };
   
@@ -29,7 +29,8 @@ button.addEventListener('click', (e) => {
     "<body style='background-color:#faf9f9;width:100%;height:100%;margin:0;position:relative;'><img src='https://storage.googleapis.com/teemill-dev-image-bucket/doodle2tee_loader.gif' style='position:absolute;top:calc(50% - 100px);left:calc(50% - 100px);'/></body>"
   );
 
-  fetch('https://teemill.com/omnis/v3/product/create', options)
+
+  fetch('https://aiflix.teemill.com/omnis/v3/product/create', options)
     .then(response => response.json())
     .then(response => newTab.location.href = response.url)
     .catch(err => console.error(err));
