@@ -2,22 +2,27 @@ import os
 import base64
 import asyncio
 import dotenv
+import traceback
 from flask import request, render_template, abort, jsonify, Blueprint
 from flask_login import current_user
 from concurrent.futures import TimeoutError
 from app.api import Model, ModelError
-from utils import generate_negative_prompt, generate_random_prompt
+from utils import generate_negative_prompt, generate_random_prompt, pprint
 
 dotenv.load_dotenv()
 
 gallery_bp = Blueprint('gallery', __name__, url_prefix='/gallery')
 
 HUGGING_FACE_API_URLS = {
-    'stable-diffusion': os.environ.get('HUGGING_FACE_API_URL1'),
-    'realistic-vision': os.environ.get('HUGGING_FACE_API_URL2'),
-    'nitro-diffusion': os.environ.get('HUGGING_FACE_API_URL3'),
-    'dreamlike-anime': os.environ.get('HUGGING_FACE_API_URL4'),
-    'anything-v5': os.environ.get('HUGGING_FACE_API_URL5'),
+    'stable-diffusion': os.environ.get('STABLE_DIFFUSION_V15'),
+    'stable-diffusion-v21': os.environ.get('STABLE_DIFFUSION_V21'),
+    'dreamlike-photo-real': os.environ.get('DREAMLIKE_PHOTO_REAL'),
+    'realistic-vision': os.environ.get('REALISTIC_VISION_V14'),
+    'nitro-diffusion': os.environ.get('NITRO_DIFFUSION'),
+    'dreamlike-anime': os.environ.get('DREAMLIKE_ANIME_V10'),
+    'dream-shaper': os.environ.get('DREAM_SHAPER'),
+    'anything-v5': os.environ.get('ANYTHING_V5'),
+    'hentai': os.environ.get('HENTAI'),
 }
 
 @gallery_bp.route('/')
@@ -29,11 +34,17 @@ def gallery():
 @gallery_bp.route('/model', methods=['POST'])
 async def model():
     try:
+        print('[Function: model] Received request')
         data = request.form
         model_input = data.get('model_input')
         selected_model = HUGGING_FACE_API_URLS.get(model_input)
         prompt = data.get('prompt')
         negative_prompt = data.get('negative_prompt')
+
+        print('model_input:', model_input)
+        print('selected_model:', selected_model)
+        print('prompt:', prompt)
+        print('negative_prompt:', negative_prompt)
 
         if not selected_model or not prompt:
             return abort(400, "Invalid form data supplied")
@@ -43,17 +54,18 @@ async def model():
         return await generate_image(selected_model, prompt, negative_prompt)
 
     except TimeoutError:
+        print('[Function: model] Timeout error occurred')
         return render_template('error.html', error='Timeout')
 
     except Exception as e:
-        print(f"Unexpected error occurred: {e}")
-        import traceback
+        print('[Function: model] Error occurred')
         traceback.print_exc()
         return render_template('error.html', error=str(e))
 
 async def generate_image(selected_model, prompt, negative_prompt):
     for attempt in range(3):
         try:
+            print(f'[Function: generate_image] Attempt {attempt + 1}')
             image = await query_model(selected_model, prompt, negative_prompt)
         except ModelError as e:
             if attempt < 2: # Only allow retries if less than 2 attempts have been made
@@ -68,6 +80,7 @@ async def generate_image(selected_model, prompt, negative_prompt):
 async def query_model(selected_model, prompt, negative_prompt):
     model = Model(selected_model, prompt, negative_prompt)
     try:
+        print('[Function: query_model] Generating image')
         image = await asyncio.wait_for(model.generate(), timeout=120)
     except TimeoutError:
         raise ModelError('Timeout while generating image')

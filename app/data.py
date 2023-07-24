@@ -36,33 +36,57 @@ PLAN_PRICES = {
 # Models data
 MODELS = [
     {
-        'title': 'Realistic Vision',
+        'title': 'Visionary Realism',
         'name' : 'realistic-vision',
-        'description': 'A model for realistic image rendering.',
+        'description': 'Turn your wildest thoughts into stunning photorealistic visuals. Step into the future of image rendering.',
         'is_free': True,
     },
     {
-        'title': 'Stable Diffusion',
+        'title': 'Stable Diffusion v2',
+        'name' : 'stable-diffusion-v21',
+        'description': 'Turn your wildest thoughts into stunning photorealistic visuals. Step into the future of image rendering.',
+        'is_free': True,
+    },
+    {
+        'title': 'Stable Mirage',
         'name' : 'stable-diffusion',
-        'description': 'A model for stable image diffusion.',
+        'description': 'Experience the magic of transforming abstract ideas into stable, clear, and captivating visual diffusion. Stability meets creativity.',
         'is_free': True,
     },
     {
-        'title': 'Nitro Diffusion',
+        'title': 'Dreamy Reality',
+        'name' : 'dreamlike-photo-real',
+        'description': 'Blend the boundaries between dreams and reality. Render your imaginations into dreamlike images with a touch of photorealistic essence.',
+        'is_free': True,
+    },
+    {
+        'title': 'Nitro Illusions',
         'name' : 'nitro-diffusion',
-        'description': 'A model for fast image diffusion.',
+        'description': 'Feel the adrenaline of speed. Accelerate your creativity and experience rapid image diffusion like never before.',
         'is_free': True,
     },
     {
-        'title': 'Dreamlike Anime',
+        'title': 'Anime Dreamworld',
         'name' : 'dreamlike-anime',
-        'description': 'A model for anime image rendering.',
+        'description': 'Unleash your fantasies in the anime world. Render your thoughts into vibrant and dreamlike anime visuals. Lets anime-fy your dreams.',
         'is_free': False,
     },
     {
-        'title': 'Anything v5',
-        'name' : 'anything-v5',
-        'description': 'A model for image rendering.',
+        'title': 'Dream Sculptor',
+        'name' : 'dream-shaper',
+        'description': 'Become an artisan of your dreams. Sculpt, shape, and breathe life into your imaginations, crafting them into vibrant images.',
         'is_free': True,
     },
+    {
+        'title': 'The Artificer',
+        'name' : 'anything-v5',
+        'description': 'Embrace the limitless potential of image rendering. With the Artificer, every thought can become an exquisite piece of visual art.',
+        'is_free': True,
+    },
+    {
+        'title': 'Hentai',
+        'name' : 'hentai',
+        'description': 'Turn your wildest thoughts into stunning photorealistic visuals. Step into the future of image rendering.',
+        'is_free': True,
+    }
 ]

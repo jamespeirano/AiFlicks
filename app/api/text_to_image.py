@@ -34,7 +34,6 @@ class Model:
                 "wait_for_model": True
             }
         }
-        self.retry_count = 0
 
     async def generate(self):
         try:
