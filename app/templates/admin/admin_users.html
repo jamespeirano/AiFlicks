@@ -1,0 +1,64 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}AIF Users{% endblock %}
+{% block username %} {{ user.username }} {% endblock %}
+{% block avatar %}
+    {% set avatar_url = user.get_avatar() %}
+    {% if avatar_url %}
+        <img class="border rounded-circle img-profile avatar" src="{{ avatar_url }}" alt="Avatar"/>
+    {% else %}
+        <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/icons/default.png') }}" alt="Default Avatar" />
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header py-3">
+        <p class="text-primary m-0 fw-bold">User Info</p>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 text-nowrap">
+                <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                    <label class="form-label">Show&nbsp;
+                        <select class="d-inline-block form-select form-select-sm" id="dataTable_length_select">
+                            <option value="10" selected="">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        &nbsp;
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="text-md-end dataTables_filter" id="dataTable_filter">
+                    <label class="form-label">
+                        <input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search">
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+            <table class="table my-0" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>User since</th>
+                        <th>Orders</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users%}
+                    <tr>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.since }}</td>
+                        <td>{{ user.orders if user.orders else 0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

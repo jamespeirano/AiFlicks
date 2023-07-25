@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Error{% endblock %}
+
+{% block header %} 
+<header class="bg-dark">
+    <section class="py-5 mt-5">
+        <div class="container">
+            <div class="row row-cols-1 d-flex justify-content-center align-items-center">
+                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                    <h2 class="fw-bold">Oops!</h2>
+                    <p class="fw-bold text-success mb-2">Error generating image. Please try again.</p>
+                </div>
+                <div class="col-md-10 text-center"><img class="img-fluid w-100" src="../static/img/icons/404.svg"></div>
+            </div>
+        </div>
+    </section>
+</header>
+{% endblock %}
+

@@ -1,0 +1,57 @@
+{% extends 'auth.html' %}
+
+{% block title %}Pricing{% endblock %}
+
+{% block header %}
+<script src="https://js.stripe.com/v3/"></script>
+<script src="{{ url_for('static', filename='js/stripe.js') }}"></script>
+
+<section class="py-5">
+    <div class="container py-4 py-xl-5">
+        <div class="row mb-5">
+            <div class="col-md-8 col-xl-6 text-center mx-auto">
+                <h2>Choose your plan</h2>
+                <p class="w-lg-50">Select from a variety of plans that best suit your needs. All plans come with exceptional support and unlimited possibilities.</p>
+            </div>
+        </div>
+        <div class="row gy-4 row-cols-1 row-cols-md-2 row-cols-xl-3">
+
+            {% for plan_name, plan_details in plans.items() %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between p-4 {% if plan_name == 'Basic' %}basic_plan{% endif %}">
+                        <div>
+                            <h6 class="text-uppercase text-muted">{{plan_name}}</h6>
+                            <h4 class="display-6 fw-bold">${{plan_details.price}}</h4>
+                            <hr>
+                            <ul class="list-unstyled">
+                                {% for feature in plan_details.features %}
+                                <li class="d-flex mb-2">
+                                    <span class="bs-icon-xs bs-icon-rounded bs-icon-primary-light bs-icon me-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-check-lg">
+                                            <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"></path>
+                                        </svg>
+                                    </span>
+                                    <span>{{feature}}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% if plan_name == 'Free' %}
+                            <button class="btn btn-primary d-block w-100" role="button">
+                                <a href="{{ url_for('auth.login') }}">Get started</a>
+                            </button>
+                        {% else %}
+                        <form action="{{ url_for('aiflix_user.create_checkout_session', plan_name=plan_name) }}" method="post">
+                            <button class="btn btn-primary d-block w-100" id="subscribe-button" role="submit">Subscribe now (coming soon)</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}            
+
+        </div>
+    </div>
+</section>
+{% endblock %}
