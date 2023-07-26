@@ -4,7 +4,7 @@ from flask_login import LoginManager, current_user
 from flask_mongoengine import MongoEngine
 from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.mongoengine import ModelView
-from instance.config import Config
+from config.config import Config
 
 db = MongoEngine()
 login_manager = LoginManager()
