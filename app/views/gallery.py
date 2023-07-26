@@ -1,4 +1,5 @@
 import os
+import random
 import base64
 import asyncio
 import dotenv
@@ -7,22 +8,21 @@ from flask import request, render_template, abort, jsonify, Blueprint
 from flask_login import current_user
 from concurrent.futures import TimeoutError
 from app.api import Model, ModelError
-from utils import generate_negative_prompt, generate_random_prompt, pprint
+from app.data import PROMPTS
 
 dotenv.load_dotenv()
 
 gallery_bp = Blueprint('gallery', __name__, url_prefix='/gallery')
 
 HUGGING_FACE_API_URLS = {
-    'stable-diffusion': os.environ.get('STABLE_DIFFUSION_V15'),
+    'stable-diffusion-v15': os.environ.get('STABLE_DIFFUSION_V15'),
     'stable-diffusion-v21': os.environ.get('STABLE_DIFFUSION_V21'),
     'dreamlike-photo-real': os.environ.get('DREAMLIKE_PHOTO_REAL'),
-    'realistic-vision': os.environ.get('REALISTIC_VISION_V14'),
+    'dream-shaper': os.environ.get('DREAM_SHAPER'),
+    'realistic-vision-v14': os.environ.get('REALISTIC_VISION_V14'),
     'nitro-diffusion': os.environ.get('NITRO_DIFFUSION'),
     'dreamlike-anime': os.environ.get('DREAMLIKE_ANIME_V10'),
-    'dream-shaper': os.environ.get('DREAM_SHAPER'),
     'anything-v5': os.environ.get('ANYTHING_V5'),
-    'hentai': os.environ.get('HENTAI'),
 }
 
 @gallery_bp.route('/')
@@ -41,16 +41,11 @@ async def model():
         prompt = data.get('prompt')
         negative_prompt = data.get('negative_prompt')
 
-        print('model_input:', model_input)
-        print('selected_model:', selected_model)
-        print('prompt:', prompt)
-        print('negative_prompt:', negative_prompt)
-
         if not selected_model or not prompt:
             return abort(400, "Invalid form data supplied")
         
         if not negative_prompt or negative_prompt.isspace():
-            negative_prompt = generate_negative_prompt(model_input)
+            negative_prompt = get_negative_prompt(selected_model, prompt)
         return await generate_image(selected_model, prompt, negative_prompt)
 
     except TimeoutError:
@@ -104,5 +99,17 @@ def gallery_image(img_name):
 @gallery_bp.route('/random-prompt', methods=['GET'])
 def random_prompt():
     selected_model = request.args.get('model')
-    prompt = generate_random_prompt(selected_model)
+    try:
+        prompt = random.choice(PROMPTS[selected_model])["prompt"]
+    except KeyError:
+        return abort(400, "Invalid model name supplied")
     return jsonify({'prompt': prompt})
+
+def get_negative_prompt(model, given_prompt):
+    prompt_list = PROMPTS.get(model)
+    if not prompt_list:
+        return None
+    for prompt_dict in prompt_list:
+        if prompt_dict['prompt'] == given_prompt:
+            return prompt_dict['negative_prompt']
+    return ""

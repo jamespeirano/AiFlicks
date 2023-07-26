@@ -1,17 +1,9 @@
 {% extends 'base.html' %}
 
 {% block title %}Home{% endblock %}
-{% block username %} {{ user.username }} {% endblock %}
-{% block avatar %}
-    {% set avatar_url = user.get_avatar() %}
-    {% if avatar_url %}
-        <img class="border rounded-circle img-profile avatar" src="{{ avatar_url }}" alt="Avatar"/>
-    {% else %}
-        <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/icons/default.png') }}" alt="Default Avatar" />
-    {% endif %}
-{% endblock %}
 
 {% block loader %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
 <div class="loader-overlay" id="loader-overlay" style="display: none">
     <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" id="loader" class="loader">
         <path pathLength="360" d="M 56.3752 2 H 7.6248 C 7.2797 2 6.9999 2.268 6.9999 2.5985 V 61.4015 C 6.9999 61.7321 7.2797 62 7.6248 62 H 56.3752 C 56.7203 62 57.0001 61.7321 57.0001 61.4015 V 2.5985 C 57.0001 2.268 56.7203 2 56.3752 2 Z"></path>
@@ -34,7 +26,6 @@
 </div>
 {% endblock %}
 
-
 {% block header %}
 <header class="bg-dark">
     <div class="container py-5">
@@ -49,7 +40,7 @@
                     <form action="{{ url_for('gallery.model') }}" id="prompt_form" class="form" method="POST">
                         <div class="mb-3" style="text-align: center;">
                             <textarea id="message-1" name="prompt" rows="6" placeholder="anime female mechanical android head with flowers growing out ..." style="color: var(--bs-body-color);border-radius: 20px;" required></textarea>
-                            <input type="hidden" id="model_input" name="model_input" value="realistic-vision">  <!-- Hidden field for model: default realistic vision -->
+                            <input type="hidden" id="model_input" name="model_input" value="realistic-vision-v14">  <!-- Hidden field for model: default realistic vision -->
                             <button id="generate-button" class="btn btn-primary shadow" type="submit" style="margin: 10px;filter: blur(0px);backdrop-filter: opacity(1);-webkit-backdrop-filter: opacity(1);--bs-body-font-size: 0.5rem;">Generate Image</button>
                             <button class="btn btn-primary shadow" type="button" style="margin: 10px;margin-left: 10px;--bs-body-font-size: 0.5rem;background: var(--bs-gray-700);border-color: var(--bs-gray-700);" onclick="generateRandomPrompt()">Random Prompt</button>
                         </div>    
@@ -58,7 +49,7 @@
                             <div class="container text-center py-5">
                                 <p class="mb-4" style="font-size: 1.4rem;">Choose a different&nbsp;<span class="text-success"><strong>model</strong></span>&nbsp;to change the output style of your image.</p>
                                 <button class="btn btn-primary model-button" type="button" data-bs-toggle="modal" data-bs-target="#modelModal" style="background: var(--bs-black);border-color: var(--bs-black);">
-                                    <span id="modelButtonText">Visionary Realism</span>
+                                    <span id="modelButtonText">Vivid Reality v14</span>
                                     <svg id="arrowIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-angle-expand" viewBox="0 0 16 16" style="margin-left: 8px;">
                                         <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707z"/>
                                     </svg>
