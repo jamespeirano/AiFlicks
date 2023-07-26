@@ -1,15 +1,6 @@
 {% extends 'base.html' %}
 
 {% block title %}Design Image{% endblock %}
-{% block username %} {{ user.username }} {% endblock %}
-{% block avatar %}
-    {% set avatar_url = user.get_avatar() %}
-    {% if avatar_url %}
-        <img class="border rounded-circle img-profile avatar" src="{{ avatar_url }}" alt="Avatar"/>
-    {% else %}
-        <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/icons/default.png') }}" alt="Default Avatar" />
-    {% endif %}
-{% endblock %}
 
 {% block header %}
 <header class="bg-dark">

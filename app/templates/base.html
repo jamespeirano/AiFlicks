@@ -8,7 +8,6 @@
     <meta name="description" content="aiflicks">
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">  
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Lightbox-Gallery-baguetteBox.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Projects-Grid-Horizontal-images.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/icons/favicon.svg') }}">
@@ -32,18 +31,38 @@
                         {% endif %}
                     </li>
 
-                    <li class="nav-item dropdown no-arrow">
-                        <div class="nav-item dropdown no-arrow">
-                            <a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="">
-                                <span class="navbar-divider">|</span>
-                                <span class="d-none d-lg-inline me-2 text-gray-600 small">{% block username %}{% endblock %}</span>
-                                {% block avatar %}{% endblock %}
-                            </a>                            
-                            <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in">
-                                <a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Logout</a>
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown no-arrow">
+                            <div class="nav-item dropdown no-arrow">
+                                <a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="">
+                                    <span class="navbar-divider">|</span>
+                                    <span class="d-none d-lg-inline me-2 text-gray-600 small">{{ current_user.username }}</span>
+                                        {% set avatar_url = current_user.get_avatar() %}
+                                        {% if avatar_url %}
+                                            <img class="border rounded-circle img-profile avatar" src="{{ avatar_url }}" alt="Avatar"/>
+                                        {% else %}
+                                            <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/icons/default.png') }}" alt="Default Avatar" />
+                                        {% endif %}
+                                </a>                            
+                                <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in">
+                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Logout</a>
+                                </div>
                             </div>
-                        </div>
-                    </li>                     
+                        </li>
+                    {% else %}
+                        <li class="nav-item dropdown no-arrow">
+                            <div class="nav-item dropdown no-arrow">
+                                <a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="">
+                                    <span class="navbar-divider">|</span>
+                                    <span class="d-none d-lg-inline me-2 text-gray-600 small">Guest</span>
+                                    <img class="border rounded-circle img-profile avatar" src="{{ url_for('static', filename='img/icons/default.png') }}" alt="Default Avatar" />
+                                </a>                            
+                                <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in">
+                                    <a class="dropdown-item" href="{{ url_for('auth.signup') }}"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Signup</a>
+                                </div>
+                            </div>
+                        </li>
+                    {% endif %}                
                 </ul>
             </div>
         </div>

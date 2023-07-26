@@ -7,7 +7,6 @@ from .auth import google_auth
 main_bp = Blueprint('main', __name__, url_prefix='/')
 
 @main_bp.route('/')
-@login_required  
 def index():
     session.permanent = False
     if 'oauth_token' in session:

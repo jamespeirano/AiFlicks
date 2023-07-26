@@ -46,7 +46,6 @@ function generateRandomPrompt() {
     .then(response => response.json())
     .then(data => {
         message.value = '';
-        console.log(data.prompt);
         isTyping = true;
         typeWriter(data.prompt, 'message-1', 10);
     })
