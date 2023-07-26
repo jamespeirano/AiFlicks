@@ -12,64 +12,82 @@
   align-items: center;
 }
 
-.svg-frame {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  transform-style: preserve-3d;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.loader {
+  width: 12em;
+  height: 12em;
 }
 
-.svg-frame svg {
-  position: absolute;
-  transition: .5s;
-  z-index: calc(1 - (0.2 * var(--j)));
-  transform-origin: center;
-  width: 344px;
-  height: 344px;
-  fill: none;
+.loader path {
+  stroke: lightgray;
+  stroke-width: 0.6px;
+  animation: dashArray 4s ease-in-out infinite, dashOffset 4s linear infinite;
+  -webkit-animation: dashArray 4s ease-in-out infinite, dashOffset 4s linear infinite;
 }
 
-.svg-frame:hover svg {
-  transform: rotate(-80deg) skew(30deg) translateX(calc(45px * var(--i))) translateY(calc(-35px * var(--i)));
-}
-
-.svg-frame svg #center {
-  transition: .5s;
-  transform-origin: center;
-}
-
-.svg-frame:hover svg #center {
-  transform: rotate(-30deg) translateX(45px) translateY(-3px);
-}
-
-#out2 {
-  animation: rotate16 7s ease-in-out infinite alternate;
-  transform-origin: center;
-}
-
-#out3 {
-  animation: rotate16 3s ease-in-out infinite alternate;
-  transform-origin: center;
-  stroke: #ff0;
-}
-
-#inner3,
-#inner1 {
-  animation: rotate16 4s ease-in-out infinite alternate;
-  transform-origin: center;
-}
-
-#center1 {
-  fill: #ff0;
-  animation: rotate16 2s ease-in-out infinite alternate;
-  transform-origin: center;
-}
-
-@keyframes rotate16 {
-  to {
-    transform: rotate(360deg);
+@keyframes dashArray {
+  0% {
+    stroke-dasharray: 0 1 359 0;
   }
+  50% {
+    stroke-dasharray: 0 359 1 0;
+  }
+  100% {
+    stroke-dasharray: 359 1 0 0;
+  }
+}
+
+@-webkit-keyframes dashArray {
+  0% {
+    stroke-dasharray: 0 1 359 0;
+  }
+  50% {
+    stroke-dasharray: 0 359 1 0;
+  }
+  100% {
+    stroke-dasharray: 359 1 0 0;
+  }
+}
+
+@keyframes dashOffset {
+  0% {
+    stroke-dashoffset: 365;
+  }
+  100% {
+    stroke-dashoffset: 5;
+  }
+}
+
+@-webkit-keyframes dashOffset {
+  0% {
+    stroke-dashoffset: 365;
+  }
+  100% {
+    stroke-dashoffset: 5;
+  }
+}
+
+.loader-text {
+  position: absolute;
+  top: 69%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: lightgray;
+  text-align: center;
+  animation: fade 1s linear infinite;
+  -webkit-animation: fade 1s linear infinite;
+}
+
+@keyframes fade {
+  0% {opacity: 1;}
+  50% {opacity: 0.5;}
+  100% {opacity: 1;}
+}
+
+@-webkit-keyframes fade {
+  0% {opacity: 1;}
+  50% {opacity: 0.5;}
+  100% {opacity: 1;}
 }
