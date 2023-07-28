@@ -48,6 +48,12 @@ MODELS = [
         'is_free': True,
     },
     {
+        'title': 'Next Gen Render XL Base',
+        'name' : 'stable-diffusion_xl_base',
+        'description': 'Step into the future of image rendering with Next Gen Render. Your wildest imaginations seamlessly become stunning, photorealistic masterpieces.',
+        'is_free': True,
+    },
+    {
         'title': 'Dream Portray PhotoReal',
         'name' : 'dreamlike-photo-real',
         'description': 'Experience the magic where dreams meet reality. Dream Portray PhotoReal renders your imagination into dreamlike images, adding a touch of photorealistic charm.',

@@ -17,6 +17,7 @@ gallery_bp = Blueprint('gallery', __name__, url_prefix='/gallery')
 HUGGING_FACE_API_URLS = {
     'stable-diffusion-v15': os.environ.get('STABLE_DIFFUSION_V15'),
     'stable-diffusion-v21': os.environ.get('STABLE_DIFFUSION_V21'),
+    'stable-diffusion_xl_base': os.environ.get('STABLE_DIFFUSION_XL_BASE'),
     'dreamlike-photo-real': os.environ.get('DREAMLIKE_PHOTO_REAL'),
     'dream-shaper': os.environ.get('DREAM_SHAPER'),
     'realistic-vision-v14': os.environ.get('REALISTIC_VISION_V14'),
