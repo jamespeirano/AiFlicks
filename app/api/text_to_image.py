@@ -14,7 +14,7 @@ class ModelError(Exception):
     pass
 
 class Model:
-    def __init__(self, selected_model, prompt, negative_prompt):
+    def __init__(self, selected_model, prompt, negative_prompt, guidance_scale, inference_steps, height, width):
         self.selected_model = selected_model
         self.prompt = prompt
         self.negative_prompt = negative_prompt
@@ -22,10 +22,10 @@ class Model:
             "inputs": self.prompt,
             "parameters": {
                 "negative_prompt": self.negative_prompt,
-                "guidance_scale": 7.5,
-                "num_inference_steps": 25,
-                "height": 512,
-                "width": 512,
+                "guidance_scale": guidance_scale,
+                "num_inference_steps": inference_steps,
+                "height": height,
+                "width": width
             },
             "options": {
                 "seed": 42,
