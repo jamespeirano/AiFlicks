@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>{% block title %}{% endblock %}</title>
     <meta name="description" content="aiflicks">
+    <meta name="google-site-verification" content="gtIM__oBr2BQj0LUTYGJq7LpA7An2i5kd8RF7TmrwYg" />
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">  
     <link rel="stylesheet" href="{{ url_for('static', filename='css/Lightbox-Gallery-baguetteBox.min.css') }}">
@@ -23,13 +24,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link active" href="{{ url_for('main.models') }}">Models</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('gallery.gallery') }}">Gallery</a></li>
-                    <li class="nav-item">
-                        {% if 'plan_name' in session %}
-                            <a class="nav-link" href="{{ url_for('aiflix_user.create_checkout_session', plan_name=session.get('plan_name')) }}">Upgrade</a>
-                        {% else %}
-                            <a class="nav-link" href="{{ url_for('main.pricing') }}">Upgrade</a>
-                        {% endif %}
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('studio.gradio') }}">Studio</a></li>
 
                     {% if current_user.is_authenticated %}
                         <li class="nav-item dropdown no-arrow">
@@ -62,7 +57,15 @@
                                 </div>
                             </div>
                         </li>
-                    {% endif %}                
+                    {% endif %}
+                    
+                    <li class="nav-item">
+                        {% if 'plan_name' in session %}
+                            <a class="nav-link" href="{{ url_for('aiflix_user.create_checkout_session', plan_name=session.get('plan_name')) }}">Upgrade</a>
+                        {% else %}
+                            <a class="nav-link" href="{{ url_for('main.pricing') }}">Upgrade</a>
+                        {% endif %}
+                    </li>
                 </ul>
             </div>
         </div>

@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'aiflicks'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0D2C558CB423454C82C36824FD7B1684 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_24BD1419DE494336B290672BA1D81C77 }}
