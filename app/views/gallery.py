@@ -17,6 +17,8 @@ gallery_bp = Blueprint('gallery', __name__, url_prefix='/gallery')
 HUGGING_FACE_API_URLS = {
     'stable-diffusion-v15': os.environ.get('STABLE_DIFFUSION_V15'),
     'stable-diffusion-v21': os.environ.get('STABLE_DIFFUSION_V21'),
+    'stable-diffusion-xl-base-0.9': os.environ.get('STABLE_DIFFUSION_XL_BASE_0.9'),
+    'stable-diffusion-xl-base-1.0': os.environ.get('STABLE_DIFFUSION_XL_BASE_1.0'),
     'dreamlike-photo-real': os.environ.get('DREAMLIKE_PHOTO_REAL'),
     'dream-shaper': os.environ.get('DREAM_SHAPER'),
     'realistic-vision-v14': os.environ.get('REALISTIC_VISION_V14'),
@@ -73,7 +75,7 @@ async def generate_image(selected_model, prompt, negative_prompt):
     return render_template('error.html', error='No image generated after retries')
 
 async def query_model(selected_model, prompt, negative_prompt):
-    model = Model(selected_model, prompt, negative_prompt)
+    model = Model(selected_model, prompt, negative_prompt, 7, 20, 1024, 1024)
     try:
         print('[Function: query_model] Generating image')
         image = await asyncio.wait_for(model.generate(), timeout=120)
