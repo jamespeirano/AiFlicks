@@ -42,61 +42,62 @@ MODELS = [
         'is_free': True,
     },
     {
-        'title': 'Next Gen Render v21',
+        'title': 'stable-diffusion-v21',
         'name' : 'stable-diffusion-v21',
         'description': 'Step into the future of image rendering with Next Gen Render. Your wildest imaginations seamlessly become stunning, photorealistic masterpieces.',
         'is_free': True,
     },
     {
-        'title': 'Dream Portray XL Base',
-        'name' : 'stable-diffusion-xl-base-0.9',
-        'description': 'Experience the magic where dreams meet reality. Dream Portray renders your imagination into dreamlike images, adding a touch of photorealistic charm.',
-        'is_free': True,
-    },
-    {
-        'title': 'Next Gen Render XL Base',
-        'name' : 'stable-diffusion-xl-base-1.0',
-        'description': 'Step into the future of image rendering with Next Gen Render. Your wildest imaginations seamlessly become stunning, photorealistic masterpieces.',
-        'is_free': True,
-    },
-    {
-        'title': 'Dream Portray PhotoReal',
+        'title': 'dreamlike-photo-real',
         'name' : 'dreamlike-photo-real',
         'description': 'Experience the magic where dreams meet reality. Dream Portray PhotoReal renders your imagination into dreamlike images, adding a touch of photorealistic charm.',
         'is_free': True,
     },
     {
-        'title': 'Dreams To Life',
+        'title': 'dream-shaper',
         'name' : 'dream-shaper',
         'description': 'Bring your dreams to life with Dreams To Life. Sculpt, mold, and transform your imaginations into dynamic, vivid images.',
         'is_free': True,
     },
     {
-        'title': 'Vivid Reality v14',
+        'title': 'realistic-vision-v14',
         'name' : 'realistic-vision-v14',
         'description': 'Witness the birth of your imaginations in high definition. With Vivid Reality, your thoughts turn into striking, photorealistic visuals.',
         'is_free': True,
     },
     {
-        'title': 'Anime Craft Nitro',
+        'title': 'nitro-diffusion',
         'name' : 'nitro-diffusion',
         'description': 'Fast-track your creativity with Anime Craft Nitro. Create dynamic, energetic anime visuals that capture the speed of your imagination.',
         'is_free': True,
     },
     {
-        'title': 'Anime Fantasy Maker',
+        'title': 'dreamlike-anime',
         'name' : 'dreamlike-anime',
         'description': 'Unleash your fantasies into the world of anime. Anime Fantasy Maker converts your thoughts into vibrant and dreamlike anime images.',
         'is_free': False,
     },
     {
-        'title': 'Limitless Artistry v5',
+        'title': 'anything-v5',
         'name' : 'anything-v5',
         'description': 'Transform every thought into an artful masterpiece. With Limitless Artistry, you have the freedom to create any and all visuals you can dream of.',
         'is_free': True,
     }
 ]
 
+
+# {
+#         'title': 'Dream Portray XL Base',
+#         'name' : 'stable-diffusion-xl-base-0.9',
+#         'description': 'Experience the magic where dreams meet reality. Dream Portray renders your imagination into dreamlike images, adding a touch of photorealistic charm.',
+#         'is_free': True,
+#     },
+#     {
+#         'title': 'Next Gen Render XL Base',
+#         'name' : 'stable-diffusion-xl-base-1.0',
+#         'description': 'Step into the future of image rendering with Next Gen Render. Your wildest imaginations seamlessly become stunning, photorealistic masterpieces.',
+#         'is_free': True,
+#     },
 
 PROMPTS = {
     "stable-diffusion": [
