@@ -64,4 +64,4 @@ jobs:
         with:
           app-name: 'aiflix'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_97DDA1959010481D9F59DAA1116EB9D8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A2176F82018B43D18F9588122A8A846A }}
